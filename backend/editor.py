@@ -135,7 +135,36 @@ def split_paragraphs(text):
     return [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
 
 
-async def chat(client, system, prompt, schema, num_ctx=4096):
+# Ollama reloads the model whenever num_ctx changes, so sizes come in a few fixed steps.
+CONTEXT_STEPS = (4096, 8192, 16384)
+RESPONSE_RESERVE = 2048  # room for the model's JSON answer
+
+
+def estimate_tokens(text):
+    # About 4 characters per token for English; 3 is deliberately pessimistic.
+    return len(text) // 3 + 1
+
+
+def context_size(*texts):
+    """Smallest step that fits the prompt plus the answer, or None if nothing does."""
+    needed = sum(estimate_tokens(t) for t in texts) + RESPONSE_RESERVE
+    return next((step for step in CONTEXT_STEPS if needed <= step), None)
+
+
+def fit_paragraphs(paragraphs, *fixed_texts):
+    """Keeps as many leading paragraphs as fit in the largest context step."""
+    budget = CONTEXT_STEPS[-1] - RESPONSE_RESERVE - sum(estimate_tokens(t) for t in fixed_texts)
+    kept, used = [], 0
+    for p in paragraphs:
+        used += estimate_tokens(p) + 1
+        if used > budget:
+            break
+        kept.append(p)
+    return kept
+
+
+async def chat(client, system, prompt, schema):
+    num_ctx = context_size(system, prompt) or CONTEXT_STEPS[-1]
     resp = await client.post(
         f"{OLLAMA_URL}/api/chat",
         json={
@@ -188,19 +217,25 @@ async def review_stream(text, voice, goal=""):
 
 
 async def overview_stream(text, voice, goal=""):
-    """Yields events: queue, start, overview, done."""
+    """Yields events: queue, start, notice (only if the essay was too long), overview, done."""
     ticket, started = queue.join(), False
     try:
         async for position in take_turn(ticket):
             yield {"type": "queue", "position": position}
         started = True
         yield {"type": "start", "total": 1}
-        prompt = (
-            f"Writer's voice:\n{voice}\n\nEssay goal: {goal or 'not specified'}\n\n"
-            f"Essay:\n\"\"\"\n{text}\n\"\"\""
-        )
+        header = f"Writer's voice:\n{voice}\n\nEssay goal: {goal or 'not specified'}\n\nEssay:\n"
+        paragraphs = split_paragraphs(text)
+        kept = fit_paragraphs(paragraphs, OVERVIEW_SYSTEM, header)
+        if len(kept) < len(paragraphs):
+            # Say so rather than silently judging an essay without its ending.
+            yield {"type": "notice", "message": (
+                f"This essay is longer than the model can read at once, so this feedback covers "
+                f"the first {len(kept)} of {len(paragraphs)} paragraphs."
+            )}
+        prompt = header + '"""\n' + "\n\n".join(kept) + '\n"""'
         async with httpx.AsyncClient() as client:
-            result = await chat(client, OVERVIEW_SYSTEM, prompt, OVERVIEW_SCHEMA, num_ctx=8192)
+            result = await chat(client, OVERVIEW_SYSTEM, prompt, OVERVIEW_SCHEMA)
         yield {"type": "overview", "overview": result}
         yield {"type": "done"}
     finally:

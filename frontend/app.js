@@ -134,6 +134,10 @@ function showApp() {
   // A stale token fails here; request() already sends the user back to sign in.
   loadDrafts().catch(() => {});
   loadProfile().catch(() => {});
+  api("/api/me").then(({ name }) => {
+    $("#account-name").textContent = name;
+    $("#account-username").value = name;
+  }).catch(() => {});
 }
 
 function signOut() {
@@ -244,7 +248,7 @@ function updateCrumb() {
   const essay = !$("#write-view").hidden;
   $("#crumb-title").textContent = essay
     ? (state.draftId ? $("#title").value.trim() || "Untitled essay" : "No essay open")
-    : "My voice";
+    : "Voice and account";
 }
 
 function setDraftControls(enabled) {
@@ -454,43 +458,6 @@ function onBodyChange() {
 }
 $("#body").addEventListener("input", onBodyChange);
 window.addEventListener("resize", onBodyChange);
-
-// Paragraph boundaries, split the same way the server splits them (blank lines, trimmed).
-function paragraphSpans(text) {
-  const spans = [];
-  const re = /\n\s*\n/g;
-  let start = 0;
-  for (let m = re.exec(text); ; m = re.exec(text)) {
-    const end = m ? m.index : text.length;
-    const raw = text.slice(start, end);
-    const lead = raw.length - raw.trimStart().length;
-    const trimmed = raw.trim();
-    if (trimmed) spans.push({ start: start + lead, end: start + lead + trimmed.length });
-    if (!m) break;
-    start = m.index + m[0].length;
-  }
-  return spans;
-}
-
-function occurrences(text, needle, from = 0, to = text.length) {
-  const found = [];
-  for (let at = text.indexOf(needle, from); at !== -1 && at + needle.length <= to; at = text.indexOf(needle, at + 1)) found.push(at);
-  return found;
-}
-
-// Where a suggestion's quote sits now. If its paragraph still exists, only that paragraph is
-// searched: once the writer has changed the quoted text there, the suggestion is stale, even if
-// the same words appear in another paragraph. Only when the paragraph is gone (paragraphs were
-// removed) does it fall back to a quote that appears exactly once. Returns -1 when unsure, so
-// an edit is never applied to the wrong copy of a repeated phrase.
-function locate(s, text = $("#body").value) {
-  if (s.paragraph != null) {
-    const para = paragraphSpans(text)[s.paragraph];
-    if (para) return occurrences(text, s.original, para.start, para.end)[0] ?? -1;
-  }
-  const all = occurrences(text, s.original);
-  return all.length === 1 ? all[0] : -1;
-}
 
 // Where each live suggestion currently sits in the text (no overlaps).
 function suggestionRanges() {
@@ -702,9 +669,14 @@ $("#review-phone").addEventListener("click", () => startReview("#review-phone"))
 
 $("#overview").addEventListener("click", () => {
   if (!state.run) $("#overview-panel").replaceChildren();
+  let notice = null;
   runStream("#overview", "/api/overview", (event) => {
     if (event.type === "start") setProgress("Reading the whole essay");
-    else if (event.type === "overview") renderOverview(event.overview);
+    else if (event.type === "notice") notice = event.message;
+    else if (event.type === "overview") {
+      renderOverview(event.overview);
+      if (notice) $("#overview-panel").prepend(el("div", { class: "voice-note" }, icon("i-alert"), el("span", {}, notice)));
+    }
   });
 });
 
@@ -763,7 +735,7 @@ function suggestionCard(s) {
 
 function highlight(s) {
   const body = $("#body");
-  const at = locate(s);
+  const at = locate(s, $("#body").value);
   if (at === -1) return false;
   body.focus({ preventScroll: true });
   body.setSelectionRange(at, at + s.original.length);
@@ -773,7 +745,7 @@ function highlight(s) {
 }
 
 function applyEdit(s) {
-  const at = locate(s);
+  const at = locate(s, $("#body").value);
   if (at === -1) {
     alert("That text has changed since the review, or now appears more than once, so this suggestion can't be applied automatically. Use Find, or edit it by hand.");
     return false;
@@ -807,6 +779,31 @@ $("#save-profile").addEventListener("click", async () => {
     $("#profile-status").textContent = "Saved.";
   } catch (err) {
     $("#profile-status").textContent = err.message;
+  }
+});
+
+// ---------- account ----------
+
+$("#password-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const status = $("#password-status");
+  status.classList.remove("bad");
+  if (form.new.value !== form.confirm.value) {
+    status.textContent = "The new passwords don't match.";
+    status.classList.add("bad");
+    return;
+  }
+  try {
+    const r = await api("/api/password", { method: "POST", body: { current: form.current.value, new: form.new.value } });
+    form.reset();
+    $("#account-username").value = $("#account-name").textContent; // reset() clears it
+    status.textContent = r.signed_out
+      ? `Password changed. Signed out of ${r.signed_out} other session${r.signed_out === 1 ? "" : "s"}.`
+      : "Password changed.";
+  } catch (err) {
+    status.textContent = err.message;
+    status.classList.add("bad");
   }
 });
 

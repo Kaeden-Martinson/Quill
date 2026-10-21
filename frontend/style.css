@@ -424,6 +424,10 @@ dialog.confirm { width: min(440px, calc(100vw - 32px)); }
 .voice-result h3 { font-size: var(--t-lg); }
 .voice-result pre { margin: 0; white-space: pre-wrap; font: var(--t-md)/1.7 var(--font-ui); color: var(--ink-2); }
 .status-text { font-size: var(--t-sm); color: var(--mute); }
+.status-text.bad { color: var(--old); }
+.account { border-top: 1px solid var(--line); padding-top: 20px; display: grid; gap: 12px; }
+.account h3 { font-size: var(--t-lg); }
+.password-form { display: grid; gap: 12px; max-width: 360px; }
 
 /* ============================================================
    Dialog

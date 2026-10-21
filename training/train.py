@@ -1,6 +1,6 @@
 """QLoRA fine-tune on an 8GB GPU, then export a GGUF that Ollama can serve.
 
-    python train.py                     # trains, writes training/out/
+    python train.py                     # trains, writes training/out/ (rerun to resume)
     ollama create quill-editor -f out/Modelfile
     set QUILL_MODEL=quill-editor        # then restart the app
 """
@@ -29,14 +29,17 @@ model = FastLanguageModel.get_peft_model(
 
 data = load_dataset("json", data_files={"train": str(HERE / "data/train.jsonl"), "val": str(HERE / "data/val.jsonl")})
 data = data.map(lambda ex: {"text": tokenizer.apply_chat_template(ex["messages"], tokenize=False)})
+# A 100-example slice is plenty to watch the loss; the full 300 took ~12 minutes per check.
+val = data["val"].select(range(min(100, len(data["val"]))))
+CHECKPOINTS = OUT / "checkpoints"
 
 trainer = SFTTrainer(
     model=model,
     tokenizer=tokenizer,
     train_dataset=data["train"],
-    eval_dataset=data["val"],
+    eval_dataset=val,
     args=SFTConfig(
-        output_dir=str(OUT / "checkpoints"),
+        output_dir=str(CHECKPOINTS),
         dataset_text_field="text",
         max_seq_length=MAX_LEN,
         per_device_train_batch_size=2,
@@ -49,8 +52,10 @@ trainer = SFTTrainer(
         warmup_ratio=0.03,
         logging_steps=10,
         eval_strategy="steps",
-        eval_steps=100,
-        save_steps=200,
+        eval_steps=120,
+        # Checkpoint often so a restart or sleep loses minutes, not the whole run.
+        save_steps=50,
+        save_total_limit=2,
         optim="adamw_8bit",
         bf16=True,
         report_to="none",
@@ -63,7 +68,11 @@ trainer = train_on_responses_only(
     instruction_part="<|im_start|>user\n",
     response_part="<|im_start|>assistant\n",
 )
-trainer.train()
+# Rerunning this script picks up from the latest checkpoint instead of starting over.
+resume = CHECKPOINTS.exists() and any(CHECKPOINTS.glob("checkpoint-*"))
+if resume:
+    print(f"Resuming from the latest checkpoint in {CHECKPOINTS}")
+trainer.train(resume_from_checkpoint=resume or None)
 print(trainer.evaluate())
 
 model.save_pretrained(OUT / "lora")

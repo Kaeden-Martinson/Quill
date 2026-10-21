@@ -70,6 +70,16 @@ $env:QUILL_MODEL = "quill-editor"   # then restart the server
 
 Training data comes from Grammarly's open CoEdIT dataset (human-written edits) plus the suggestions your users accepted. Rerun `build_dataset.py` and `train.py` every so often as feedback builds up.
 
+## Tests
+
+```powershell
+.venv\Scripts\pip install -r requirements-dev.txt
+.venv\Scripts\python -m pytest            # server: accounts, essays, reviews, queue, Word files
+node --test "tests/frontend/*.test.cjs"   # browser logic: where suggestions land in the text
+```
+
+The server tests use a throwaway database and a fake model, so they never touch real essays or the GPU.
+
 ## Check whether a model is actually better
 
 `training/eval_set.jsonl` has 32 paragraphs: 20 with known problems, 12 that are already fine. Compare models side by side:

@@ -78,7 +78,7 @@
     <nav class="rail" aria-label="Main">
       <span class="logo" aria-hidden="true">Q</span>
       <button class="rail-btn active" data-view="write" title="Essays" aria-label="Essays"><svg class="icon"><use href="#i-file"/></svg></button>
-      <button class="rail-btn" data-view="voice" title="My voice" aria-label="My voice"><svg class="icon"><use href="#i-voice"/></svg></button>
+      <button class="rail-btn" data-view="voice" title="Voice and account" aria-label="Voice and account"><svg class="icon"><use href="#i-voice"/></svg></button>
       <span class="rail-spacer"></span>
       <button id="logout" class="rail-btn" title="Sign out" aria-label="Sign out"><svg class="icon"><use href="#i-logout"/></svg></button>
     </nav>
@@ -96,7 +96,7 @@
       <ul id="draft-list" class="draft-list"></ul>
       <div class="drawer-nav only-phone">
         <button class="nav-item" data-view="write"><svg class="icon"><use href="#i-file"/></svg>Write</button>
-        <button class="nav-item" data-view="voice"><svg class="icon"><use href="#i-voice"/></svg>My voice</button>
+        <button class="nav-item" data-view="voice"><svg class="icon"><use href="#i-voice"/></svg>Voice and account</button>
         <button id="logout-phone" class="nav-item"><svg class="icon"><use href="#i-logout"/></svg>Sign out</button>
       </div>
     </aside>
@@ -189,6 +189,20 @@
             <h3>What Quill noticed</h3>
             <pre id="voice-summary">Nothing yet. Add samples above.</pre>
           </section>
+          <section class="account" aria-labelledby="account-heading">
+            <h3 id="account-heading">Account</h3>
+            <p class="hint">Signed in as <strong id="account-name"></strong>. Changing your password signs you out on every other device.</p>
+            <form id="password-form" class="password-form">
+              <input id="account-username" name="username" autocomplete="username" hidden>
+              <label>Current password <input name="current" type="password" required autocomplete="current-password"></label>
+              <label>New password <input name="new" type="password" required minlength="8" autocomplete="new-password"></label>
+              <label>Repeat new password <input name="confirm" type="password" required minlength="8" autocomplete="new-password"></label>
+              <div class="row">
+                <button class="btn">Change password</button>
+                <span id="password-status" class="status-text" role="status"></span>
+              </div>
+            </form>
+          </section>
         </div>
       </div>
 
@@ -225,6 +239,7 @@
     </form>
   </dialog>
 
+  <script src="/static/text.js"></script>
   <script src="/static/app.js"></script>
 </body>
 </html>

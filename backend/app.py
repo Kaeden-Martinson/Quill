@@ -115,11 +115,41 @@ def current_user(authorization: str = Header(default="")):
     return {**dict(row), "token_hash": security.hash_token(token)}
 
 
+@app.get("/api/me")
+def me(user=Depends(current_user)):
+    return {"name": user["name"]}
+
+
 @app.post("/api/logout")
 def logout(user=Depends(current_user)):
     with db.connect() as conn:
         conn.execute("DELETE FROM sessions WHERE token_hash = ?", (user["token_hash"],))
     return {"ok": True}
+
+
+class PasswordIn(BaseModel):
+    current: str = Field(max_length=200)
+    new: str = Field(min_length=8, max_length=200)
+
+
+@app.post("/api/password")
+def change_password(body: PasswordIn, request: Request, user=Depends(current_user)):
+    ip = security.client_ip(request)
+    check_rate_limit(ip, user["name"])
+    with db.connect() as conn:
+        row = conn.execute("SELECT password_hash FROM users WHERE id = ?", (user["id"],)).fetchone()
+        if not security.check_password(body.current, row["password_hash"]):
+            security.by_ip.fail(ip)
+            security.by_name.fail(user["name"].lower())
+            raise HTTPException(401, "Your current password isn't right.")
+        if body.new == body.current:
+            raise HTTPException(400, "Pick a new password that's different from the current one.")
+        conn.execute("UPDATE users SET password_hash = ? WHERE id = ?",
+                     (security.hash_password(body.new), user["id"]))
+        # Keep this browser signed in; sign out everywhere else.
+        others = conn.execute("DELETE FROM sessions WHERE user_id = ? AND token_hash != ?",
+                              (user["id"], user["token_hash"])).rowcount
+    return {"ok": True, "signed_out": others}
 
 
 @app.get("/api/status")
@@ -168,16 +198,51 @@ class ReviewIn(BaseModel):
     goal: str = ""
 
 
-def ndjson(first_events, model_events):
+class OneAtATime:
+    """Each person gets one review in the queue at a time, so two tabs can't take two places.
+
+    A claim is released when its stream ends. The expiry covers a client that disconnects
+    before its stream ever starts, which would otherwise never release.
+    """
+
+    def __init__(self, expire_after=30 * 60):
+        self.expire_after = expire_after
+        self.started = {}
+
+    def claim(self, user_id):
+        now = db.now()
+        if now - self.started.get(user_id, 0) < self.expire_after:
+            return False
+        self.started[user_id] = now
+        return True
+
+    def release(self, user_id):
+        self.started.pop(user_id, None)
+
+
+active_reviews = OneAtATime()
+
+
+def claim_review(user):
+    if not active_reviews.claim(user["id"]):
+        raise HTTPException(409, "You already have a review running, maybe in another tab. "
+                                 "Wait for it to finish or stop it first.")
+
+
+def ndjson(first_events, model_events, on_finish=None):
     """Streams events one JSON object per line; model failures become an error event."""
     async def gen():
-        for event in first_events:
-            yield json.dumps(event) + "\n"
         try:
-            async for event in model_events:
+            for event in first_events:
                 yield json.dumps(event) + "\n"
-        except Exception as exc:  # Ollama down, model missing, timeout
-            yield json.dumps({"type": "error", "message": f"The writing model isn't responding: {exc}"}) + "\n"
+            try:
+                async for event in model_events:
+                    yield json.dumps(event) + "\n"
+            except Exception as exc:  # Ollama down, model missing, timeout
+                yield json.dumps({"type": "error", "message": f"The writing model isn't responding: {exc}"}) + "\n"
+        finally:
+            if on_finish:
+                on_finish()
     # X-Accel-Buffering stops proxies from holding the stream until it ends.
     return StreamingResponse(gen(), media_type="application/x-ndjson",
                              headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
@@ -185,6 +250,7 @@ def ndjson(first_events, model_events):
 
 @app.post("/api/review")
 async def review(body: ReviewIn, user=Depends(current_user)):
+    claim_review(user)
     stats = load_profile(user["id"])["stats"]
     # Instant checks go first so there's something to read while waiting for the model.
     flags = [
@@ -197,13 +263,16 @@ async def review(body: ReviewIn, user=Depends(current_user)):
         "suggestions": flags,
         "voice_notes": style.compare(body.body, stats),
     }
-    return ndjson([instant], editor.review_stream(body.body, style.describe_voice(stats), body.goal))
+    return ndjson([instant], editor.review_stream(body.body, style.describe_voice(stats), body.goal),
+                  on_finish=lambda: active_reviews.release(user["id"]))
 
 
 @app.post("/api/overview")
 async def overview(body: ReviewIn, user=Depends(current_user)):
+    claim_review(user)
     stats = load_profile(user["id"])["stats"]
-    return ndjson([], editor.overview_stream(body.body, style.describe_voice(stats), body.goal))
+    return ndjson([], editor.overview_stream(body.body, style.describe_voice(stats), body.goal),
+                  on_finish=lambda: active_reviews.release(user["id"]))
 
 
 class FeedbackIn(BaseModel):
