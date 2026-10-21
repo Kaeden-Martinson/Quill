@@ -37,6 +37,10 @@ TASKS = {
     "simplification": ("concision", "Makes the sentence simpler and easier to read."),
 }
 CLEAN_PARAGRAPH_SHARE = 0.15  # paragraphs with nothing to fix, so the model learns to leave them alone
+# Coherence edits join short sentences with connectors. Fine for Wikipedia prose, but round 2 used
+# them to merge deliberate fragments ("Eleven miles.") and add "But" to "I tried. I failed. I tried
+# again." Keep only some so joining sentences isn't the model's default move.
+KEEP_SHARE = {"coherence": 0.5}
 GENERIC_VOICE = "No writing samples yet; keep the writer's existing tone."
 
 
@@ -55,7 +59,8 @@ def example(paragraph, suggestions, voice=GENERIC_VOICE, goal="not specified"):
 
 
 def coedit_examples(limit):
-    rows = [r for r in load_dataset("grammarly/coedit", split="train") if r["task"] in TASKS]
+    rows = [r for r in load_dataset("grammarly/coedit", split="train")
+            if r["task"] in TASKS and random.random() < KEEP_SHARE.get(r["task"], 1.0)]
     random.shuffle(rows)
     rows = rows[:limit * 3]
     examples = []
@@ -98,7 +103,9 @@ def casual_examples(variants=2):
     from style import describe_voice, profile_stats
     examples = []
     for line in open(CASUAL, encoding="utf-8-sig"):  # tolerate a BOM if the file was edited by hand
-        paragraph = json.loads(line)["paragraph"]
+        # Straight quotes, so the error rules can see contractions like "It's".
+        paragraph = json.loads(line)["paragraph"].translate(
+            str.maketrans({"’": "'", "‘": "'", "“": '"', "”": '"'})).strip()
         voice = describe_voice(profile_stats([paragraph]))
         for _ in range(variants):
             text, suggestions = paragraph, []

@@ -42,6 +42,12 @@ STYLES = [
 ]
 SCHEMA = {"type": "object", "properties": {"paragraph": {"type": "string"}}, "required": ["paragraph"]}
 CONTRACTION = re.compile(r"\b\w+'(?:s|t|re|ve|ll|d|m)\b", re.I)
+# Curly quotes would hide contractions from the error rules ("It’s" never matches "It's").
+STRAIGHT = str.maketrans({"’": "'", "‘": "'", "“": '"', "”": '"'})
+
+
+def normalize(p):
+    return p.translate(STRAIGHT).strip()
 
 
 def prompt(rng):
@@ -72,7 +78,7 @@ def main(target):
                 "options": {"temperature": 0.9},  # variety of content and phrasing across paragraphs
             }).json()
             try:
-                p = json.loads(r["message"]["content"])["paragraph"].strip()
+                p = normalize(json.loads(r["message"]["content"])["paragraph"])
             except (KeyError, json.JSONDecodeError):
                 continue
             if usable(p):
