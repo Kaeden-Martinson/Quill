@@ -70,5 +70,7 @@ def reason_for(category, src, tgt, rng=random):
     if not change or not templates:
         return None
     kind, old, new = change
+    if category == "concision" and (len(new) >= len(old) or len(WORD.findall(tgt)) >= len(WORD.findall(src))):
+        return None  # "fewer words" would be false; the caller falls back to a general sentence
     options = templates.get(kind) or templates["replace"]
     return rng.choice(options).format(old=_quote(old), new=_quote(new))

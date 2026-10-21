@@ -29,6 +29,11 @@ def test_reasons_vary_instead_of_repeating_one_sentence():
     assert len(seen) > 1
 
 
+def test_concision_never_claims_fewer_words_for_a_longer_edit():
+    assert reasons.reason_for("concision", "They'll go.", "Tomorrow they will go.") is None
+    assert reasons.reason_for("concision", "We went in order to win.", "We went to win.") is not None
+
+
 def test_unchanged_text_or_unknown_category_gives_no_reason():
     assert reasons.reason_for("grammar", "Same.", "Same.") is None
     assert reasons.reason_for("poetry", "a b", "a c") is None

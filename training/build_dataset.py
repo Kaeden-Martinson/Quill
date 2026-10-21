@@ -14,7 +14,7 @@ from pathlib import Path
 
 from datasets import load_dataset
 
-from reasons import reason_for
+from reasons import main_change, reason_for
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "backend"))
@@ -24,14 +24,18 @@ OUT = Path(__file__).resolve().parent / "data"
 DB = ROOT / "data" / "quill.db"
 random.seed(7)
 
-# CoEdIT task -> (app category, reason). Paraphrase is skipped: it rewrites wholesale, which erases voice.
+# CoEdIT task -> (app category, fallback reason). Skipped tasks:
+# - paraphrase rewrites wholesale, which erases voice;
+# - neutralize comes from Wikipedia's no-opinion rule ("famous" -> ""), but in a personal essay
+#   the opinion is the writer's voice; the first fine-tune learned to flatten "go great" to "go well".
 TASKS = {
     "gec": ("grammar", "Fixes a grammar or spelling error without changing your wording."),
     "clarity": ("clarity", "Makes the meaning easier to follow on the first read."),
     "coherence": ("flow", "Connects the ideas so the sentence reads more smoothly."),
-    "simplification": ("concision", "Says the same thing in fewer, plainer words."),
-    "neutralize": ("word choice", "Swaps loaded wording for something more even-handed."),
+    # Simplification edits are sometimes longer (spelling a contraction out), so this must not say "fewer".
+    "simplification": ("concision", "Makes the sentence simpler and easier to read."),
 }
+CLEAN_PARAGRAPH_SHARE = 0.15  # paragraphs with nothing to fix, so the model learns to leave them alone
 GENERIC_VOICE = "No writing samples yet; keep the writer's existing tone."
 
 
@@ -54,18 +58,24 @@ def coedit_examples(limit):
     random.shuffle(rows)
     rows = rows[:limit * 3]
     examples = []
-    # Group 3 sentences into a pseudo-paragraph; include some unchanged sentences so the model
-    # learns to leave good writing alone.
+    # Group 3 sentences into a pseudo-paragraph; include some unchanged sentences, and some
+    # paragraphs with nothing to fix at all, so the model learns to leave good writing alone.
     for i in range(0, len(rows) - 2, 3):
         sentences, suggestions = [], []
+        all_clean = random.random() < CLEAN_PARAGRAPH_SHARE
         for r in rows[i:i + 3]:
             src, tgt = strip_instruction(r["src"]), r["tgt"].strip()
-            if src == tgt or random.random() < 0.25:
+            category, fallback = TASKS[r["task"]]
+            # Name the actual change. No word-level change (only spacing) means there's nothing to
+            # teach; the first fine-tune learned to suggest "edits" that changed nothing.
+            change = main_change(src, tgt)
+            if all_clean or change is None or " ".join(src.split()) == " ".join(tgt.split()) or random.random() < 0.25:
                 sentences.append(tgt)
                 continue
-            category, fallback = TASKS[r["task"]]
-            # Name the actual change; the generic sentence is only for edits we can't summarize.
-            reason = reason_for(category, src, tgt) or fallback
+            # Quoting a big rewrite as "X says the same as Y" is often false (simplification pairs
+            # sometimes drop whole clauses), so large changes get the accurate general sentence.
+            _, old, new = change
+            reason = (reason_for(category, src, tgt) if len(old) + len(new) <= 8 else None) or fallback
             sentences.append(src)
             suggestions.append({"original": src, "revised": tgt, "reason": reason, "category": category})
         examples.append(example(" ".join(sentences), suggestions))
