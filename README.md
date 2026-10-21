@@ -38,9 +38,34 @@ The interface ("Studio") uses cool neutrals, one ink-blue accent, and hairline b
 
 People outside your Wi-Fi need a tunnel to your laptop. Two easy options:
 - **Tailscale** (private): invite each person to your tailnet; they open `http://<laptop-name>:8000`.
-- **Cloudflare Tunnel** (public link): `cloudflared tunnel --url http://localhost:8000`. Anyone with the link reaches the sign-in page, so use a strong passcode.
+- **Cloudflare Tunnel** (public link): anyone with the link reaches the sign-in page; the invite code and sign-in lockout protect it from there.
 
 The laptop has to be on, awake, and running the server for others to use it.
+
+### Cloudflare Tunnel
+
+`cloudflared` makes an *outbound* connection to Cloudflare on **port 7844** (UDP for QUIC, TCP for HTTP/2). Some networks, typically school and workplace Wi-Fi, block that port while allowing normal web traffic, and the tunnel then never connects (Cloudflare shows error 1033). Check before troubleshooting anything else:
+
+```powershell
+Test-NetConnection region1.v2.argotunnel.com -Port 7844   # TcpTestSucceeded must be True
+```
+
+**Quick tunnel** (no account, address changes every time it restarts; fine for trying it out):
+
+```powershell
+cloudflared tunnel --protocol http2 --url http://127.0.0.1:8000
+```
+
+**Permanent address** (needs a free Cloudflare account and a domain on Cloudflare):
+
+```powershell
+cloudflared tunnel login                     # opens the browser to authorize your account
+cloudflared tunnel create quill
+cloudflared tunnel route dns quill quill.example.com
+cloudflared tunnel run --url http://127.0.0.1:8000 quill
+```
+
+Keep Quill bound to `127.0.0.1` (the default in `quill.env`) when using a tunnel, so the only way in from outside is through Cloudflare.
 
 ## How it works
 
