@@ -33,6 +33,7 @@
       <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
       <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
       <symbol id="i-restore" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13M9 7V4h6v3"/></symbol>
       <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17.5v.01"/></symbol>
       <!-- suggestion categories -->
       <symbol id="c-grammar" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></symbol>
@@ -166,6 +167,9 @@
               <button id="export" class="btn ghost" disabled><svg class="icon"><use href="#i-download"/></svg>Download history</button>
             </div>
             <ol id="version-list" class="version-list"></ol>
+            <div class="danger-zone">
+              <button id="delete-draft" class="btn ghost danger" disabled><svg class="icon"><use href="#i-trash"/></svg>Delete this essay</button>
+            </div>
           </div>
         </aside>
       </div>
@@ -205,6 +209,19 @@
     <form method="dialog" class="row dialog-foot">
       <button class="btn ghost" value="close">Close</button>
       <button class="btn primary" value="restore"><svg class="icon"><use href="#i-restore"/></svg>Restore this version</button>
+    </form>
+  </dialog>
+
+  <dialog id="delete-dialog" class="confirm">
+    <form method="dialog">
+      <div class="confirm-body">
+        <h3>Delete “<span id="delete-title"></span>”?</h3>
+        <p>The essay and all <span id="delete-versions"></span> of its saved versions are removed from Quill. This can't be undone. Nightly backups keep a copy for up to 14 days.</p>
+      </div>
+      <div class="row dialog-foot">
+        <button class="btn ghost" value="cancel" autofocus>Cancel</button>
+        <button class="btn danger-fill" value="delete"><svg class="icon"><use href="#i-trash"/></svg>Delete essay</button>
+      </div>
     </form>
   </dialog>
 

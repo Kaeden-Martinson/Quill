@@ -248,7 +248,7 @@ function updateCrumb() {
 }
 
 function setDraftControls(enabled) {
-  for (const id of ["#review", "#review-phone", "#overview", "#save", "#export", "#export-docx"]) $(id).disabled = !enabled;
+  for (const id of ["#review", "#review-phone", "#overview", "#save", "#export", "#export-docx", "#delete-draft"]) $(id).disabled = !enabled;
 }
 
 document.addEventListener("keydown", (e) => {
@@ -347,9 +347,32 @@ async function saveVersion(note = "") {
   }
 }
 
+// Browsers cancel normal requests when a page closes, and phones often skip unload events
+// entirely. Saving whenever the page is hidden, with keepalive, survives tab close, app
+// switching, and the phone locking.
+function saveOnLeave() {
+  if (!state.draftId || !state.token) return;
+  const body = $("#body").value;
+  if (body === state.lastSaved) return;
+  state.lastSaved = body;
+  fetch(`/api/drafts/${state.draftId}/versions`, {
+    method: "POST",
+    keepalive: true,
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${state.token}` },
+    body: JSON.stringify({ body, note: "Autosave" }),
+  }).catch(() => { state.lastSaved = ""; });
+}
+
 $("#save").addEventListener("click", () => saveVersion(prompt("Name this version (optional)") || "Manual save"));
 setInterval(() => saveVersion("Autosave"), 120000);
-window.addEventListener("beforeunload", () => saveVersion("Autosave"));
+document.addEventListener("visibilitychange", async () => {
+  if (document.visibilityState === "hidden") return saveOnLeave();
+  // Back on the tab: show the version that was saved while it was hidden.
+  if (!state.draftId) return;
+  const d = await api(`/api/drafts/${state.draftId}`).catch(() => null);
+  if (d) { renderVersions(d.versions); loadDrafts(); }
+});
+window.addEventListener("pagehide", saveOnLeave);
 
 $("#title").addEventListener("input", updateCrumb);
 $("#title").addEventListener("change", async () => {
@@ -369,10 +392,41 @@ async function viewVersion(id) {
 $("#version-dialog").addEventListener("close", async () => {
   if ($("#version-dialog").returnValue === "restore" && state.openVersion) {
     await saveVersion("Before restoring an older version");
-    $("#body").value = state.openVersion.body;
+    replaceRange(0, $("#body").value.length, state.openVersion.body); // undoable too
     await saveVersion(`Restored version from ${fmtDate(state.openVersion.created)}`);
-    onBodyChange();
   }
+});
+
+$("#delete-draft").addEventListener("click", () => {
+  $("#delete-title").textContent = $("#title").value.trim() || "Untitled essay";
+  $("#delete-versions").textContent = $("#version-count").textContent || "0";
+  $("#delete-dialog").returnValue = "";
+  $("#delete-dialog").showModal();
+});
+
+$("#delete-dialog").addEventListener("close", async () => {
+  if ($("#delete-dialog").returnValue !== "delete" || !state.draftId) return;
+  const id = state.draftId;
+  stopRun();
+  try {
+    await api(`/api/drafts/${id}`, { method: "DELETE" });
+  } catch (err) {
+    alert(`Couldn't delete: ${err.message}`);
+    return;
+  }
+  // Forget the essay entirely so no autosave can recreate a version for it.
+  state.draftId = null;
+  state.lastSaved = "";
+  $("#body").value = "";
+  $("#title").value = "";
+  $("#draft-area").hidden = true;
+  $("#no-draft").hidden = false;
+  $("#version-list").replaceChildren();
+  $("#version-count").textContent = "";
+  setDraftControls(false);
+  clearFeedback();
+  updateCrumb();
+  loadDrafts();
 });
 
 $("#export").addEventListener("click", async () => {
@@ -401,20 +455,69 @@ function onBodyChange() {
 $("#body").addEventListener("input", onBodyChange);
 window.addEventListener("resize", onBodyChange);
 
-// Where each live suggestion currently sits in the text (first match, no overlaps).
+// Paragraph boundaries, split the same way the server splits them (blank lines, trimmed).
+function paragraphSpans(text) {
+  const spans = [];
+  const re = /\n\s*\n/g;
+  let start = 0;
+  for (let m = re.exec(text); ; m = re.exec(text)) {
+    const end = m ? m.index : text.length;
+    const raw = text.slice(start, end);
+    const lead = raw.length - raw.trimStart().length;
+    const trimmed = raw.trim();
+    if (trimmed) spans.push({ start: start + lead, end: start + lead + trimmed.length });
+    if (!m) break;
+    start = m.index + m[0].length;
+  }
+  return spans;
+}
+
+function occurrences(text, needle, from = 0, to = text.length) {
+  const found = [];
+  for (let at = text.indexOf(needle, from); at !== -1 && at + needle.length <= to; at = text.indexOf(needle, at + 1)) found.push(at);
+  return found;
+}
+
+// Where a suggestion's quote sits now. If its paragraph still exists, only that paragraph is
+// searched: once the writer has changed the quoted text there, the suggestion is stale, even if
+// the same words appear in another paragraph. Only when the paragraph is gone (paragraphs were
+// removed) does it fall back to a quote that appears exactly once. Returns -1 when unsure, so
+// an edit is never applied to the wrong copy of a repeated phrase.
+function locate(s, text = $("#body").value) {
+  if (s.paragraph != null) {
+    const para = paragraphSpans(text)[s.paragraph];
+    if (para) return occurrences(text, s.original, para.start, para.end)[0] ?? -1;
+  }
+  const all = occurrences(text, s.original);
+  return all.length === 1 ? all[0] : -1;
+}
+
+// Where each live suggestion currently sits in the text (no overlaps).
 function suggestionRanges() {
   const text = $("#body").value;
   const ranges = [];
   // Edits with a rewrite claim their text before plain phrase flags inside them.
   const byPriority = [...state.suggestions].sort((a, b) => (a.revised == null) - (b.revised == null));
   for (const s of byPriority) {
-    const start = text.indexOf(s.original);
+    const start = locate(s, text);
     if (start === -1) continue;
     const end = start + s.original.length;
     if (ranges.some((r) => start < r.end && end > r.start)) continue;
     ranges.push({ start, end, s });
   }
   return ranges.sort((a, b) => a.start - b.start);
+}
+
+// Replaces a range through the browser's editing command so Ctrl+Z can undo it.
+function replaceRange(start, end, text) {
+  const body = $("#body");
+  body.focus({ preventScroll: true });
+  body.setSelectionRange(start, end);
+  const ok = document.execCommand("insertText", false, text);
+  if (!ok) { // very old browsers: still correct, just not undoable
+    body.setRangeText(text, start, end, "end");
+    body.dispatchEvent(new Event("input"));
+  }
 }
 
 function renderHighlights() {
@@ -583,7 +686,7 @@ function startReview(trigger) {
       setProgress(`Reviewing paragraph 1 of ${event.total}`, 0);
     } else if (event.type === "paragraph") {
       modelCount += event.suggestions.length;
-      addSuggestions(event.suggestions);
+      addSuggestions(event.suggestions.map((s) => ({ ...s, paragraph: event.index })));
       const done = event.index + 1;
       if (done < event.total) setProgress(`Reviewing paragraph ${done + 1} of ${event.total}`, done / event.total);
     } else if (event.type === "done" && state.suggestions.length === 0) {
@@ -639,11 +742,11 @@ function suggestionCard(s) {
   const button = (label, iconName, onclick, cls = "") =>
     el("button", { class: `btn sm ${cls}`, onclick }, icon(iconName), label);
   const actions = s.revised == null
-    ? [button("Show me", "i-locate", () => highlight(s.original)),
+    ? [button("Show me", "i-locate", () => highlight(s)),
        button("Dismiss", "i-x", () => removeSuggestion(s), "ghost")]
     : [button("Accept", "i-check", () => { if (applyEdit(s)) done(true); }, "primary"),
        button("Reject", "i-x", () => done(false)),
-       button("Find", "i-locate", () => highlight(s.original), "ghost")];
+       button("Find", "i-locate", () => highlight(s), "ghost")];
   const category = (s.category || "").toLowerCase();
   const label = category.charAt(0).toUpperCase() + category.slice(1);
   const parts = [
@@ -658,28 +761,24 @@ function suggestionCard(s) {
   return card;
 }
 
-function highlight(text) {
+function highlight(s) {
   const body = $("#body");
-  const at = body.value.indexOf(text);
+  const at = locate(s);
   if (at === -1) return false;
   body.focus({ preventScroll: true });
-  body.setSelectionRange(at, at + text.length);
+  body.setSelectionRange(at, at + s.original.length);
   // The textarea doesn't scroll itself, so bring the selected line into view.
-  const mark = $$("#backdrop mark").find((m) => m.textContent === text);
-  mark?.scrollIntoView({ behavior: "smooth", block: "center" });
+  $(`#backdrop mark[data-id="${s.id}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" });
   return true;
 }
 
 function applyEdit(s) {
-  const body = $("#body");
-  const at = body.value.indexOf(s.original);
+  const at = locate(s);
   if (at === -1) {
-    alert("That text has changed since the review, so this suggestion can't be applied.");
+    alert("That text has changed since the review, or now appears more than once, so this suggestion can't be applied automatically. Use Find, or edit it by hand.");
     return false;
   }
-  body.value = body.value.slice(0, at) + s.revised + body.value.slice(at + s.original.length);
-  body.setSelectionRange(at, at + s.revised.length);
-  onBodyChange();
+  replaceRange(at, at + s.original.length, s.revised);
   return true;
 }
 

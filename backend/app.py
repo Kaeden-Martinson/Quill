@@ -187,9 +187,14 @@ def ndjson(first_events, model_events):
 async def review(body: ReviewIn, user=Depends(current_user)):
     stats = load_profile(user["id"])["stats"]
     # Instant checks go first so there's something to read while waiting for the model.
+    flags = [
+        {**flag, "paragraph": i}
+        for i, paragraph in enumerate(editor.split_paragraphs(body.body))
+        for flag in style.generic_phrase_flags(paragraph)
+    ]
     instant = {
         "type": "instant",
-        "suggestions": style.generic_phrase_flags(body.body),
+        "suggestions": flags,
         "voice_notes": style.compare(body.body, stats),
     }
     return ndjson([instant], editor.review_stream(body.body, style.describe_voice(stats), body.goal))
@@ -287,6 +292,15 @@ def rename_draft(draft_id: int, body: TitleIn, user=Depends(current_user)):
     with db.connect() as conn:
         owned_draft(conn, draft_id, user["id"])
         conn.execute("UPDATE drafts SET title = ? WHERE id = ?", (body.title, draft_id))
+    return {"ok": True}
+
+
+@app.delete("/api/drafts/{draft_id}")
+def delete_draft(draft_id: int, user=Depends(current_user)):
+    with db.connect() as conn:
+        owned_draft(conn, draft_id, user["id"])
+        conn.execute("DELETE FROM versions WHERE draft_id = ?", (draft_id,))
+        conn.execute("DELETE FROM drafts WHERE id = ?", (draft_id,))
     return {"ok": True}
 
 

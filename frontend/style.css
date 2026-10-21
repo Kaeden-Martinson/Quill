@@ -401,6 +401,16 @@ label { display: grid; gap: 6px; font-size: var(--t-sm); font-weight: 500; color
 .v-note { font-size: var(--t-sm); font-weight: 500; }
 .v-meta { font-size: var(--t-xs); color: var(--mute); font-variant-numeric: tabular-nums; }
 
+.danger-zone { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px; }
+.btn.danger { color: var(--old); }
+.btn.danger:hover:not(:disabled) { background: var(--mark-generic); color: var(--old); }
+.btn.danger-fill { background: var(--old); border-color: var(--old); color: var(--surface); }
+.btn.danger-fill:hover { filter: brightness(1.08); }
+dialog.confirm { width: min(440px, calc(100vw - 32px)); }
+.confirm-body { padding: 20px 20px 16px; display: grid; gap: 8px; }
+.confirm-body h3 { font-size: var(--t-lg); overflow-wrap: anywhere; }
+.confirm-body p { color: var(--ink-2); font-size: var(--t-sm); line-height: 1.55; }
+
 /* ============================================================
    Voice view
    ============================================================ */
