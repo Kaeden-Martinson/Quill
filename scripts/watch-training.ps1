@@ -14,7 +14,13 @@ $seen = New-Object System.Collections.Generic.List[object]
 
 while ($true) {
     $text = if (Test-Path $Log) { Get-Content -Raw $Log } else { "" }
-    $progress = ($text -split "`r|`n" | Where-Object { $_ -match '(\d+)/(\d+) \[([^\]]*)\]' } | Select-Object -Last 1)
+    # Only the training bar counts; data preparation and evaluation print their own progress bars.
+    $progress = $null
+    if ($text -match 'Total steps = ([\d,]+)') {
+        $steps = $Matches[1] -replace ',', ''
+        # Matching the exact step count is enough to skip the other bars (they count examples).
+        $progress = ($text -split "`r|`n" | Where-Object { $_ -match "\d+/$steps \[" } | Select-Object -Last 1)
+    }
     # Losses come from the newest checkpoint's records: Python buffers printed output when it
     # goes to a file, so the log can lag by many minutes, but checkpoints are always complete.
     $latest = Get-ChildItem $Checkpoints -Directory -Filter "checkpoint-*" -ErrorAction SilentlyContinue |
@@ -30,10 +36,15 @@ while ($true) {
     Clear-Host
     Write-Host "Quill training  ($(Get-Date -Format 'h:mm:ss tt'))" -ForegroundColor Cyan
     Write-Host ""
-    if ($progress -match '(\d+)%\|.*?(\d+)/(\d+) \[([^<]*)<([^,]*),\s*([^\]]*)\]') {
+    if ($text -match "Done\. Next:|All GGUF conversions completed") {
+        Write-Host "  Finished: model exported." -ForegroundColor Green
+    } elseif ($text -match "Merging weights|Converting") {
+        Write-Host "  Training done. Exporting the model for Ollama (about 15 minutes)..." -ForegroundColor Yellow
+    } elseif ($progress -match '(\d+)%\|.*?(\d+)/(\d+) \[([^<]*)<([^,]*),\s*([^\]]*)\]') {
         $pct = [int]$Matches[1]; $step = [int]$Matches[2]; $total = [int]$Matches[3]
         $bar = ('#' * [math]::Floor($pct / 4)).PadRight(25, '.')
         Write-Host ("  Step      {0} of {1}  [{2}] {3}%" -f $step, $total, $bar, $pct)
+        if ($seen.Count -and $step -lt $seen[$seen.Count - 1].Step) { $seen.Clear() }  # a new run started
         if (-not $seen.Count -or $seen[$seen.Count - 1].Step -ne $step) { $seen.Add([pscustomobject]@{ Step = $step; Time = Get-Date }) }
         while ($seen.Count -gt 12) { $seen.RemoveAt(0) }
         if ($seen.Count -ge 3) {
@@ -44,10 +55,6 @@ while ($true) {
         } else {
             Write-Host "  Speed     measuring (needs a few steps)..."
         }
-    } elseif ($text -match "All GGUF conversions completed") {
-        Write-Host "  Finished: model exported." -ForegroundColor Green
-    } elseif ($text -match "Converting|Merging|GGUF") {
-        Write-Host "  Training done. Exporting the model for Ollama (about 15 minutes)..." -ForegroundColor Yellow
     } else {
         Write-Host "  Starting up (loading the model and data)..."
     }
