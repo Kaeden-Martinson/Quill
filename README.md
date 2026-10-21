@@ -53,7 +53,7 @@ Test-NetConnection region1.v2.argotunnel.com -Port 7844   # TcpTestSucceeded mus
 **Quick tunnel** (no account, address changes every time it restarts; fine for trying it out):
 
 ```powershell
-cloudflared tunnel --protocol http2 --url http://127.0.0.1:8000
+powershell -File scripts\start-tunnel.ps1   # checks the port, opens the tunnel, prints the link
 ```
 
 **Permanent address** (needs a free Cloudflare account and a domain on Cloudflare):
