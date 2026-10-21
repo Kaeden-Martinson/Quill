@@ -1,0 +1,10 @@
+quill.env
+.superpowers/
+.venv/
+.venv-train/
+data/
+training/data/
+training/out/
+training/eval_results/
+__pycache__/
+unsloth_compiled_cache/

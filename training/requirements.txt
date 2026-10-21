@@ -1,0 +1,5 @@
+# Install PyTorch with CUDA 12.8+ first (required for RTX 50-series):
+#   pip install torch --index-url https://download.pytorch.org/whl/cu128
+unsloth
+datasets
+trl

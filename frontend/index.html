@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>Quill</title>
+  <link rel="preload" href="/static/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/static/fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/theme.js"></script>
+</head>
+<body>
+  <!-- Icon sprite: every icon in the app is one of these symbols. 24px grid, 1.8px stroke. -->
+  <svg class="sprite" aria-hidden="true">
+    <defs>
+      <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+      <symbol id="i-voice" viewBox="0 0 24 24"><path d="M4 10v4M8 6v12M12 3v18M16 8v8M20 11v2"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+      <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+      <symbol id="i-locate" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+      <symbol id="i-pen" viewBox="0 0 24 24"><path d="m15 5 4 4L8 20H4v-4z"/></symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></symbol>
+      <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
+      <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+      <symbol id="i-restore" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17.5v.01"/></symbol>
+      <!-- suggestion categories -->
+      <symbol id="c-grammar" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></symbol>
+      <symbol id="c-clarity" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="c-flow" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h12"/></symbol>
+      <symbol id="c-argument" viewBox="0 0 24 24"><path d="M12 3v18M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/></symbol>
+      <symbol id="c-evidence" viewBox="0 0 24 24"><path d="M7 7h4v4c0 3-1.5 5-4 6M15 7h4v4c0 3-1.5 5-4 6"/></symbol>
+      <symbol id="c-concision" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></symbol>
+      <symbol id="c-word-choice" viewBox="0 0 24 24"><path d="M9 4h6M9 20h6M12 4v16"/></symbol>
+      <symbol id="c-generic-phrasing" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17.5v.01"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- ===================== Sign in ===================== -->
+  <main id="login-view" class="login" hidden>
+    <section class="login-intro" aria-label="About Quill">
+      <span class="wordmark">Quill</span>
+      <p class="login-lede">Line-by-line edits that keep your essay sounding like you, with a timestamped history of every draft.</p>
+      <figure class="login-sample" aria-hidden="true">
+        <p class="sample-text">When I was eight I unscrewed our toaster to see how it worked. <mark>Their was crumbs everywhere</mark> and I couldn't get it back together.</p>
+        <div class="sample-card">
+          <span class="cat"><svg class="icon"><use href="#c-grammar"/></svg>Grammar</span>
+          <span class="old">Their was crumbs everywhere</span>
+          <span class="new">There were crumbs everywhere</span>
+          <span class="why">“Their” is possessive, and “crumbs” is plural, so the verb is “were.”</span>
+        </div>
+      </figure>
+    </section>
+    <form id="login-form" class="login-form">
+      <h1 id="login-heading">Sign in</h1>
+      <label>Name <input name="name" required maxlength="40" autocomplete="username"></label>
+      <label>Password <input name="password" type="password" required autocomplete="current-password"></label>
+      <label id="invite-field" hidden>Invite code <input name="invite" autocomplete="off"></label>
+      <button id="login-submit" class="btn primary">Sign in</button>
+      <p id="login-error" class="error" role="alert"></p>
+      <p class="login-switch"><span id="mode-hint">New here?</span> <button type="button" id="toggle-mode" class="link">Create an account</button></p>
+    </form>
+  </main>
+
+  <!-- ===================== App ===================== -->
+  <div id="app-view" class="shell" hidden>
+    <nav class="rail" aria-label="Main">
+      <span class="logo" aria-hidden="true">Q</span>
+      <button class="rail-btn active" data-view="write" title="Essays" aria-label="Essays"><svg class="icon"><use href="#i-file"/></svg></button>
+      <button class="rail-btn" data-view="voice" title="My voice" aria-label="My voice"><svg class="icon"><use href="#i-voice"/></svg></button>
+      <span class="rail-spacer"></span>
+      <button id="logout" class="rail-btn" title="Sign out" aria-label="Sign out"><svg class="icon"><use href="#i-logout"/></svg></button>
+    </nav>
+
+    <aside id="drawer" class="drawer" aria-label="Your essays">
+      <div class="drawer-head">
+        <span class="drawer-title">Essays</span>
+        <button id="close-drawer" class="icon-btn only-overlay" aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
+      </div>
+      <div class="drawer-actions">
+        <button id="new-draft" class="btn"><svg class="icon"><use href="#i-plus"/></svg>New essay</button>
+        <button id="import-docx" class="btn ghost" title="Import a Word file"><svg class="icon"><use href="#i-upload"/></svg>Import</button>
+        <input id="import-file" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+      </div>
+      <ul id="draft-list" class="draft-list"></ul>
+      <div class="drawer-nav only-phone">
+        <button class="nav-item" data-view="write"><svg class="icon"><use href="#i-file"/></svg>Write</button>
+        <button class="nav-item" data-view="voice"><svg class="icon"><use href="#i-voice"/></svg>My voice</button>
+        <button id="logout-phone" class="nav-item"><svg class="icon"><use href="#i-logout"/></svg>Sign out</button>
+      </div>
+    </aside>
+    <div id="scrim" class="scrim" hidden></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button id="open-drawer" class="icon-btn drawer-toggle" aria-label="Essays"><svg class="icon"><use href="#i-menu"/></svg></button>
+        <div class="crumb"><span class="crumb-root">Essays</span><span class="crumb-sep">/</span><span id="crumb-title">No essay open</span></div>
+        <div class="topbar-end">
+          <span id="model-status" class="status"><span class="dot"></span><span class="status-text">Checking model</span></span>
+          <button id="export-docx" class="btn ghost hide-phone" title="Download as Word" disabled><svg class="icon"><use href="#i-download"/></svg>.docx</button>
+          <button id="theme-toggle" class="icon-btn" aria-label="Switch theme"><svg class="icon"><use href="#i-moon"/></svg></button>
+          <button id="review" class="btn primary hide-phone" disabled><svg class="icon"><use href="#i-pen"/></svg><span>Review draft</span></button>
+        </div>
+      </header>
+
+      <!-- Write view -->
+      <div id="write-view" class="workspace">
+        <section class="doc">
+          <div id="no-draft" class="empty">
+            <h2>Pick an essay or start a new one</h2>
+            <p>Paste a draft, write from scratch, or import a Word file. Every change is saved as a timestamped version.</p>
+            <div class="empty-actions">
+              <button class="btn primary" data-action="new"><svg class="icon"><use href="#i-plus"/></svg>New essay</button>
+              <button class="btn" data-action="import"><svg class="icon"><use href="#i-upload"/></svg>Import .docx</button>
+            </div>
+          </div>
+          <div id="draft-area" class="doc-inner" hidden>
+            <input id="title" class="doc-title" placeholder="Untitled essay" aria-label="Title">
+            <div class="doc-meta">
+              <input id="goal" class="goal" placeholder="What is this for? e.g. college application" aria-label="Essay purpose">
+              <span id="word-count"></span>
+              <span id="save-status"></span>
+            </div>
+            <div class="page">
+              <div id="backdrop" class="backdrop" aria-hidden="true"></div>
+              <textarea id="body" placeholder="Write or paste your draft. Leave a blank line between paragraphs." aria-label="Essay text"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <aside id="inspector" class="inspector" aria-label="Feedback">
+          <div class="tabs" role="tablist">
+            <button class="tab active" role="tab" data-tab="edits" aria-selected="true">Line edits <span id="edit-count" class="count"></span></button>
+            <button class="tab" role="tab" data-tab="big" aria-selected="false">Big picture</button>
+            <button class="tab" role="tab" data-tab="history" aria-selected="false">History <span id="version-count" class="count"></span></button>
+          </div>
+          <div id="progress" class="progress" hidden></div>
+
+          <div class="tab-panel" data-panel="edits">
+            <div id="voice-notes"></div>
+            <div id="suggestion-list" class="suggestion-list">
+              <p class="hint">Run <strong>Review draft</strong> for edits on each paragraph. Accept the ones you agree with; nothing changes until you do.</p>
+            </div>
+          </div>
+
+          <div class="tab-panel" data-panel="big" hidden>
+            <p class="hint">Comments on your thesis, structure, evidence and conclusion. Quill won't rewrite the essay; it tells you what to work on.</p>
+            <button id="overview" class="btn" disabled><svg class="icon"><use href="#i-layers"/></svg><span>Get big-picture feedback</span></button>
+            <div id="overview-panel"></div>
+          </div>
+
+          <div class="tab-panel" data-panel="history" hidden>
+            <p class="hint">Every version is timestamped. If anyone questions whether you wrote this, the history shows how it came together.</p>
+            <div class="row">
+              <button id="save" class="btn" disabled><svg class="icon"><use href="#i-bookmark"/></svg>Save version</button>
+              <button id="export" class="btn ghost" disabled><svg class="icon"><use href="#i-download"/></svg>Download history</button>
+            </div>
+            <ol id="version-list" class="version-list"></ol>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Voice view -->
+      <div id="voice-view" class="voice" hidden>
+        <div class="voice-inner">
+          <h2>Your voice</h2>
+          <p class="lede">Paste three to five things you wrote yourself, without AI help. Quill measures your sentence rhythm, word choices and habits, and keeps its suggestions in your style.</p>
+          <div id="samples" class="samples"></div>
+          <div class="row">
+            <button id="add-sample" class="btn ghost"><svg class="icon"><use href="#i-plus"/></svg>Add a sample</button>
+            <button id="save-profile" class="btn primary">Save my voice</button>
+            <span id="profile-status" class="status-text"></span>
+          </div>
+          <section class="voice-result">
+            <h3>What Quill noticed</h3>
+            <pre id="voice-summary">Nothing yet. Add samples above.</pre>
+          </section>
+        </div>
+      </div>
+
+      <!-- Phone action bar -->
+      <div class="phone-bar">
+        <button id="review-phone" class="btn primary" disabled><svg class="icon"><use href="#i-pen"/></svg><span>Review draft</span></button>
+        <a id="jump-suggestions" class="btn" href="#inspector" hidden><span></span><svg class="icon"><use href="#i-arrow-down"/></svg></a>
+      </div>
+    </div>
+  </div>
+
+  <dialog id="version-dialog">
+    <header class="dialog-head">
+      <h3 id="version-title"></h3>
+      <form method="dialog"><button class="icon-btn" value="close" aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button></form>
+    </header>
+    <pre id="version-body"></pre>
+    <form method="dialog" class="row dialog-foot">
+      <button class="btn ghost" value="close">Close</button>
+      <button class="btn primary" value="restore"><svg class="icon"><use href="#i-restore"/></svg>Restore this version</button>
+    </form>
+  </dialog>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
