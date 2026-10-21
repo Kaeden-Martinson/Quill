@@ -93,6 +93,8 @@ ollama create quill-editor -f training\out\Modelfile
 $env:QUILL_MODEL = "quill-editor"   # then restart the server
 ```
 
+To watch a run, send its output to a file (e.g. `... train.py *> train.log`) and in another terminal run `powershell -File scripts\watch-training.ps1 -Log train.log`. It shows progress, time left, loss from the latest checkpoint, and GPU load. Training checkpoints every 50 steps; if it's interrupted, run `train.py` again and it resumes.
+
 Training data comes from Grammarly's open CoEdIT dataset (human-written edits) plus the suggestions your users accepted. Rerun `build_dataset.py` and `train.py` every so often as feedback builds up.
 
 ## Tests
