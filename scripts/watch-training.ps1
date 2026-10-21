@@ -8,6 +8,10 @@ param(
 # Windows PowerShell 5.1 hasn't set $PSScriptRoot yet while reading param defaults.
 if (-not $Checkpoints) { $Checkpoints = Join-Path (Split-Path -Parent $PSScriptRoot) "training\out\checkpoints" }
 
+# Speed is measured from steps seen by this view. The progress bar's own estimate averages over
+# the whole run, so a sleep or pause in the middle distorts it for a long time afterwards.
+$seen = New-Object System.Collections.Generic.List[object]
+
 while ($true) {
     $text = if (Test-Path $Log) { Get-Content -Raw $Log } else { "" }
     $progress = ($text -split "`r|`n" | Where-Object { $_ -match '(\d+)/(\d+) \[([^\]]*)\]' } | Select-Object -Last 1)
@@ -27,9 +31,19 @@ while ($true) {
     Write-Host "Quill training  ($(Get-Date -Format 'h:mm:ss tt'))" -ForegroundColor Cyan
     Write-Host ""
     if ($progress -match '(\d+)%\|.*?(\d+)/(\d+) \[([^<]*)<([^,]*),\s*([^\]]*)\]') {
-        $pct = [int]$Matches[1]; $bar = ('#' * [math]::Floor($pct / 4)).PadRight(25, '.')
-        Write-Host ("  Step      {0} of {1}  [{2}] {3}%" -f $Matches[2], $Matches[3], $bar, $pct)
-        Write-Host ("  Elapsed   {0}    Left: {1}    Speed: {2}" -f $Matches[4], $Matches[5], $Matches[6])
+        $pct = [int]$Matches[1]; $step = [int]$Matches[2]; $total = [int]$Matches[3]
+        $bar = ('#' * [math]::Floor($pct / 4)).PadRight(25, '.')
+        Write-Host ("  Step      {0} of {1}  [{2}] {3}%" -f $step, $total, $bar, $pct)
+        if (-not $seen.Count -or $seen[$seen.Count - 1].Step -ne $step) { $seen.Add([pscustomobject]@{ Step = $step; Time = Get-Date }) }
+        while ($seen.Count -gt 12) { $seen.RemoveAt(0) }
+        if ($seen.Count -ge 3) {
+            $span = $seen[$seen.Count - 1]
+            $per = (($span.Time - $seen[0].Time).TotalSeconds) / ($span.Step - $seen[0].Step)
+            $left = [TimeSpan]::FromSeconds($per * ($total - $step))
+            Write-Host ("  Speed     {0:n1} s/step    Left: about {1} min of training, then ~15 min export" -f $per, [math]::Ceiling($left.TotalMinutes))
+        } else {
+            Write-Host "  Speed     measuring (needs a few steps)..."
+        }
     } elseif ($text -match "All GGUF conversions completed") {
         Write-Host "  Finished: model exported." -ForegroundColor Green
     } elseif ($text -match "Converting|Merging|GGUF") {
