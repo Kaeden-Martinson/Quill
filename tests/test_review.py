@@ -77,6 +77,19 @@ def _user_id(name):
         return conn.execute("SELECT id FROM users WHERE name = ?", (name,)).fetchone()["id"]
 
 
+# ---------- reading model replies ----------
+
+def test_replies_with_a_stray_prefix_still_parse():
+    assert editor.parse_reply('</tool_call>\n\n{"suggestions": []}') == {"suggestions": []}
+    assert editor.parse_reply('{"suggestions": [{"original": "a"}]} trailing') == {"suggestions": [{"original": "a"}]}
+
+
+def test_unusable_replies_give_none():
+    assert editor.parse_reply("") is None
+    assert editor.parse_reply("no json here") is None
+    assert editor.parse_reply('{"suggestions": [') is None
+
+
 # ---------- context sizing ----------
 
 def test_context_grows_in_fixed_steps():

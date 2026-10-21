@@ -28,7 +28,11 @@ model = FastLanguageModel.get_peft_model(
 )
 
 data = load_dataset("json", data_files={"train": str(HERE / "data/train.jsonl"), "val": str(HERE / "data/val.jsonl")})
-data = data.map(lambda ex: {"text": tokenizer.apply_chat_template(ex["messages"], tokenize=False)})
+# This tokenizer's chat template puts an empty "<think>\n\n</think>\n\n" before every answer, but
+# Ollama's template for the exported model doesn't, so a model trained with it writes the block
+# out itself. Train without it so training and serving see the same prompt.
+EMPTY_THINK = "<think>\n\n</think>\n\n"
+data = data.map(lambda ex: {"text": tokenizer.apply_chat_template(ex["messages"], tokenize=False).replace(EMPTY_THINK, "")})
 # A 100-example slice is plenty to watch the loss; the full 300 took ~12 minutes per check.
 val = data["val"].select(range(min(100, len(data["val"]))))
 CHECKPOINTS = OUT / "checkpoints"
@@ -82,7 +86,12 @@ model.save_pretrained_gguf(str(OUT / "gguf"), tokenizer, quantization_method="q4
 # Unsloth writes the GGUF and a Modelfile (with the right chat template) to a sibling "<dir>_gguf" folder.
 gguf = next(OUT.glob("gguf*/*.Q4_K_M.gguf"))
 unsloth_modelfile = gguf.parent / "Modelfile"
-template = unsloth_modelfile.read_text(encoding="utf-8").split("\n", 1)[1] if unsloth_modelfile.exists() else ""
+# Keep Unsloth's template and parameters but not its FROM line (a relative path, and not always
+# the first line), so ours with the absolute path is the only one.
+template = "\n".join(
+    line for line in unsloth_modelfile.read_text(encoding="utf-8").splitlines()
+    if not line.startswith("FROM ")
+) if unsloth_modelfile.exists() else ""
 (OUT / "Modelfile").write_text(
     f"FROM {gguf.resolve()}\n{template}\nPARAMETER temperature 0.3\nPARAMETER num_ctx 4096\n", encoding="utf-8"
 )

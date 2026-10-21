@@ -163,6 +163,22 @@ def fit_paragraphs(paragraphs, *fixed_texts):
     return kept
 
 
+def parse_reply(content):
+    """The JSON object in a model reply, ignoring anything before it.
+
+    Ollama's format constraint isn't always honored (the fine-tuned model can emit a special token
+    such as a stray end-of-thinking marker first), so parse from the first "{" rather than failing.
+    """
+    start = content.find("{")
+    if start == -1:
+        return None
+    try:
+        obj, _ = json.JSONDecoder().raw_decode(content[start:])
+    except json.JSONDecodeError:
+        return None
+    return obj if isinstance(obj, dict) else None
+
+
 async def chat(client, system, prompt, schema):
     num_ctx = context_size(system, prompt) or CONTEXT_STEPS[-1]
     resp = await client.post(
@@ -178,8 +194,8 @@ async def chat(client, system, prompt, schema):
     )
     resp.raise_for_status()
     try:
-        return json.loads(resp.json()["message"]["content"])
-    except (KeyError, json.JSONDecodeError):
+        return parse_reply(resp.json()["message"]["content"])
+    except KeyError:
         return None
 
 

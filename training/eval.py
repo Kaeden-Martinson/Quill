@@ -25,7 +25,7 @@ import httpx
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "backend"))
 from config import OLLAMA_URL  # noqa: E402
-from editor import SUGGESTION_SCHEMA, SYSTEM  # noqa: E402
+from editor import SUGGESTION_SCHEMA, SYSTEM, parse_reply  # noqa: E402
 from style import GENERIC_PHRASES  # noqa: E402
 
 NUMBER_RE = re.compile(r"\d[\d,.]*")
@@ -51,10 +51,11 @@ def ask(model, case):
     )
     elapsed = time.perf_counter() - start
     resp.raise_for_status()
-    try:
-        return json.loads(resp.json()["message"]["content"]).get("suggestions", []), True, elapsed
-    except (KeyError, json.JSONDecodeError):
+    # Same lenient parsing the app uses, so the eval scores what users would actually see.
+    reply = parse_reply(resp.json().get("message", {}).get("content", ""))
+    if reply is None:
         return [], False, elapsed
+    return reply.get("suggestions", []), True, elapsed
 
 
 def score(model, cases):
