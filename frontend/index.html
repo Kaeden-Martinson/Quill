@@ -140,27 +140,27 @@
         </section>
 
         <aside id="inspector" class="inspector" aria-label="Feedback">
-          <div class="tabs" role="tablist">
-            <button class="tab active" role="tab" data-tab="edits" aria-selected="true">Line edits <span id="edit-count" class="count"></span></button>
-            <button class="tab" role="tab" data-tab="big" aria-selected="false">Big picture</button>
-            <button class="tab" role="tab" data-tab="history" aria-selected="false">History <span id="version-count" class="count"></span></button>
+          <div class="tabs" role="tablist" aria-label="Feedback views">
+            <button id="tab-edits" class="tab active" role="tab" data-tab="edits" aria-selected="true" aria-controls="panel-edits">Line edits <span id="edit-count" class="count"></span></button>
+            <button id="tab-big" class="tab" role="tab" data-tab="big" aria-selected="false" aria-controls="panel-big" tabindex="-1">Big picture</button>
+            <button id="tab-history" class="tab" role="tab" data-tab="history" aria-selected="false" aria-controls="panel-history" tabindex="-1">History <span id="version-count" class="count"></span></button>
           </div>
-          <div id="progress" class="progress" hidden></div>
+          <div id="progress" class="progress" role="status" aria-live="polite" hidden></div>
 
-          <div class="tab-panel" data-panel="edits">
+          <div id="panel-edits" class="tab-panel" data-panel="edits" role="tabpanel" aria-labelledby="tab-edits">
             <div id="voice-notes"></div>
             <div id="suggestion-list" class="suggestion-list">
               <p class="hint">Run <strong>Review draft</strong> for edits on each paragraph. Accept the ones you agree with; nothing changes until you do.</p>
             </div>
           </div>
 
-          <div class="tab-panel" data-panel="big" hidden>
+          <div id="panel-big" class="tab-panel" data-panel="big" role="tabpanel" aria-labelledby="tab-big" hidden>
             <p class="hint">Comments on your thesis, structure, evidence and conclusion. Quill won't rewrite the essay; it tells you what to work on.</p>
             <button id="overview" class="btn" disabled><svg class="icon"><use href="#i-layers"/></svg><span>Get big-picture feedback</span></button>
             <div id="overview-panel"></div>
           </div>
 
-          <div class="tab-panel" data-panel="history" hidden>
+          <div id="panel-history" class="tab-panel" data-panel="history" role="tabpanel" aria-labelledby="tab-history" hidden>
             <p class="hint">Every version is timestamped. If anyone questions whether you wrote this, the history shows how it came together.</p>
             <div class="row">
               <button id="save" class="btn" disabled><svg class="icon"><use href="#i-bookmark"/></svg>Save version</button>
@@ -230,7 +230,7 @@
     <form method="dialog">
       <div class="confirm-body">
         <h3>Delete “<span id="delete-title"></span>”?</h3>
-        <p>The essay and all <span id="delete-versions"></span> of its saved versions are removed from Quill. This can't be undone. Nightly backups keep a copy for up to 14 days.</p>
+        <p>The essay and all <span id="delete-versions"></span> of its saved versions are removed from Quill, along with the suggestions you accepted or rejected in it. This can't be undone. Nightly backups keep a copy for up to 14 days.</p>
       </div>
       <div class="row dialog-foot">
         <button class="btn ghost" value="cancel" autofocus>Cancel</button>

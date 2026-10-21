@@ -276,6 +276,7 @@ async def overview(body: ReviewIn, user=Depends(current_user)):
 
 
 class FeedbackIn(BaseModel):
+    draft_id: int
     original: str
     revised: str
     reason: str = ""
@@ -286,10 +287,12 @@ class FeedbackIn(BaseModel):
 @app.post("/api/feedback")
 def feedback(body: FeedbackIn, user=Depends(current_user)):
     with db.connect() as conn:
+        owned_draft(conn, body.draft_id, user["id"])
         conn.execute(
-            "INSERT INTO feedback (user_id, original, revised, reason, category, accepted, created) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (user["id"], body.original, body.revised, body.reason, body.category, int(body.accepted), db.now()),
+            "INSERT INTO feedback (user_id, draft_id, original, revised, reason, category, accepted, created) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (user["id"], body.draft_id, body.original, body.revised, body.reason, body.category,
+             int(body.accepted), db.now()),
         )
     return {"ok": True}
 
@@ -369,6 +372,7 @@ def delete_draft(draft_id: int, user=Depends(current_user)):
     with db.connect() as conn:
         owned_draft(conn, draft_id, user["id"])
         conn.execute("DELETE FROM versions WHERE draft_id = ?", (draft_id,))
+        conn.execute("DELETE FROM feedback WHERE draft_id = ?", (draft_id,))  # its training data too
         conn.execute("DELETE FROM drafts WHERE id = ?", (draft_id,))
     return {"ok": True}
 

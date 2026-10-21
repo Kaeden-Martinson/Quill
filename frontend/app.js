@@ -224,9 +224,23 @@ $$("[data-view]").forEach((b) => b.addEventListener("click", () => {
   setView(b.dataset.view);
 }));
 
+let drawerOpener = null;
+
 function toggleDrawer(open = !$("#app-view").classList.contains("drawer-open")) {
-  $("#app-view").classList.toggle("drawer-open", open && overlayDrawer());
-  $("#scrim").hidden = !(open && overlayDrawer());
+  const overlay = open && overlayDrawer();
+  const wasOpen = $("#app-view").classList.contains("drawer-open");
+  $("#app-view").classList.toggle("drawer-open", overlay);
+  $("#scrim").hidden = !overlay;
+  // While the drawer covers the page, everything behind it is inert: keyboard and screen-reader
+  // focus stay inside the drawer instead of wandering into content you can't see.
+  for (const behind of [".main", ".rail"]) $(behind).inert = overlay;
+  if (overlay && !wasOpen) {
+    drawerOpener = document.activeElement;
+    $("#close-drawer").focus();
+  } else if (!overlay && wasOpen) {
+    if (drawerOpener?.isConnected && !drawerOpener.closest("[inert]")) drawerOpener.focus();
+    drawerOpener = null;
+  }
 }
 const closeDrawer = () => toggleDrawer(false);
 $("#open-drawer").addEventListener("click", () => toggleDrawer(true));
@@ -239,10 +253,24 @@ function setTab(name) {
     const on = t.dataset.tab === name;
     t.classList.toggle("active", on);
     t.setAttribute("aria-selected", on);
+    t.tabIndex = on ? 0 : -1; // one tab stop for the whole tab list; arrows move within it
   });
   $$(".tab-panel").forEach((p) => { p.hidden = p.dataset.panel !== name; });
 }
 $$(".tab").forEach((t) => t.addEventListener("click", () => setTab(t.dataset.tab)));
+
+// Arrow keys, Home and End move between tabs (the standard keyboard pattern for tab lists).
+$(".tabs").addEventListener("keydown", (e) => {
+  const tabs = $$(".tab");
+  const i = tabs.indexOf(document.activeElement);
+  if (i === -1) return;
+  const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+  if (next === undefined) return;
+  e.preventDefault();
+  const tab = tabs[(next + tabs.length) % tabs.length];
+  setTab(tab.dataset.tab);
+  tab.focus();
+});
 
 function updateCrumb() {
   const essay = !$("#write-view").hidden;
@@ -708,7 +736,7 @@ function suggestionCard(s) {
   });
   const done = (accepted) => {
     const { card: _card, id: _id, ...payload } = s;
-    api("/api/feedback", { method: "POST", body: { ...payload, revised: s.revised ?? "", accepted } }).catch(() => {});
+    api("/api/feedback", { method: "POST", body: { ...payload, draft_id: state.draftId, revised: s.revised ?? "", accepted } }).catch(() => {});
     removeSuggestion(s);
   };
   const button = (label, iconName, onclick, cls = "") =>

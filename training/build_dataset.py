@@ -14,6 +14,8 @@ from pathlib import Path
 
 from datasets import load_dataset
 
+from reasons import reason_for
+
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "backend"))
 from editor import SYSTEM  # noqa: E402  same instructions the app uses at inference
@@ -61,7 +63,9 @@ def coedit_examples(limit):
             if src == tgt or random.random() < 0.25:
                 sentences.append(tgt)
                 continue
-            category, reason = TASKS[r["task"]]
+            category, fallback = TASKS[r["task"]]
+            # Name the actual change; the generic sentence is only for edits we can't summarize.
+            reason = reason_for(category, src, tgt) or fallback
             sentences.append(src)
             suggestions.append({"original": src, "revised": tgt, "reason": reason, "category": category})
         examples.append(example(" ".join(sentences), suggestions))

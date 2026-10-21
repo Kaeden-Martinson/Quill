@@ -43,7 +43,8 @@ def remove(conn, name):
     if input(f"Delete {name} and ALL their drafts and history? Type the name to confirm: ") != name:
         sys.exit("Cancelled.")
     conn.execute("DELETE FROM versions WHERE draft_id IN (SELECT id FROM drafts WHERE user_id = ?)", (uid,))
-    for table in ("drafts", "profiles", "feedback", "sessions"):
+    # Feedback first: it references drafts.
+    for table in ("feedback", "drafts", "profiles", "sessions"):
         conn.execute(f"DELETE FROM {table} WHERE user_id = ?", (uid,))
     conn.execute("DELETE FROM users WHERE id = ?", (uid,))
     print(f"Removed {name}.")

@@ -46,6 +46,59 @@ def test_delete_removes_the_essay_and_its_history(client, user):
     assert all(x["id"] != d for x in client.get("/api/drafts", headers=h).json())
 
 
+def test_deleting_an_essay_deletes_its_training_feedback_only(client, user):
+    import db
+    _, h = user
+    keep, gone = make_draft(client, h, title="Keep"), make_draft(client, h, title="Gone")
+    for d in (keep, gone):
+        r = client.post("/api/feedback", headers=h, json={
+            "draft_id": d, "original": f"text {d}", "revised": "fixed", "category": "grammar", "accepted": True})
+        assert r.status_code == 200
+
+    client.delete(f"/api/drafts/{gone}", headers=h)
+    with db.connect() as conn:
+        left = {row["draft_id"] for row in conn.execute("SELECT draft_id FROM feedback WHERE draft_id IN (?, ?)", (keep, gone))}
+    assert left == {keep}
+
+
+def test_feedback_cannot_be_attached_to_someone_elses_essay(client, user):
+    _, owner = user
+    d = make_draft(client, owner)
+    other = client.post("/api/register", json={"name": "sneaky", "password": "sneaky password", "invite": "test-invite"})
+    sneaky = {"Authorization": f"Bearer {other.json()['token']}"}
+    r = client.post("/api/feedback", headers=sneaky, json={
+        "draft_id": d, "original": "a", "revised": "b", "accepted": True})
+    assert r.status_code == 404
+
+
+def test_old_databases_gain_the_draft_link(tmp_path, monkeypatch):
+    import sqlite3
+    import db
+    path = tmp_path / "old.db"
+    with sqlite3.connect(path) as conn:  # the feedback table as the first version created it
+        conn.execute("CREATE TABLE feedback (id INTEGER PRIMARY KEY, user_id INTEGER, original TEXT, revised TEXT,"
+                     " reason TEXT, category TEXT, accepted INTEGER, created REAL)")
+    monkeypatch.setattr(db, "DB_PATH", path)
+    monkeypatch.setattr(db, "DATA_DIR", tmp_path)
+    db.init()
+    with sqlite3.connect(path) as conn:
+        assert "draft_id" in {row[1] for row in conn.execute("PRAGMA table_info(feedback)")}
+
+
+def test_admin_remove_deletes_a_user_with_feedback(client, user, monkeypatch):
+    import db
+    import manage
+    name, h = user
+    d = make_draft(client, h)
+    client.post("/api/feedback", headers=h, json={"draft_id": d, "original": "a", "revised": "b", "accepted": True})
+    monkeypatch.setattr("builtins.input", lambda prompt: name)  # types the name to confirm
+    with db.connect() as conn:
+        manage.remove(conn, name)
+    with db.connect() as conn:
+        assert conn.execute("SELECT 1 FROM users WHERE name = ?", (name,)).fetchone() is None
+        assert conn.execute("SELECT 1 FROM drafts WHERE id = ?", (d,)).fetchone() is None
+
+
 def test_history_export_lists_every_version_in_order(client, user):
     name, h = user
     d = make_draft(client, h, title="Toaster", body="one")

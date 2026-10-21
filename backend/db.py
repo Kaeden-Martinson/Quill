@@ -38,9 +38,11 @@ CREATE TABLE IF NOT EXISTS versions (
     created REAL NOT NULL
 );
 -- Every accept/reject is kept: accepted edits become fine-tuning data later.
+-- draft_id ties it to its essay so deleting the essay deletes this too.
 CREATE TABLE IF NOT EXISTS feedback (
     id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id),
+    draft_id INTEGER REFERENCES drafts(id),
     original TEXT NOT NULL,
     revised TEXT NOT NULL,
     reason TEXT NOT NULL,
@@ -55,6 +57,14 @@ def init():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     with connect() as conn:
         conn.executescript(SCHEMA)
+        migrate(conn)
+
+
+def migrate(conn):
+    """Brings databases created by older versions up to the current schema."""
+    feedback_columns = {row["name"] for row in conn.execute("PRAGMA table_info(feedback)")}
+    if "draft_id" not in feedback_columns:
+        conn.execute("ALTER TABLE feedback ADD COLUMN draft_id INTEGER REFERENCES drafts(id)")
 
 
 @contextmanager
