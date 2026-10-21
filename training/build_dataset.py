@@ -14,6 +14,7 @@ from pathlib import Path
 
 from datasets import load_dataset
 
+import errors
 from reasons import main_change, reason_for
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -82,6 +83,41 @@ def coedit_examples(limit):
     return examples
 
 
+CASUAL = Path(__file__).resolve().parent / "data-casual" / "paragraphs.jsonl"
+GOALS = ["personal blog post", "college application", "personal essay", "scholarship essay", "op-ed", "not specified"]
+
+
+def casual_examples(variants=2):
+    """Casual paragraphs with code-planted errors: fix only the error, keep the voice.
+
+    The voice line is measured from the paragraph itself, so the model learns to read it (every
+    CoEdIT example says there are no samples, which taught it to ignore voice entirely).
+    """
+    if not CASUAL.exists():
+        return []
+    from style import describe_voice, profile_stats
+    examples = []
+    for line in open(CASUAL, encoding="utf-8-sig"):  # tolerate a BOM if the file was edited by hand
+        paragraph = json.loads(line)["paragraph"]
+        voice = describe_voice(profile_stats([paragraph]))
+        for _ in range(variants):
+            text, suggestions = paragraph, []
+            rules = errors.applicable(paragraph)
+            random.shuffle(rules)
+            if rules and random.random() > CLEAN_PARAGRAPH_SHARE:
+                for rule in rules[: 2 if random.random() < 0.25 else 1]:
+                    planted = errors.plant(text, rule, random)
+                    # A second error must land in a different sentence, or the first quote goes stale.
+                    if planted and all(s["original"] not in planted[1]["original"] and planted[1]["original"] not in s["original"]
+                                       for s in suggestions):
+                        new_text, s = planted
+                        if all(old["original"] in new_text for old in suggestions):
+                            text = new_text
+                            suggestions.append(s)
+            examples.append(example(text, suggestions, voice=voice, goal=random.choice(GOALS)))
+    return examples
+
+
 def app_examples():
     if not DB.exists():
         return []
@@ -103,6 +139,8 @@ def app_examples():
 
 def main(limit=6000):
     data = coedit_examples(limit)
+    casual = casual_examples()
+    data += casual
     personal = app_examples()
     # Weight your group's accepted edits up; there are far fewer of them.
     data += personal * 3
@@ -112,7 +150,8 @@ def main(limit=6000):
     for name, rows in (("val", data[:split]), ("train", data[split:])):
         with open(OUT / f"{name}.jsonl", "w", encoding="utf-8") as f:
             f.writelines(json.dumps(r, ensure_ascii=False) + "\n" for r in rows)
-    print(f"{len(data) - split} train / {split} val examples ({len(personal)} from app feedback)")
+    print(f"{len(data) - split} train / {split} val examples "
+          f"({len(casual)} casual-voice, {len(personal)} from app feedback)")
 
 
 if __name__ == "__main__":

@@ -11,6 +11,8 @@ Metrics:
   writing        known writing problems fixed (grammar, word use) out of the total
   stock          stock phrases the model itself fixed; Quill's built-in checker flags all of them anyway
   clean_edits    avg suggestions on paragraphs that were already fine (lower is better)
+  voice          deliberate style choices (fragments, slang, "And"/"But" openers) left intact
+  formalized     suggestions that expand contractions in casual writing (should be 0)
   reasons        share of explanations that are distinct (low = the same canned sentence repeated)
   invented       suggestions that add numbers not in the paragraph (should be 0)
   stock_added    suggestions that introduce stock phrases (should be 0)
@@ -74,11 +76,24 @@ def fixes(suggestions, problem):
     return any(p in s["original"].lower() and p not in s.get("revised", "").lower() for s in suggestions)
 
 
+def breaks(suggestions, keep):
+    """True if a suggestion rewrites a deliberate style choice (overlapping it and losing it)."""
+    for s in suggestions:
+        orig, rev = s["original"], s.get("revised", "")
+        if (keep in orig or orig in keep) and keep not in rev:
+            return True
+    return False
+
+
+CONTRACTION = re.compile(r"\b\w+'(?:s|t|re|ve|ll|d|m)\b", re.I)
+
+
 def score(model, cases):
     out_dir = HERE / "eval_results"
     out_dir.mkdir(exist_ok=True)
     t = dict(json_ok=0, raw=0, shown=0, writing=0, writing_total=0, stock=0, stock_total=0,
-             clean_cases=0, clean_edits=0, invented=0, stock_added=0, change=0.0, seconds=0.0)
+             clean_cases=0, clean_edits=0, invented=0, stock_added=0, change=0.0, seconds=0.0,
+             kept=0, keep_total=0, formalized=0)
     reasons = set()
     with open(out_dir / f"{model.replace(':', '_').replace('/', '_')}.jsonl", "w", encoding="utf-8") as log:
         for i, case in enumerate(cases, 1):
@@ -106,6 +121,14 @@ def score(model, cases):
             if case["clean"]:
                 t["clean_cases"] += 1
                 t["clean_edits"] += len(visible)
+            for keep in case.get("keep", []):
+                t["keep_total"] += 1
+                t["kept"] += not breaks(visible, keep)
+            if re.search(r"contraction|casual|chatty|conversational", case["voice"]):
+                t["formalized"] += sum(
+                    len(CONTRACTION.findall(s.get("revised", ""))) < len(CONTRACTION.findall(s["original"]))
+                    for s in visible
+                )
             log.write(json.dumps({"id": case["id"], "text": text, "suggestions": raw,
                                   "seconds": round(secs, 1)}, ensure_ascii=False) + "\n")
     print(" " * 60, end="\r")
@@ -116,6 +139,8 @@ def score(model, cases):
         "writing": f"{t['writing']}/{t['writing_total']}",
         "stock": f"{t['stock']}/{t['stock_total']}",
         "clean_edits": f"{t['clean_edits'] / max(t['clean_cases'], 1):.1f}",
+        "voice": f"{t['kept']}/{t['keep_total']}",
+        "formalized": t["formalized"],
         "reasons": f"{100 * len(reasons) / k:.0f}% distinct",
         "invented": t["invented"],
         "stock_added": t["stock_added"],
