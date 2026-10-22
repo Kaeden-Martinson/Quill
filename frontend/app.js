@@ -7,6 +7,12 @@ const state = {
   openVersion: null,
   suggestions: [], // {id, original, revised, reason, category, card}
   run: null,       // AbortController for the review in progress
+  current: null,   // the note picked with the keyboard
+  aiText: null,    // Quill's AI draft of this essay, if it started as one
+  aiCache: new Map(),
+  profile: null,
+  voices: null,    // presets and custom settings, from the server
+  ignored: [],
 };
 let nextId = 1;
 
@@ -133,6 +139,7 @@ function showApp() {
   // A stale token fails here; request() already sends the user back to sign in.
   loadDrafts().catch(() => {});
   loadProfile().catch(() => {});
+  loadIgnored().catch(() => {});
   api("/api/me").then(({ name }) => {
     $("#account-name").textContent = name;
     $("#account-username").value = name;
@@ -250,6 +257,7 @@ function setTab(name) {
   });
   $$(".panel").forEach((p) => { p.hidden = p.dataset.panel !== name; });
   if (name === "edits") requestAnimationFrame(placeNotes); // positions need the panel visible
+  if (name === "report") renderReport();
 }
 $$(".tab").forEach((t) => t.addEventListener("click", () => setTab(t.dataset.tab)));
 
@@ -274,7 +282,7 @@ function updateCrumb() {
 }
 
 function setDraftControls(enabled) {
-  for (const id of ["#review", "#review-phone", "#overview", "#save", "#export", "#export-docx", "#delete-draft"]) $(id).disabled = !enabled;
+  for (const id of ["#review", "#review-phone", "#overview", "#save", "#replay", "#export", "#export-docx", "#delete-draft"]) $(id).disabled = !enabled;
 }
 
 document.addEventListener("keydown", (e) => {
@@ -283,7 +291,24 @@ document.addEventListener("keydown", (e) => {
     e.preventDefault();
     saveVersion("Manual save");
   }
+  // Working through notes from the keyboard, without leaving the text.
+  if (e.altKey && !e.ctrlKey && !e.metaKey && !$("#write-view").hidden && state.suggestions.length) {
+    const action = { ArrowDown: () => moveCurrent(1), ArrowUp: () => moveCurrent(-1),
+      Enter: () => actOnCurrent(true), Backspace: () => actOnCurrent(false) }[e.key];
+    if (action) { e.preventDefault(); action(); }
+  }
 });
+
+// ---------- Write / Mark-up ----------
+
+function setMode(mode) {
+  $("#app-view").classList.toggle("write-mode", mode === "write");
+  $$(".mode button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.mode === mode));
+  storage("quill-mode", mode);
+  renderMarkup();
+}
+const writeMode = () => $("#app-view").classList.contains("write-mode");
+$$(".mode button").forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
 
 // ---------- drafts ----------
 
@@ -312,6 +337,7 @@ $("#new-draft").addEventListener("click", newDraft);
 $("#import-docx").addEventListener("click", pickFile);
 $('[data-action="new"]').addEventListener("click", newDraft);
 $('[data-action="import"]').addEventListener("click", pickFile);
+$$('[data-action="compose"]').forEach((b) => b.addEventListener("click", openCompose));
 
 $("#import-file").addEventListener("change", async (e) => {
   const file = e.target.files[0];
@@ -337,6 +363,9 @@ async function openDraft(id) {
   $("#draft-area").hidden = false;
   $("#title").value = d.title;
   $("#body").value = d.body;
+  for (const field of ["goal", "audience", "tone"]) $(`#${field}`).value = d[field] || "";
+  state.aiText = d.ai_text || null;
+  state.aiCache = new Map();
   $("#save-status").textContent = "";
   setDraftControls(true);
   renderVersions(d.versions);
@@ -353,7 +382,7 @@ function renderVersions(versions) {
     ...[...versions].reverse().map((v) =>
       el("li", {},
         el("button", { onclick: () => viewVersion(v.id) },
-          el("span", { class: "v-note" }, v.note || "Autosave"),
+          el("span", { class: "v-note" }, v.note || "Autosave", v.source === "ai" && !/AI/.test(v.note) ? el("span", { class: "tag-ai" }, " · AI-written") : null),
           el("span", { class: "v-meta" }, `${fmtDate(v.created)} · ${v.chars.toLocaleString()} characters`))))
   );
 }
@@ -407,6 +436,14 @@ $("#title").addEventListener("change", async () => {
   loadDrafts();
 });
 
+// Goal, audience and tone are saved with the essay and sent with every review.
+$$(".doc-meta [data-field]").forEach((input) => input.addEventListener("change", () => {
+  if (!state.draftId) return;
+  api(`/api/drafts/${state.draftId}`, { method: "PATCH", body: { [input.dataset.field]: input.value.trim() } })
+    .catch((err) => { $("#save-status").textContent = `Not saved: ${err.message}`; });
+}));
+const goals = () => ({ goal: $("#goal").value, audience: $("#audience").value, tone: $("#tone").value });
+
 async function viewVersion(id) {
   const v = await api(`/api/versions/${id}`);
   state.openVersion = v;
@@ -443,6 +480,7 @@ $("#delete-dialog").addEventListener("close", async () => {
   // Forget the essay entirely so no autosave can recreate a version for it.
   state.draftId = null;
   state.lastSaved = "";
+  state.aiText = null;
   $("#body").value = "";
   $("#title").value = "";
   $("#draft-area").hidden = true;
@@ -477,6 +515,7 @@ function onBodyChange() {
   body.style.height = "auto";
   body.style.height = `${body.scrollHeight}px`;
   renderMarkup();
+  if (!$("#panel-report").hidden) scheduleReport();
 }
 $("#body").addEventListener("input", onBodyChange);
 window.addEventListener("resize", onBodyChange);
@@ -527,18 +566,72 @@ function markupFor(s, original) {
   return span;
 }
 
+// The mirror: red-pencil markup (in Mark-up mode) and a tint on paragraphs that are still
+// Quill's AI-written text (always, since that's about who wrote it, not about editing).
 function renderMarkup() {
   const text = $("#body").value;
-  const nodes = [];
+  const ranges = writeMode() ? [] : suggestionRanges();
+  const fill = (into, from, to) => {
+    let at = from;
+    for (const { start, end, s } of ranges) {
+      if (start < at || end > to) continue;
+      into.append(text.slice(at, start), markupFor(s, text.slice(start, end)));
+      at = end;
+    }
+    into.append(text.slice(at, to));
+  };
+  const root = $("#backdrop");
+  root.replaceChildren();
+  const paras = state.aiText ? aiParagraphs(text, state.aiText, state.aiCache) : [];
   let at = 0;
-  for (const { start, end, s } of suggestionRanges()) {
-    nodes.push(text.slice(at, start), markupFor(s, text.slice(start, end)));
-    at = end;
+  for (const p of paras.filter((x) => x.ai)) {
+    fill(root, at, p.start);
+    const span = el("span", { class: "ai-para" });
+    fill(span, p.start, p.end);
+    root.append(span);
+    at = p.end;
   }
-  // Trailing newline keeps the last empty line the same height as in the textarea.
-  nodes.push(text.slice(at) + "\n");
-  $("#backdrop").replaceChildren(...nodes);
+  fill(root, at, text.length);
+  root.append("\n"); // keeps the last empty line the same height as in the textarea
+  renderAiBanner(paras);
   placeNotes();
+}
+
+function renderAiBanner(paras) {
+  const ai = paras.filter((p) => p.ai).length;
+  const banner = $("#ai-banner");
+  banner.hidden = !ai;
+  banner.textContent = ai
+    ? `${ai} of ${paras.length} paragraph${paras.length === 1 ? " is" : "s are"} still Quill's AI draft (tinted). The tint goes away as you rewrite ${ai === 1 ? "it" : "them"} in your own words.`
+    : "";
+}
+
+// Screen position of a character offset in the draft, read from the mirror. Replacement words
+// drawn above the line aren't part of the draft, so they're skipped while counting.
+function offsetRect(offset) {
+  const walker = document.createTreeWalker($("#backdrop"), NodeFilter.SHOW_TEXT, {
+    acceptNode: (n) => (n.parentElement.closest(".fix, .caret-fix") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
+  });
+  let seen = 0;
+  for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+    if (seen + n.length >= offset) {
+      const range = document.createRange();
+      range.setStart(n, offset - seen);
+      range.setEnd(n, Math.min(n.length, offset - seen + 1));
+      return range.getBoundingClientRect();
+    }
+    seen += n.length;
+  }
+  return null;
+}
+
+// Selects part of the draft and scrolls it into view (the textarea grows, so the page scrolls).
+function selectText(start, end) {
+  const body = $("#body");
+  body.focus({ preventScroll: true });
+  body.setSelectionRange(start, end);
+  const rect = offsetRect(start);
+  if (rect) window.scrollBy({ top: rect.top - window.innerHeight / 3, behavior: "smooth" });
 }
 
 const marginBeside = () => matchMedia("(min-width: 1001px)").matches;
@@ -548,7 +641,7 @@ const marginBeside = () => matchMedia("(min-width: 1001px)").matches;
 function placeNotes() {
   const list = $("#suggestion-list");
   const notes = state.suggestions.filter((s) => s.note.isConnected);
-  const beside = marginBeside() && !$("#panel-edits").hidden && notes.length > 0;
+  const beside = marginBeside() && !$("#panel-edits").hidden && notes.length > 0 && !writeMode();
   list.classList.toggle("placed", beside);
   if (!beside) {
     notes.forEach((s) => { s.note.style.top = ""; });
@@ -594,6 +687,7 @@ function marginMessage(text) {
 
 function clearFeedback() {
   state.suggestions = [];
+  state.current = null;
   $("#suggestion-list").replaceChildren(marginMessage("Press “Mark it up” and Quill reads each paragraph. Its notes appear here, beside the line they're about."));
   $("#voice-notes").replaceChildren();
   $("#overview-panel").replaceChildren();
@@ -622,9 +716,15 @@ function queueText(position) {
     : `You're ${ordinal(position)} in line. Others are using Quill right now.`;
 }
 
+const grammarFixes = () => state.suggestions.filter((s) => s.category === "grammar" && s.revised != null);
+
 function updateCounts() {
   const n = state.suggestions.length;
   $("#edit-count").textContent = n || "";
+  const g = grammarFixes().length;
+  $("#bulk").hidden = n === 0;
+  $("#accept-grammar").hidden = g < 2;
+  $("#accept-grammar").textContent = `Accept all ${g} grammar fixes`;
   const jump = $("#jump-suggestions");
   jump.hidden = n === 0;
   jump.querySelector("span").textContent = `${n}`;
@@ -645,8 +745,11 @@ function addSuggestions(items) {
 }
 
 function removeSuggestion(s) {
+  const i = state.suggestions.indexOf(s);
   state.suggestions = state.suggestions.filter((x) => x !== s);
   s.note.remove();
+  // Keyboard users land on the next note instead of losing their place.
+  if (state.current === s) setCurrent(state.suggestions[Math.min(i, state.suggestions.length - 1)] || null);
   if (!state.suggestions.length && !state.run) {
     $("#suggestion-list").replaceChildren(marginMessage("That's everything. Mark it up again after you revise."));
   }
@@ -685,7 +788,7 @@ async function runStream(trigger, path, onEvent) {
   setProgress("Starting");
   let failed = false;
   try {
-    await stream(path, { body, goal: $("#goal").value }, (event) => {
+    await stream(path, { body, ...goals() }, (event) => {
       if (event.type === "queue") setProgress(queueText(event.position));
       else if (event.type === "error") { failed = true; setProgressMessage(event.message); }
       else onEvent(event);
@@ -700,10 +803,12 @@ async function runStream(trigger, path, onEvent) {
 }
 
 function startReview(trigger) {
+  if (writeMode()) setMode("markup"); // asking for notes means wanting to see them
   if (!state.run) {
     setTab("edits");
     state.suggestions.forEach((s) => s.note.remove());
     state.suggestions = [];
+    state.current = null;
     $("#suggestion-list").replaceChildren();
     $("#voice-notes").replaceChildren();
     updateCounts();
@@ -769,23 +874,106 @@ function noteFor(s) {
     onmouseenter: () => setActive(s.id, true),
     onmouseleave: () => setActive(s.id, false),
   });
-  const done = (accepted) => {
-    const { note: _note, id: _id, ...payload } = s;
-    api("/api/feedback", { method: "POST", body: { ...payload, draft_id: state.draftId, revised: s.revised ?? "", accepted } }).catch(() => {});
-    removeSuggestion(s);
-  };
-  const act = (label, onclick, cls = "") => el("button", { class: cls, onclick }, label);
+  const act = (label, onclick, cls = "", title = null) => el("button", { class: cls, onclick, ...(title ? { title } : {}) }, label);
   note.append(el("span", {}, s.reason));
+  const never = act("Never flag", () => neverFlag(s), "", `Quill won't flag “${ignorePhrase(s)}” again`);
   if (s.revised == null) {
-    note.append(el("span", { class: "acts" }, act("Show me", () => highlight(s)), act("Got it", () => removeSuggestion(s))));
+    note.append(el("span", { class: "acts" }, act("Show me", () => highlight(s)), act("Got it", () => removeSuggestion(s)), never));
   } else {
     note.append(el("span", { class: "acts" },
-      act("Accept", () => { if (applyEdit(s)) done(true); }, "yes"),
-      act("Skip", () => done(false)),
-      act("Show me", () => highlight(s))));
+      act("Accept", () => accept(s), "yes"),
+      act("Skip", () => decide(s, false)),
+      act("Show me", () => highlight(s)),
+      never));
   }
   return note;
 }
+
+function sendFeedback(s, accepted) {
+  const { note: _note, id: _id, ...payload } = s;
+  api("/api/feedback", { method: "POST", body: { ...payload, draft_id: state.draftId, revised: s.revised ?? "", accepted } }).catch(() => {});
+}
+
+function decide(s, accepted) {
+  sendFeedback(s, accepted);
+  removeSuggestion(s);
+}
+
+function accept(s) {
+  if (applyEdit(s)) decide(s, true);
+}
+
+// What "Never flag" remembers: a small word change is about those words ("gonna"), wherever they
+// appear; anything bigger is about that exact sentence.
+function ignorePhrase(s) {
+  if (s.revised == null) return s.original;
+  const changes = diffWords(s.original, s.revised).filter((seg) => seg.type === "change");
+  const words = changes.length === 1 ? changes[0].del.trim() : "";
+  return words && words.split(/\s+/).length <= 3 ? words : s.original;
+}
+
+async function neverFlag(s) {
+  const phrase = ignorePhrase(s);
+  try {
+    state.ignored = await api("/api/ignored", { method: "POST", body: { phrase } });
+  } catch (err) {
+    alert(`Couldn't save that: ${err.message}`);
+    return;
+  }
+  renderIgnored();
+  if (s.revised != null) sendFeedback(s, false);
+  const lower = phrase.toLowerCase();
+  state.suggestions.filter((x) => x.original.toLowerCase().includes(lower)).forEach(removeSuggestion);
+}
+
+// ---------- notes from the keyboard ----------
+
+function setCurrent(s) {
+  state.current?.note.classList.remove("current");
+  state.current = s;
+  if (!s) return;
+  s.note.classList.add("current");
+  setTab("edits");
+  s.note.scrollIntoView({ block: "nearest" });
+  const at = locate(s, $("#body").value);
+  if (at !== -1) selectText(at, at + s.original.length);
+}
+
+// Notes in reading order, so Alt+Down walks down the page.
+function notesInOrder() {
+  const text = $("#body").value;
+  return [...state.suggestions].sort((a, b) => {
+    const pa = locate(a, text), pb = locate(b, text);
+    return (pa === -1 ? Infinity : pa) - (pb === -1 ? Infinity : pb);
+  });
+}
+
+function moveCurrent(step) {
+  const order = notesInOrder();
+  const i = order.indexOf(state.current);
+  const next = i === -1 ? (step > 0 ? 0 : order.length - 1) : Math.max(0, Math.min(order.length - 1, i + step));
+  setCurrent(order[next]);
+}
+
+function actOnCurrent(yes) {
+  const s = state.current;
+  if (!s) { moveCurrent(1); return; }
+  if (s.revised == null) removeSuggestion(s);
+  else if (yes) accept(s);
+  else decide(s, false);
+}
+
+// Accept every grammar fix at once, last first so earlier positions stay put. Each one is still
+// its own step in Ctrl+Z.
+$("#accept-grammar").addEventListener("click", () => {
+  const text = $("#body").value;
+  const fixes = grammarFixes().map((s) => ({ s, at: locate(s, text) })).filter((f) => f.at !== -1)
+    .sort((a, b) => b.at - a.at);
+  for (const { s, at } of fixes) {
+    replaceRange(at, at + s.original.length, s.revised);
+    decide(s, true);
+  }
+});
 
 function highlight(s) {
   const body = $("#body");
@@ -808,32 +996,328 @@ function applyEdit(s) {
   return true;
 }
 
-// ---------- voice profile ----------
+// ---------- read-through report ----------
+
+let reportTimer = null;
+function scheduleReport() {
+  clearTimeout(reportTimer);
+  reportTimer = setTimeout(renderReport, 400);
+}
+
+function renderReport() {
+  const text = $("#body").value;
+  const r = readThrough(text);
+  const box = $("#report");
+  if (!r.words) {
+    box.replaceChildren(el("p", { class: "none" }, "Write something and the report fills in."));
+    return;
+  }
+  const preview = (start, end) => {
+    const words = text.slice(start, end).split(/\s+/);
+    return words.length > 9 ? `${words.slice(0, 9).join(" ")}…` : words.join(" ");
+  };
+  const find = (label, start, end, extra = null) =>
+    el("button", { onclick: () => selectText(start, end) }, label, extra);
+  const block = (title, ...children) => el("section", {}, el("h4", {}, title), ...children);
+  const finds = (items, cls = "finds") => (items.length ? el("div", { class: cls }, ...items) : el("p", { class: "none" }, "None."));
+
+  // Sentence rhythm: one bar per sentence, a gap between paragraphs.
+  const paraStarts = new Set(paragraphSpans(text).map((p) => p.start));
+  const rhythm = el("div", { class: "rhythm", role: "img", "aria-label": `Sentence lengths for ${r.sentences.length} sentences` },
+    ...r.sentences.map((s, i) => {
+      const bar = find("", s.start, s.end);
+      bar.className = `${s.words > 30 ? "long" : ""}${i && paraStarts.has(s.start) ? " para-start" : ""}`;
+      bar.style.height = `${Math.max(6, Math.min(100, (s.words / 40) * 100))}%`;
+      bar.title = `Sentence ${i + 1}: ${s.words} words`;
+      bar.setAttribute("aria-label", bar.title);
+      return bar;
+    }));
+
+  const grade = Math.round(r.grade);
+  box.replaceChildren(
+    el("div", { class: "stats" },
+      el("div", { class: "stat" }, el("b", {}, r.words.toLocaleString()), el("span", {}, "words")),
+      el("div", { class: "stat" }, el("b", {}, String(r.sentences.length)), el("span", {}, "sentences")),
+      el("div", { class: "stat" }, el("b", {}, r.avgWords.toFixed(1)), el("span", {}, "words per sentence")),
+      el("div", { class: "stat", title: "Flesch-Kincaid grade level: an estimate from sentence and word length" },
+        el("b", {}, grade < 1 ? "Easy" : `Grade ${grade}`), el("span", {}, "reading level"))),
+    block("Sentence rhythm", rhythm,
+      el("p", { class: "caption" }, r.long.length
+        ? `Each bar is a sentence. ${r.long.length} run${r.long.length === 1 ? "s" : ""} past 30 words (in red); check ${r.long.length === 1 ? "it reads" : "they read"} clearly.`
+        : "Each bar is a sentence. A row of bars the same height reads flat; varied lengths keep a reader moving.")),
+    block("Words you lean on", finds(r.repeated.map((c) => find(c.word, c.start, c.end, el("small", {}, `×${c.count}`))))),
+    block("Passive voice", finds(r.passive.slice(0, 8).map((p) => find(preview(p.start, p.end + 40).replace(/…$/, "") + "…", p.start, p.end)), "finds list"),
+      r.passive.length ? el("p", { class: "caption" }, "Fine when who did it doesn't matter. Otherwise, try naming who acts.") : null),
+    block("Adverbs", finds(r.adverbs.slice(0, 16).map((a) => find(a.text, a.start, a.end))),
+      r.adverbs.length > 3 ? el("p", { class: "caption" }, "A stronger verb can often do the adverb's job.") : null),
+  );
+}
+
+// ---------- drafting from a prompt ----------
+
+let composeRun = null;
+
+function voiceName() {
+  const p = state.profile;
+  if (!p) return "your voice";
+  if (p.voice_mode === "preset") return state.voices?.presets.find((v) => v.id === p.preset_id)?.name || "a ready-made voice";
+  if (p.voice_mode === "custom") return "your custom voice";
+  return p.samples.length ? "the voice from your writing samples" : "a neutral voice, since you haven't picked one";
+}
+
+function openCompose() {
+  closeDrawer();
+  $("#compose-voice").textContent = voiceName();
+  $("#compose-status").textContent = "";
+  $("#compose-dialog").showModal();
+  $("#compose-form").instructions.focus();
+}
+
+function closeCompose() {
+  composeRun?.abort();
+  $("#compose-dialog").close();
+}
+$$("#compose-dialog [data-close]").forEach((b) => b.addEventListener("click", closeCompose));
+$("#compose-dialog").addEventListener("cancel", () => composeRun?.abort());
+$("#compose-change-voice").addEventListener("click", () => { closeCompose(); setView("voice"); });
+
+$("#compose-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (composeRun) { composeRun.abort(); return; } // second click = Stop
+  const form = e.target;
+  const body = Object.fromEntries(["instructions", "goal", "audience", "tone", "length"].map((k) => [k, form[k].value]));
+  const status = $("#compose-status");
+  const go = $("#compose-go span");
+  const run = (composeRun = new AbortController());
+  go.textContent = "Stop";
+  status.textContent = "Starting…";
+  let draftId = null;
+  try {
+    await saveVersion("Switched essays");
+    await stream("/api/compose", body, (event) => {
+      if (event.type === "queue") status.textContent = queueText(event.position);
+      else if (event.type === "start") status.textContent = "Writing the draft. This can take a minute.";
+      else if (event.type === "error") status.textContent = event.message;
+      else if (event.type === "draft") draftId = event.id;
+    }, run.signal);
+  } catch (err) {
+    status.textContent = err.name === "AbortError" ? "Stopped." : err.message;
+  } finally {
+    composeRun = null;
+    go.textContent = "Write the draft";
+  }
+  if (draftId) {
+    $("#compose-dialog").close();
+    form.reset();
+    await openDraft(draftId);
+  }
+});
+
+// ---------- replay ----------
+
+const replay = { versions: [], index: 0, timer: null };
+
+// Paragraph-level alignment first, then a word diff inside paragraphs that changed, so long
+// essays don't need one huge diff.
+function diffParagraphs(before, after) {
+  const a = paragraphSpans(before).map((p) => before.slice(p.start, p.end));
+  const b = paragraphSpans(after).map((p) => after.slice(p.start, p.end));
+  const lcs = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+  for (let i = a.length - 1; i >= 0; i--) {
+    for (let j = b.length - 1; j >= 0; j--) {
+      lcs[i][j] = a[i] === b[j] ? lcs[i + 1][j + 1] + 1 : Math.max(lcs[i + 1][j], lcs[i][j + 1]);
+    }
+  }
+  const out = []; // {before?, after?}
+  let i = 0, j = 0;
+  while (i < a.length || j < b.length) {
+    if (i < a.length && j < b.length && a[i] === b[j]) { out.push({ before: a[i++], after: b[j++] }); continue; }
+    // A removed paragraph followed by an added one is the same paragraph, edited.
+    if (i < a.length && j < b.length && lcs[i + 1][j + 1] === lcs[i][j]) { out.push({ before: a[i++], after: b[j++] }); continue; }
+    if (j < b.length && (i === a.length || lcs[i][j + 1] >= lcs[i + 1][j])) out.push({ after: b[j++] });
+    else out.push({ before: a[i++] });
+  }
+  return out;
+}
+
+function renderReplay() {
+  const { versions, index } = replay;
+  const v = versions[index];
+  const prev = index ? versions[index - 1].body : "";
+  const who = v.source === "ai" ? "AI-written"
+    : v.ai_paragraphs.some(Boolean) ? `${v.ai_paragraphs.filter(Boolean).length} of ${v.ai_paragraphs.length} paragraphs still AI-written`
+      : "Written by you";
+  $("#replay-label").textContent = `Version ${index + 1} of ${versions.length} · ${fmtDate(v.created)} · ${v.note || "Autosave"}${v.note === "Drafted by Quill AI" ? "" : ` · ${who}`}`;
+  $("#replay-slider").value = index;
+  $("#replay-prev").disabled = index === 0;
+  $("#replay-next").disabled = index === versions.length - 1;
+  let n = 0; // index among this version's paragraphs, to match ai_paragraphs
+  const paras = diffParagraphs(prev, v.body).map(({ before, after }) => {
+    if (after == null) return el("p", {}, el("del", {}, before));
+    const p = el("p", { class: v.ai_paragraphs[n++] ? "ai-para" : "" });
+    if (before == null) p.append(el("ins", {}, after));
+    else if (before === after) p.append(after);
+    else for (const seg of diffWords(before, after)) {
+      if (seg.type === "keep") p.append(seg.del);
+      else p.append(seg.del.trim() ? el("del", {}, seg.del) : "", seg.ins.trim() ? el("ins", {}, seg.ins) : "");
+    }
+    return p;
+  });
+  $("#replay-body").replaceChildren(...(paras.length ? paras : [el("p", { class: "none" }, "This version is empty.")]));
+}
+
+function stopReplay() {
+  clearInterval(replay.timer);
+  replay.timer = null;
+  $("#replay-play span").textContent = "Play";
+}
+
+function stepReplay(to) {
+  replay.index = Math.max(0, Math.min(replay.versions.length - 1, to));
+  renderReplay();
+}
+
+$("#replay").addEventListener("click", async () => {
+  await saveVersion("Before replay");
+  replay.versions = await api(`/api/drafts/${state.draftId}/replay`);
+  if (!replay.versions.length) return;
+  $("#replay-slider").max = replay.versions.length - 1;
+  $("#replay-title").textContent = `How “${$("#title").value.trim() || "Untitled essay"}” was written`;
+  stepReplay(0);
+  $("#replay-dialog").showModal();
+});
+$("#replay-prev").addEventListener("click", () => { stopReplay(); stepReplay(replay.index - 1); });
+$("#replay-next").addEventListener("click", () => { stopReplay(); stepReplay(replay.index + 1); });
+$("#replay-slider").addEventListener("input", (e) => { stopReplay(); stepReplay(Number(e.target.value)); });
+$("#replay-play").addEventListener("click", () => {
+  if (replay.timer) { stopReplay(); return; }
+  if (replay.index === replay.versions.length - 1) stepReplay(0);
+  $("#replay-play span").textContent = "Pause";
+  replay.timer = setInterval(() => {
+    if (replay.index >= replay.versions.length - 1) stopReplay();
+    else stepReplay(replay.index + 1);
+  }, 1400);
+});
+$("#replay-dialog").addEventListener("close", stopReplay);
+
+// ---------- voice ----------
+
+const CUSTOM_LABELS = {
+  formality: ["Formality", { casual: "Casual", balanced: "In between", formal: "Formal" }],
+  sentences: ["Sentence length", { short: "Short", medium: "Medium", long: "Long" }],
+  contractions: ["Contractions", { yes: "Use them", no: "Avoid them" }],
+  person: ["Point of view", { first: "I and me", third: "Keep myself out" }],
+  humor: ["Humor", { none: "None", light: "A little", lots: "Plenty" }],
+};
 
 function addSample(text = "") {
   const t = el("textarea", { placeholder: "Paste something you wrote, like an old essay, a blog post or a long email", "aria-label": "Writing sample" });
   t.value = text;
   $("#samples").append(t);
+  return t;
 }
-$("#add-sample").addEventListener("click", () => addSample());
+$("#add-sample").addEventListener("click", () => addSample().focus());
+
+function renderProfile(p) {
+  state.profile = p;
+  $$('input[name="voice-mode"]').forEach((r) => { r.checked = r.value === p.voice_mode; });
+  $$("[data-mode-panel]").forEach((section) => {
+    // Samples stay visible under "Match each essay" too: they still power the voice-drift notes.
+    section.hidden = !(section.dataset.modePanel === p.voice_mode || (section.dataset.modePanel === "samples" && p.voice_mode === "auto"));
+  });
+  $$("#preset-list .preset").forEach((b) => b.setAttribute("aria-checked", b.dataset.id === p.preset_id));
+  $$("#custom-options input").forEach((r) => { r.checked = p.custom[r.name] === r.value; });
+  let summary = p.active;
+  if (p.voice_mode === "auto") summary = "Measured from each essay as Quill reads it.";
+  else if (p.voice_mode === "samples" && !p.samples.length) summary = "No samples saved yet, so Quill measures each essay instead. Add some above.";
+  $("#voice-summary").textContent = summary;
+}
+
+async function saveProfile(changes, statusEl = $("#mode-status")) {
+  try {
+    renderProfile(await api("/api/profile", { method: "PUT", body: changes }));
+    statusEl.textContent = "Saved.";
+    statusEl.classList.remove("bad");
+  } catch (err) {
+    statusEl.textContent = err.message;
+    statusEl.classList.add("bad");
+  }
+}
 
 async function loadProfile() {
-  const p = await api("/api/profile");
+  const [p, voices] = await Promise.all([api("/api/profile"), api("/api/voices")]);
+  state.voices = voices;
+  $("#preset-list").replaceChildren(...voices.presets.map((v) =>
+    el("button", { class: "preset", role: "radio", "data-id": v.id, "aria-checked": "false",
+      onclick: () => saveProfile({ voice_mode: "preset", preset_id: v.id }) },
+      el("b", {}, v.name), el("span", {}, v.blurb), el("q", {}, v.sample))));
+  $("#custom-options").replaceChildren(...Object.entries(voices.custom_options).map(([key, values]) => {
+    const [label, names] = CUSTOM_LABELS[key] || [key, {}];
+    return el("fieldset", {}, el("legend", {}, label),
+      el("div", { class: "segmented" }, ...values.map((value) =>
+        el("label", {}, el("input", { type: "radio", name: key, value,
+          onchange: () => saveProfile({ voice_mode: "custom", custom: { ...state.profile.custom, [key]: value } }) }),
+        el("span", {}, names[value] || value)))));
+  }));
   $("#samples").replaceChildren();
-  (p.samples.length ? p.samples : ["", "", ""]).forEach(addSample);
-  $("#voice-summary").textContent = p.samples.length ? p.voice : "Nothing yet. Add a few pieces of your writing above.";
+  (p.samples.length ? p.samples : ["", "", ""]).forEach((t) => addSample(t));
+  renderProfile(p);
 }
 
-$("#save-profile").addEventListener("click", async () => {
+$$('input[name="voice-mode"]').forEach((r) => r.addEventListener("change", () => {
+  const changes = { voice_mode: r.value };
+  // Picking "ready-made" before any preset starts from the first one.
+  if (r.value === "preset" && !state.profile.preset_id) changes.preset_id = state.voices.presets[0].id;
+  saveProfile(changes);
+}));
+
+$("#save-profile").addEventListener("click", () => {
   const samples = $$("#samples textarea").map((t) => t.value).filter((t) => t.trim());
   if (!samples.length) { $("#profile-status").textContent = "Add at least one sample."; return; }
-  try {
-    const p = await api("/api/profile", { method: "PUT", body: { samples } });
-    $("#voice-summary").textContent = p.voice;
-    $("#profile-status").textContent = "Saved.";
-  } catch (err) {
-    $("#profile-status").textContent = err.message;
+  saveProfile({ samples }, $("#profile-status"));
+});
+
+$("#upload-sample").addEventListener("click", () => $("#sample-file").click());
+$("#sample-file").addEventListener("change", async (e) => {
+  const files = [...e.target.files];
+  e.target.value = "";
+  for (const file of files) {
+    try {
+      const { text } = await api("/api/voice/sample-file", { method: "POST", body: await file.arrayBuffer() });
+      const empty = $$("#samples textarea").find((t) => !t.value.trim());
+      (empty || addSample()).value = text;
+      $("#profile-status").textContent = `Added ${file.name}. Save to use it.`;
+    } catch (err) {
+      $("#profile-status").textContent = `${file.name}: ${err.message}`;
+    }
   }
+});
+
+// ---------- never flag ----------
+
+function renderIgnored() {
+  $("#ignored-list").replaceChildren(...(state.ignored.length
+    ? state.ignored.map((phrase) => el("li", {}, phrase,
+        el("button", { class: "icon-btn", "aria-label": `Flag “${phrase}” again`, title: "Flag it again", onclick: () => unignore(phrase) }, icon("i-x"))))
+    : [el("li", { class: "none" }, "Nothing yet.")]));
+}
+
+async function loadIgnored() {
+  state.ignored = await api("/api/ignored");
+  renderIgnored();
+}
+
+async function unignore(phrase) {
+  state.ignored = await api(`/api/ignored?phrase=${encodeURIComponent(phrase)}`, { method: "DELETE" });
+  renderIgnored();
+}
+
+$("#ignore-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const input = e.target.phrase;
+  state.ignored = await api("/api/ignored", { method: "POST", body: { phrase: input.value } });
+  input.value = "";
+  renderIgnored();
 });
 
 // ---------- account ----------
@@ -863,5 +1347,6 @@ $("#password-form").addEventListener("submit", async (e) => {
 
 // ---------- boot ----------
 
+setMode(storage("quill-mode") === "write" ? "write" : "markup");
 state.token = storage("quill-token");
 state.token ? showApp() : signOut();

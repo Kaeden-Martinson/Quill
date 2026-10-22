@@ -12,10 +12,12 @@ from fastapi.responses import FileResponse, PlainTextResponse, Response, Streami
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+import authorship
 import db
 import editor
 import security
 import style
+import voices
 import wordfiles
 from config import FRONTEND_DIR, MODEL, PASSCODE
 
@@ -42,6 +44,10 @@ async def security_headers(request: Request, call_next):
     response.headers["Content-Security-Policy"] = (
         "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-ancestors 'none'"
     )
+    # Browsers check for a newer page and scripts on each load (a quick 304 if unchanged), so
+    # people get updates without clearing their cache.
+    if request.url.path == "/" or request.url.path.startswith("/static/"):
+        response.headers.setdefault("Cache-Control", "no-cache")
     return response
 
 
@@ -159,43 +165,146 @@ async def status():
 
 # ---------- voice profile ----------
 
+VOICE_MODES = {"auto", "samples", "preset", "custom"}
+
+
 class ProfileIn(BaseModel):
-    samples: list[str] = Field(min_length=1, max_length=10)
+    # Every field is optional so the voice page can save one part at a time.
+    samples: list[str] | None = Field(default=None, max_length=10)
+    voice_mode: str | None = None
+    preset_id: str | None = None
+    custom: dict[str, str] | None = None
 
 
 def load_profile(user_id):
     with db.connect() as conn:
-        row = conn.execute("SELECT samples, stats FROM profiles WHERE user_id = ?", (user_id,)).fetchone()
+        row = conn.execute("SELECT * FROM profiles WHERE user_id = ?", (user_id,)).fetchone()
     if not row:
-        return {"samples": [], "stats": {}}
-    return {"samples": db.loads(row["samples"]), "stats": db.loads(row["stats"])}
+        return {"samples": [], "stats": {}, "voice_mode": "auto", "preset_id": None,
+                "custom": voices.clean_custom(None)}
+    return {"samples": db.loads(row["samples"]), "stats": db.loads(row["stats"]),
+            "voice_mode": row["voice_mode"], "preset_id": row["preset_id"],
+            "custom": voices.clean_custom(db.loads(row["custom"]))}
+
+
+def profile_out(profile):
+    # "voice" describes the saved samples (what the samples tab shows); "active" is what Quill uses.
+    return {**profile, "voice": style.describe_voice(profile["stats"]),
+            "active": voices.describe(profile, "")}
 
 
 @app.get("/api/profile")
 def get_profile(user=Depends(current_user)):
-    profile = load_profile(user["id"])
-    return {**profile, "voice": style.describe_voice(profile["stats"])}
+    return profile_out(load_profile(user["id"]))
 
 
 @app.put("/api/profile")
 def put_profile(body: ProfileIn, user=Depends(current_user)):
-    samples = [s.strip() for s in body.samples if s.strip()]
-    stats = style.profile_stats(samples)
+    profile = load_profile(user["id"])
+    if body.samples is not None:
+        profile["samples"] = [s.strip()[:20000] for s in body.samples if s.strip()]
+        profile["stats"] = style.profile_stats(profile["samples"])
+    if body.voice_mode is not None:
+        if body.voice_mode not in VOICE_MODES:
+            raise HTTPException(400, "Unknown voice choice.")
+        profile["voice_mode"] = body.voice_mode
+    if body.preset_id is not None:
+        if body.preset_id not in voices.PRESETS:
+            raise HTTPException(400, "Unknown voice preset.")
+        profile["preset_id"] = body.preset_id
+    if body.custom is not None:
+        profile["custom"] = voices.clean_custom(body.custom)
     with db.connect() as conn:
         conn.execute(
-            "INSERT INTO profiles (user_id, samples, stats, updated) VALUES (?, ?, ?, ?) "
-            "ON CONFLICT(user_id) DO UPDATE SET samples = excluded.samples, stats = excluded.stats, "
-            "updated = excluded.updated",
-            (user["id"], json.dumps(samples), json.dumps(stats), db.now()),
+            "INSERT INTO profiles (user_id, samples, stats, updated, voice_mode, preset_id, custom) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(user_id) DO UPDATE SET samples = excluded.samples, "
+            "stats = excluded.stats, updated = excluded.updated, voice_mode = excluded.voice_mode, "
+            "preset_id = excluded.preset_id, custom = excluded.custom",
+            (user["id"], json.dumps(profile["samples"]), json.dumps(profile["stats"]), db.now(),
+             profile["voice_mode"], profile["preset_id"], json.dumps(profile["custom"])),
         )
-    return {"samples": samples, "stats": stats, "voice": style.describe_voice(stats)}
+    return profile_out(profile)
+
+
+@app.get("/api/voices")
+def list_voices(user=Depends(current_user)):
+    presets = [{"id": k, "name": v["name"], "blurb": v["blurb"], "sample": v["sample"]}
+               for k, v in voices.PRESETS.items()]
+    return {"presets": presets, "custom_options": {k: list(v) for k, v in voices.CUSTOM_OPTIONS.items()}}
+
+
+@app.post("/api/voice/sample-file")
+async def sample_from_file(request: Request, user=Depends(current_user)):
+    """Text from an uploaded Word or plain-text file, for the samples list. Nothing is stored."""
+    data = await request.body()
+    if len(data) > 5_000_000:
+        raise HTTPException(400, "That file is too big. Try one under 5 MB.")
+    if data[:2] == b"PK":  # .docx is a zip file
+        try:
+            _, text = wordfiles.read_docx(data)
+        except wordfiles.BadFile as exc:
+            raise HTTPException(400, str(exc)) from exc
+    else:
+        try:
+            text = data.decode("utf-8-sig")
+        except UnicodeDecodeError:
+            raise HTTPException(400, "Quill can read Word (.docx) and plain-text (.txt) files.") from None
+    text = text.strip()
+    if not text:
+        raise HTTPException(400, "That file has no text in it.")
+    return {"text": text[:20000]}
+
+
+def load_ignored(user_id):
+    with db.connect() as conn:
+        return [r["phrase"] for r in conn.execute(
+            "SELECT phrase FROM ignored WHERE user_id = ? ORDER BY created", (user_id,))]
+
+
+class IgnoreIn(BaseModel):
+    phrase: str = Field(min_length=1, max_length=300)
+
+
+@app.get("/api/ignored")
+def get_ignored(user=Depends(current_user)):
+    return load_ignored(user["id"])
+
+
+@app.post("/api/ignored")
+def add_ignored(body: IgnoreIn, user=Depends(current_user)):
+    phrase = " ".join(body.phrase.split())
+    with db.connect() as conn:
+        conn.execute("INSERT OR IGNORE INTO ignored (user_id, phrase, created) VALUES (?, ?, ?)",
+                     (user["id"], phrase, db.now()))
+    return load_ignored(user["id"])
+
+
+@app.delete("/api/ignored")
+def remove_ignored(phrase: str, user=Depends(current_user)):
+    with db.connect() as conn:
+        conn.execute("DELETE FROM ignored WHERE user_id = ? AND phrase = ?", (user["id"], " ".join(phrase.split())))
+    return load_ignored(user["id"])
+
+
+def not_ignored(suggestions, ignored):
+    """Drops suggestions on text the writer said never to flag."""
+    ignored = [p.lower() for p in ignored]
+    return [s for s in suggestions if not any(p in " ".join(s.get("original", "").lower().split()) for p in ignored)]
 
 
 # ---------- review ----------
 
 class ReviewIn(BaseModel):
     body: str = Field(min_length=1, max_length=40000)
-    goal: str = ""
+    goal: str = Field(default="", max_length=300)
+    audience: str = Field(default="", max_length=100)
+    tone: str = Field(default="", max_length=100)
+
+    def goal_line(self):
+        """Goal, audience and tone in the one "Essay goal" line the editor was trained on."""
+        extra = [f"{label} {value.strip()}" for label, value in (("for", self.audience), ("tone:", self.tone))
+                 if value.strip()]
+        return ", ".join([self.goal.strip() or "not specified", *extra])
 
 
 class OneAtATime:
@@ -248,20 +357,27 @@ def ndjson(first_events, model_events, on_finish=None):
                              headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
-def writer_voice(stats, draft):
-    """Voice guidance for the model: from saved samples if there are any, otherwise from the draft.
+def writer_voice(profile, draft):
+    """Voice guidance for the model: the writer's chosen voice, or one measured from the draft.
 
     The draft is the writer's own text too, and the fine-tuned editor was trained with a voice
     measured from each paragraph; "no samples yet" only ever appeared on formal examples, which
     makes it edit casual writing as if it were formal.
     """
-    return style.describe_voice(stats or style.profile_stats([draft]))
+    return voices.describe(profile, draft)
+
+
+async def without_ignored(events, ignored):
+    async for event in events:
+        if event.get("type") == "paragraph":
+            event = {**event, "suggestions": not_ignored(event["suggestions"], ignored)}
+        yield event
 
 
 @app.post("/api/review")
 async def review(body: ReviewIn, user=Depends(current_user)):
     claim_review(user)
-    stats = load_profile(user["id"])["stats"]
+    profile, ignored = load_profile(user["id"]), load_ignored(user["id"])
     # Instant checks go first so there's something to read while waiting for the model.
     flags = [
         {**flag, "paragraph": i}
@@ -270,19 +386,54 @@ async def review(body: ReviewIn, user=Depends(current_user)):
     ]
     instant = {
         "type": "instant",
-        "suggestions": flags,
-        "voice_notes": style.compare(body.body, stats),
+        "suggestions": not_ignored(flags, ignored),
+        "voice_notes": style.compare(body.body, profile["stats"]),
     }
-    return ndjson([instant], editor.review_stream(body.body, writer_voice(stats, body.body), body.goal),
-                  on_finish=lambda: active_reviews.release(user["id"]))
+    events = editor.review_stream(body.body, writer_voice(profile, body.body), body.goal_line())
+    return ndjson([instant], without_ignored(events, ignored), on_finish=lambda: active_reviews.release(user["id"]))
 
 
 @app.post("/api/overview")
 async def overview(body: ReviewIn, user=Depends(current_user)):
     claim_review(user)
-    stats = load_profile(user["id"])["stats"]
-    return ndjson([], editor.overview_stream(body.body, writer_voice(stats, body.body), body.goal),
+    profile = load_profile(user["id"])
+    return ndjson([], editor.overview_stream(body.body, writer_voice(profile, body.body), body.goal_line()),
                   on_finish=lambda: active_reviews.release(user["id"]))
+
+
+class DraftRequest(BaseModel):
+    instructions: str = Field(min_length=10, max_length=4000)
+    goal: str = Field(default="", max_length=300)
+    audience: str = Field(default="", max_length=100)
+    tone: str = Field(default="", max_length=100)
+    length: str = "medium"
+
+
+@app.post("/api/compose")
+async def compose(body: DraftRequest, user=Depends(current_user)):
+    """Drafts a new essay from instructions. It's saved as an AI-written version, and Quill keeps the
+    AI text so the editor and the writing history can show which parts the writer hasn't rewritten."""
+    claim_review(user)
+    profile = load_profile(user["id"])
+    # Without a chosen voice there's no draft to measure, so the writer's samples (if any) stand in.
+    voice = voices.describe(profile, "\n\n".join(profile["samples"]))
+    prompt = editor.draft_prompt(body.instructions, voice, voices.sample_for(profile),
+                                 body.goal, body.audience, body.tone, body.length)
+
+    async def save(events):
+        async for event in events:
+            if event.get("type") == "draft":
+                with db.connect() as conn:
+                    cur = conn.execute(
+                        "INSERT INTO drafts (user_id, title, created, goal, audience, tone, ai_text) "
+                        "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        (user["id"], event["title"], db.now(), body.goal, body.audience, body.tone, event["body"]))
+                    conn.execute("INSERT INTO versions (draft_id, body, note, created, source) VALUES (?, ?, ?, ?, 'ai')",
+                                 (cur.lastrowid, event["body"], "Drafted by Quill AI", db.now()))
+                event = {**event, "id": cur.lastrowid}
+            yield event
+
+    return ndjson([], save(editor.draft_stream(prompt)), on_finish=lambda: active_reviews.release(user["id"]))
 
 
 class FeedbackIn(BaseModel):
@@ -356,7 +507,7 @@ def get_draft(draft_id: int, user=Depends(current_user)):
     with db.connect() as conn:
         draft = owned_draft(conn, draft_id, user["id"])
         versions = conn.execute(
-            "SELECT id, note, created, LENGTH(body) AS chars FROM versions WHERE draft_id = ? ORDER BY created",
+            "SELECT id, note, created, source, LENGTH(body) AS chars FROM versions WHERE draft_id = ? ORDER BY created",
             (draft_id,),
         ).fetchall()
         latest = conn.execute(
@@ -365,15 +516,21 @@ def get_draft(draft_id: int, user=Depends(current_user)):
     return {**draft, "body": latest["body"] if latest else "", "versions": [dict(v) for v in versions]}
 
 
-class TitleIn(BaseModel):
-    title: str = Field(min_length=1, max_length=200)
+class DraftPatch(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+    goal: str | None = Field(default=None, max_length=300)
+    audience: str | None = Field(default=None, max_length=100)
+    tone: str | None = Field(default=None, max_length=100)
 
 
 @app.patch("/api/drafts/{draft_id}")
-def rename_draft(draft_id: int, body: TitleIn, user=Depends(current_user)):
+def update_draft(draft_id: int, body: DraftPatch, user=Depends(current_user)):
+    """Renames an essay or changes its goals; only the fields sent are changed."""
+    changes = body.model_dump(exclude_none=True)
     with db.connect() as conn:
         owned_draft(conn, draft_id, user["id"])
-        conn.execute("UPDATE drafts SET title = ? WHERE id = ?", (body.title, draft_id))
+        for column, value in changes.items():  # column names come from DraftPatch, not the request
+            conn.execute(f"UPDATE drafts SET {column} = ? WHERE id = ?", (value.strip(), draft_id))
     return {"ok": True}
 
 
@@ -403,6 +560,17 @@ def save_version(draft_id: int, body: VersionIn, user=Depends(current_user)):
     return {"saved": True}
 
 
+@app.get("/api/drafts/{draft_id}/replay")
+def replay(draft_id: int, user=Depends(current_user)):
+    """Every version in full, oldest first, for stepping through how the essay was written."""
+    with db.connect() as conn:
+        draft = owned_draft(conn, draft_id, user["id"])
+        versions = conn.execute(
+            "SELECT id, body, note, created, source FROM versions WHERE draft_id = ? ORDER BY created", (draft_id,)
+        ).fetchall()
+    return [{**dict(v), "ai_paragraphs": authorship.ai_paragraph_flags(v["body"], draft["ai_text"])} for v in versions]
+
+
 @app.get("/api/versions/{version_id}")
 def get_version(version_id: int, user=Depends(current_user)):
     with db.connect() as conn:
@@ -421,12 +589,19 @@ def export_history(draft_id: int, user=Depends(current_user)):
     with db.connect() as conn:
         draft = owned_draft(conn, draft_id, user["id"])
         versions = conn.execute(
-            "SELECT body, note, created FROM versions WHERE draft_id = ? ORDER BY created", (draft_id,)
+            "SELECT body, note, created, source FROM versions WHERE draft_id = ? ORDER BY created", (draft_id,)
         ).fetchall()
-    out = [f"Writing history: {draft['title']}", f"Author: {user['name']}", f"Versions: {len(versions)}", ""]
+    out = [f"Writing history: {draft['title']}", f"Author: {user['name']}", f"Versions: {len(versions)}"]
+    if draft["ai_text"]:
+        out.append("This essay started from a draft written by Quill's AI; versions say how much of it remains.")
+    out.append("")
     for i, v in enumerate(versions, 1):
         stamp = datetime.fromtimestamp(v["created"]).strftime("%Y-%m-%d %H:%M:%S")
-        out += [f"===== Version {i} | {stamp} | {v['note'] or 'autosave'} =====", v["body"], ""]
+        if v["source"] == "ai":
+            who = "WRITTEN BY QUILL AI"
+        else:
+            who = authorship.summary(v["body"], draft["ai_text"]) or "written by the author"
+        out += [f"===== Version {i} | {stamp} | {v['note'] or 'autosave'} | {who} =====", v["body"], ""]
     return "\n".join(out)
 
 

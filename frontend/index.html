@@ -21,6 +21,10 @@
       <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
       <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
       <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+      <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+      <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V4M7 9l5-5 5 5M5 15v4h14v-4"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"/></symbol>
     </defs>
   </svg>
 
@@ -53,6 +57,10 @@
         <button class="bar-link hide-phone" data-view="write" hidden>Back to essay</button>
         <button id="theme-toggle" class="icon-btn" aria-label="Switch theme"><svg class="icon"><use href="#i-moon"/></svg></button>
         <button id="logout" class="bar-link hide-phone">Sign out</button>
+        <div class="mode hide-phone" role="group" aria-label="How the page looks">
+          <button data-mode="write" aria-pressed="false" title="Just the essay: no markup or margin">Write</button>
+          <button data-mode="markup" aria-pressed="true" title="The essay with Quill's notes beside it">Mark-up</button>
+        </div>
         <button id="review" class="btn pen hide-phone" disabled><svg class="icon"><use href="#i-pen"/></svg><span>Mark it up</span></button>
       </span>
     </header>
@@ -66,6 +74,7 @@
       <div class="drawer-actions">
         <button id="new-draft" class="btn ink">New essay</button>
         <button id="import-docx" class="btn quiet">Import a Word file</button>
+        <button class="btn quiet" data-action="compose">Draft from a prompt</button>
         <input id="import-file" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
       </div>
       <ul id="draft-list" class="draft-list"></ul>
@@ -85,6 +94,7 @@
           <div class="row">
             <button class="btn ink" data-action="new">New essay</button>
             <button class="btn quiet" data-action="import">Import a Word file</button>
+            <button class="btn quiet" data-action="compose">Draft from a prompt</button>
           </div>
         </div>
 
@@ -92,9 +102,20 @@
           <section class="page">
             <input id="title" class="doc-title" placeholder="Untitled essay" aria-label="Title">
             <div class="doc-meta">
-              <input id="goal" class="goal" placeholder="What's it for? A college application, a history class…" aria-label="Essay purpose">
+              <input id="goal" class="goal" data-field="goal" maxlength="300" placeholder="What's it for? A college application, a history class…" aria-label="What the essay is for">
+              <input id="audience" class="goal short" data-field="audience" maxlength="100" list="audiences" placeholder="Who's reading?" aria-label="Who will read it">
+              <input id="tone" class="goal short" data-field="tone" maxlength="100" list="tones" placeholder="Tone" aria-label="Tone">
               <span id="word-count"></span>
             </div>
+            <datalist id="audiences">
+              <option value="a teacher"><option value="an admissions committee"><option value="a scholarship committee">
+              <option value="classmates"><option value="a general reader"><option value="a hiring manager">
+            </datalist>
+            <datalist id="tones">
+              <option value="confident"><option value="warm"><option value="formal"><option value="conversational">
+              <option value="persuasive"><option value="reflective">
+            </datalist>
+            <p id="ai-banner" class="ai-banner" hidden></p>
             <div class="text">
               <div id="backdrop" class="backdrop" aria-hidden="true"></div>
               <textarea id="body" placeholder="Write or paste your draft here. Leave a blank line between paragraphs." aria-label="Essay text"></textarea>
@@ -105,13 +126,23 @@
             <div class="tabs" role="tablist" aria-label="Margin">
               <button id="tab-edits" class="tab active" role="tab" data-tab="edits" aria-selected="true" aria-controls="panel-edits">Notes <span id="edit-count" class="count"></span></button>
               <button id="tab-big" class="tab" role="tab" data-tab="big" aria-selected="false" aria-controls="panel-big" tabindex="-1">Letter</button>
+              <button id="tab-report" class="tab" role="tab" data-tab="report" aria-selected="false" aria-controls="panel-report" tabindex="-1">Report</button>
               <button id="tab-history" class="tab" role="tab" data-tab="history" aria-selected="false" aria-controls="panel-history" tabindex="-1">History <span id="version-count" class="count"></span></button>
             </div>
             <div id="progress" class="progress" role="status" aria-live="polite" hidden></div>
 
             <div id="panel-edits" class="panel" data-panel="edits" role="tabpanel" aria-labelledby="tab-edits">
               <div id="voice-notes"></div>
+              <div id="bulk" class="bulk" hidden>
+                <button id="accept-grammar" class="link"></button>
+                <p class="keys">Alt + <kbd>↓</kbd> <kbd>↑</kbd> move between notes, Alt + <kbd>Enter</kbd> accepts, Alt + <kbd>Backspace</kbd> skips</p>
+              </div>
               <div id="suggestion-list" class="notes"></div>
+            </div>
+
+            <div id="panel-report" class="panel" data-panel="report" role="tabpanel" aria-labelledby="tab-report" hidden>
+              <p class="aside">A read-through of the essay as it stands. These are things to look at, not rules. Click any of them to find it.</p>
+              <div id="report" class="report"></div>
             </div>
 
             <div id="panel-big" class="panel" data-panel="big" role="tabpanel" aria-labelledby="tab-big" hidden>
@@ -124,6 +155,7 @@
               <p class="aside">Every version is dated. If anyone asks whether you wrote this, the history shows how it came together.</p>
               <div class="row">
                 <button id="save" class="btn quiet" disabled>Save a version</button>
+                <button id="replay" class="btn quiet" disabled><svg class="icon"><use href="#i-play"/></svg><span>Replay the writing</span></button>
               </div>
               <ol id="version-list" class="version-list"></ol>
               <div class="links">
@@ -141,17 +173,58 @@
         <article class="sheet single">
           <section class="page">
             <h2 class="sheet-title">Your voice</h2>
-            <p class="lede">Paste three to five things you wrote yourself, without AI help: an old essay, a blog post, a long message. Quill learns how you write and keeps its notes in your style.</p>
-            <div id="samples" class="samples"></div>
-            <div class="row">
-              <button id="add-sample" class="btn quiet">Add another</button>
-              <button id="save-profile" class="btn ink">Save my voice</button>
-              <span id="profile-status" class="status-text"></span>
-            </div>
+            <p class="lede">Quill keeps its edits, and any draft it writes for you, in the voice you choose here.</p>
+            <fieldset class="voice-modes">
+              <legend class="sr-only">Which voice Quill uses</legend>
+              <label class="choice"><input type="radio" name="voice-mode" value="auto">
+                <span><b>Match each essay</b><small>Quill reads the essay in front of it and keeps that style.</small></span></label>
+              <label class="choice"><input type="radio" name="voice-mode" value="samples">
+                <span><b>My writing samples</b><small>Learned from things you wrote yourself.</small></span></label>
+              <label class="choice"><input type="radio" name="voice-mode" value="preset">
+                <span><b>A ready-made voice</b><small>Five styles to start from.</small></span></label>
+              <label class="choice"><input type="radio" name="voice-mode" value="custom">
+                <span><b>Build my own</b><small>A few settings, your call on each.</small></span></label>
+            </fieldset>
+            <span id="mode-status" class="status-text" role="status"></span>
+
+            <section id="voice-samples" class="sub" data-mode-panel="samples">
+              <h3>Your samples</h3>
+              <p class="aside">Paste three to five things you wrote yourself, without AI help: an old essay, a blog post, a long message. Or bring Word or text files.</p>
+              <div id="samples" class="samples"></div>
+              <div class="row">
+                <button id="add-sample" class="btn quiet">Add another</button>
+                <button id="upload-sample" class="btn quiet"><svg class="icon"><use href="#i-upload"/></svg><span>Add from a file</span></button>
+                <input id="sample-file" type="file" accept=".docx,.txt,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden>
+                <button id="save-profile" class="btn ink">Save my samples</button>
+                <span id="profile-status" class="status-text" role="status"></span>
+              </div>
+            </section>
+
+            <section id="voice-presets" class="sub" data-mode-panel="preset">
+              <h3>Ready-made voices</h3>
+              <div id="preset-list" class="presets" role="radiogroup" aria-label="Ready-made voices"></div>
+            </section>
+
+            <section id="voice-custom" class="sub" data-mode-panel="custom">
+              <h3>Build your own</h3>
+              <div id="custom-options" class="custom-options"></div>
+            </section>
+
             <section class="sub">
-              <h3>What Quill noticed</h3>
+              <h3>What Quill will follow</h3>
               <pre id="voice-summary">Nothing yet.</pre>
             </section>
+
+            <section class="sub" aria-labelledby="ignored-heading">
+              <h3 id="ignored-heading">Never flag</h3>
+              <p class="aside">Words and phrases Quill leaves alone, like a name, slang you mean, or a phrase you use on purpose. Use “Never flag” on a note, or add one here.</p>
+              <form id="ignore-form" class="row ignore-form">
+                <input name="phrase" maxlength="300" placeholder="A word or phrase" aria-label="Word or phrase to never flag" required>
+                <button class="btn quiet">Add</button>
+              </form>
+              <ul id="ignored-list" class="ignored-list"></ul>
+            </section>
+
             <section class="sub" aria-labelledby="account-heading">
               <h3 id="account-heading">Account</h3>
               <p class="aside">Signed in as <strong id="account-name"></strong>. Changing your password signs you out everywhere else.</p>
@@ -189,6 +262,50 @@
       <button class="btn quiet" value="close">Close</button>
       <button class="btn ink" value="restore">Go back to this version</button>
     </form>
+  </dialog>
+
+  <dialog id="compose-dialog" class="paper-dialog">
+    <form id="compose-form">
+      <header class="dialog-head">
+        <h3>Draft from a prompt</h3>
+        <button type="button" class="icon-btn" data-close aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
+      </header>
+      <div class="dialog-body">
+        <label>What should it say?
+          <textarea name="instructions" required minlength="10" maxlength="4000" rows="5" placeholder="The prompt or assignment, and the points you want to make. The more of your own ideas you give it, the more the draft is yours."></textarea>
+        </label>
+        <div class="field-grid">
+          <label>What's it for? <input name="goal" maxlength="300" placeholder="A history class"></label>
+          <label>Who's reading? <input name="audience" maxlength="100" list="audiences" placeholder="A teacher"></label>
+          <label>Tone <input name="tone" maxlength="100" list="tones" placeholder="Confident"></label>
+          <label>Length
+            <select name="length"><option value="short">Short, about 250 words</option><option value="medium" selected>Medium, about 500 words</option><option value="long">Long, about 900 words</option></select>
+          </label>
+        </div>
+        <p class="aside">Writes in <span id="compose-voice">your voice</span>. <button type="button" class="link" id="compose-change-voice">Change the voice</button></p>
+        <p class="ai-note">This draft is marked as written by Quill's AI. Its paragraphs stay tinted on the page, and your writing history says how much is still AI text, until you rewrite them in your own words.</p>
+        <p id="compose-status" class="status-text" role="status"></p>
+      </div>
+      <div class="row dialog-foot">
+        <button type="button" class="btn quiet" data-close>Cancel</button>
+        <button id="compose-go" class="btn ink"><span>Write the draft</span></button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="replay-dialog" class="paper-dialog wide">
+    <header class="dialog-head">
+      <h3 id="replay-title">How this essay was written</h3>
+      <form method="dialog"><button class="icon-btn" value="close" aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button></form>
+    </header>
+    <div class="replay-controls">
+      <button id="replay-prev" class="icon-btn" aria-label="Earlier version"><svg class="icon"><use href="#i-left"/></svg></button>
+      <input id="replay-slider" type="range" min="0" value="0" aria-label="Version">
+      <button id="replay-next" class="icon-btn" aria-label="Later version"><svg class="icon"><use href="#i-right"/></svg></button>
+      <button id="replay-play" class="btn quiet"><svg class="icon"><use href="#i-play"/></svg><span>Play</span></button>
+    </div>
+    <p id="replay-label" class="replay-label" aria-live="polite"></p>
+    <div id="replay-body" class="replay-body"></div>
   </dialog>
 
   <dialog id="delete-dialog" class="paper-dialog confirm">

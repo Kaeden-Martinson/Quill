@@ -74,6 +74,13 @@ Keep Quill bound to `127.0.0.1` (the default in `quill.env`) when using a tunnel
 - **My voice**: users paste 3–5 essays they wrote themselves. `backend/style.py` measures sentence rhythm, contractions, first person, punctuation habits and favorite words, and the model is told to match them.
 - **Review**: each paragraph goes to the model, which returns up to 4 quoted edits with reasons (structured JSON). Suggestions stream in paragraph by paragraph and are highlighted in the draft; clicking highlighted text brings up its suggestion. A rule-based checker flags stock phrases instantly. Users accept or reject each one.
 - **Big-picture feedback**: comments on thesis, structure, evidence and conclusion, plus a top priority and what to keep. Comments only; it never rewrites the essay.
+- **Voices** (`backend/voices.py`): match each essay (the default), learn from your samples (pasted or from .docx/.txt files), pick one of five ready-made voices, or build your own from five settings. Editing and drafting both follow the choice.
+- **Drafting from a prompt**: the general model writes a first draft in the chosen voice, with bracketed placeholders instead of invented facts. It's saved as an AI-written version; paragraphs that are still mostly AI text stay tinted until rewritten (`backend/authorship.py`, `aiParagraphs` in `frontend/text.js`), and the history export says how much of each version is still AI-written.
+- **Goals**: each essay keeps what it's for, who's reading and the tone; all three go to the editor.
+- **Report tab**: sentence rhythm, reading level, repeated words, passive voice and adverbs, computed in the browser (`readThrough` in `frontend/text.js`).
+- **Replay**: steps through every version with the changes marked, and which paragraphs were AI-written.
+- **Write / Mark-up**: Write hides the notes and margin; Mark-up shows them.
+- **Never flag**: words or phrases Quill should leave alone, per person. Notes also have keyboard shortcuts (Alt+↓/↑, Alt+Enter, Alt+Backspace) and "Accept all grammar fixes".
 - **Taking turns**: reviews share the GPU through a fair queue (`QUILL_MAX_CONCURRENT` at a time, default 2). Anyone waiting sees their place in line, and closing the tab leaves the line.
 - **Word files**: "Import .docx" makes a new essay from a Word file (5 MB limit); "Download .docx" exports the current draft.
 - **Phones**: the layout adapts to small screens, with Review buttons pinned at the bottom.

@@ -60,11 +60,40 @@ def init():
         migrate(conn)
 
 
+# Columns added after the first release: (table, column, definition). Existing databases gain
+# them on startup; new ones get them from here too, so SCHEMA stays the original shape.
+ADDED_COLUMNS = [
+    ("feedback", "draft_id", "INTEGER REFERENCES drafts(id)"),
+    # Who wrote each version: 'human' or 'ai'. Keeps the authorship history honest.
+    ("versions", "source", "TEXT NOT NULL DEFAULT 'human'"),
+    # Per-essay goals, and Quill's original draft text when the essay was drafted by AI.
+    ("drafts", "goal", "TEXT NOT NULL DEFAULT ''"),
+    ("drafts", "audience", "TEXT NOT NULL DEFAULT ''"),
+    ("drafts", "tone", "TEXT NOT NULL DEFAULT ''"),
+    ("drafts", "ai_text", "TEXT"),
+    # Which voice to write and edit in: auto (from the draft), samples, preset, or custom.
+    ("profiles", "voice_mode", "TEXT NOT NULL DEFAULT 'auto'"),
+    ("profiles", "preset_id", "TEXT"),
+    ("profiles", "custom", "TEXT"),
+]
+
+EXTRA_TABLES = """
+CREATE TABLE IF NOT EXISTS ignored (
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    phrase TEXT NOT NULL COLLATE NOCASE,
+    created REAL NOT NULL,
+    PRIMARY KEY (user_id, phrase)
+);
+"""
+
+
 def migrate(conn):
     """Brings databases created by older versions up to the current schema."""
-    feedback_columns = {row["name"] for row in conn.execute("PRAGMA table_info(feedback)")}
-    if "draft_id" not in feedback_columns:
-        conn.execute("ALTER TABLE feedback ADD COLUMN draft_id INTEGER REFERENCES drafts(id)")
+    conn.executescript(EXTRA_TABLES)
+    for table, column, definition in ADDED_COLUMNS:
+        existing = {row["name"] for row in conn.execute(f"PRAGMA table_info({table})")}
+        if column not in existing:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
 
 @contextmanager

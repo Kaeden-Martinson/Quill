@@ -261,6 +261,59 @@ async def overview_stream(text, voice, goal=""):
         await queue.leave(ticket, started)
 
 
+DRAFT_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "title": {"type": "string"},
+        "paragraphs": {"type": "array", "items": {"type": "string"}},
+    },
+    "required": ["title", "paragraphs"],
+}
+
+DRAFT_SYSTEM = """You write a first draft of an essay from the writer's instructions, in the voice described.
+Follow the voice closely: sentence length, contractions, first person, formality.
+Stay on the writer's topic and points. Never invent statistics, quotes, studies, or personal
+events that the writer didn't mention; where the essay needs a specific detail only the writer
+knows, write a short bracketed placeholder like [your example here] instead.
+Write plain paragraphs, no headings or lists. "title" is a short working title."""
+
+DRAFT_LENGTHS = {"short": "about 250 words (3 paragraphs)", "medium": "about 500 words (5 paragraphs)",
+                 "long": "about 900 words (7 paragraphs)"}
+
+
+def draft_prompt(instructions, voice, sample=None, goal="", audience="", tone="", length="medium"):
+    parts = [f"Writer's voice:\n{voice}"]
+    if sample:
+        parts.append(f"A sample of how this writer sounds (match the style, not the content):\n\"\"\"\n{sample}\n\"\"\"")
+    for label, value in (("Essay goal", goal), ("Audience", audience), ("Tone", tone)):
+        if value:
+            parts.append(f"{label}: {value}")
+    parts.append(f"Length: {DRAFT_LENGTHS.get(length, DRAFT_LENGTHS['medium'])}")
+    parts.append(f"Instructions:\n\"\"\"\n{instructions}\n\"\"\"")
+    return "\n\n".join(parts)
+
+
+async def draft_stream(prompt):
+    """Yields events: queue, start, draft (title and body), done. Uses the general model."""
+    ticket, started = queue.join(), False
+    try:
+        async for position in take_turn(ticket):
+            yield {"type": "queue", "position": position}
+        started = True
+        yield {"type": "start", "total": 1}
+        async with httpx.AsyncClient() as client:
+            result = await chat(client, DRAFT_SYSTEM, prompt, DRAFT_SCHEMA, model=OVERVIEW_MODEL)
+        paragraphs = [" ".join(p.split()) for p in (result or {}).get("paragraphs", []) if p.strip()]
+        if not paragraphs:
+            yield {"type": "error", "message": "The model didn't return a draft. Try again or reword the prompt."}
+            return
+        title = " ".join(((result or {}).get("title") or "").split())[:200] or "Untitled draft"
+        yield {"type": "draft", "title": title, "body": "\n\n".join(paragraphs)}
+        yield {"type": "done"}
+    finally:
+        await queue.leave(ticket, started)
+
+
 async def model_available():
     try:
         async with httpx.AsyncClient() as client:
