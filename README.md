@@ -16,7 +16,9 @@ Settings (in `quill.env`): `QUILL_PASSCODE`, `QUILL_MODEL`, `QUILL_HOST`, `QUILL
 
 ## Design
 
-The interface ("Studio") uses cool neutrals, one ink-blue accent, and hairline borders. All colors are tokens at the top of `frontend/style.css`, defined once for light and once for dark. The theme follows the device setting until someone uses the toggle in the top bar; that choice is remembered per browser. Icons are inline SVG symbols in `frontend/index.html` (no emoji, no icon font). Fonts are bundled in `frontend/fonts/` (Inter for the interface, Source Serif 4 for essay text, both SIL Open Font License), so nothing loads from outside the server.
+"Editor's markup": the essay is a sheet of paper on a desk, and Quill marks it up like a human editor. Suggested corrections are drawn on the text in red pencil (only the changed words are struck through, with the fix written above; see `diffWords` in `frontend/text.js`), and the reasons sit in the margin level with their line. Big-picture feedback is a short letter in the margin.
+
+All colors are tokens at the top of `frontend/style.css`, defined for paper (light) and night desk (dark). The theme follows the device setting until someone uses the toggle in the top bar. Icons are a few inline SVG symbols (no emoji, no icon font). Fonts are bundled in `frontend/fonts/` (Newsreader for writing, IBM Plex Sans for the interface, both SIL Open Font License), so nothing loads from outside the server.
 
 ## Accounts and security
 

@@ -49,7 +49,6 @@ function download(blob, filename) {
 const fmtDate = (ts) => new Date(ts * 1000).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
 const fmtTime = (ts) => new Date(ts * 1000).toLocaleTimeString([], { timeStyle: "short" });
 const ordinal = (n) => n + (["th", "st", "nd", "rd"][(n % 100 - 20) % 10] || ["th", "st", "nd", "rd"][n % 100] || "th");
-const overlayDrawer = () => matchMedia("(max-width: 1279px)").matches;
 
 // ---------- network ----------
 
@@ -196,7 +195,7 @@ async function refreshStatus() {
     const s = await api("/api/status");
     status.className = `status ${s.model_ready ? "ready" : "down"}`;
     status.title = s.model_ready ? `Model ${s.model} is ready` : `Model ${s.model} is offline`;
-    status.querySelector(".status-text").textContent = s.model_ready ? s.model : "Model offline";
+    status.querySelector(".status-text").textContent = s.model_ready ? "Ready" : "Offline";
   } catch {
     status.className = "status down";
     status.querySelector(".status-text").textContent = "Server unreachable";
@@ -209,31 +208,26 @@ function setView(view) {
   $("#write-view").hidden = view !== "write";
   $("#voice-view").hidden = view !== "voice";
   $("#app-view").classList.toggle("voice-mode", view === "voice");
-  $$("[data-view]").forEach((b) => b.classList.toggle("active", b.dataset.view === view));
-  $(".crumb-root").textContent = view === "voice" ? "Settings" : "Essays";
+  // The bar offers whichever view you're not on.
+  $$(".bar [data-view]").forEach((b) => { b.hidden = b.dataset.view === view; });
+  $$(".drawer [data-view]").forEach((b) => b.classList.toggle("active", b.dataset.view === view));
   updateCrumb();
   closeDrawer();
+  if (view === "write") requestAnimationFrame(placeNotes);
 }
 
-$$("[data-view]").forEach((b) => b.addEventListener("click", () => {
-  // On narrow screens the Essays button opens the essay list instead.
-  if (b.dataset.view === "write" && b.classList.contains("rail-btn") && overlayDrawer() && !$("#write-view").hidden) {
-    toggleDrawer();
-    return;
-  }
-  setView(b.dataset.view);
-}));
+$$("[data-view]").forEach((b) => b.addEventListener("click", () => setView(b.dataset.view)));
 
 let drawerOpener = null;
 
 function toggleDrawer(open = !$("#app-view").classList.contains("drawer-open")) {
-  const overlay = open && overlayDrawer();
+  const overlay = open;
   const wasOpen = $("#app-view").classList.contains("drawer-open");
   $("#app-view").classList.toggle("drawer-open", overlay);
   $("#scrim").hidden = !overlay;
   // While the drawer covers the page, everything behind it is inert: keyboard and screen-reader
   // focus stay inside the drawer instead of wandering into content you can't see.
-  for (const behind of [".main", ".rail"]) $(behind).inert = overlay;
+  $(".main").inert = overlay;
   if (overlay && !wasOpen) {
     drawerOpener = document.activeElement;
     $("#close-drawer").focus();
@@ -243,10 +237,9 @@ function toggleDrawer(open = !$("#app-view").classList.contains("drawer-open")) 
   }
 }
 const closeDrawer = () => toggleDrawer(false);
-$("#open-drawer").addEventListener("click", () => toggleDrawer(true));
+$("#open-drawer").addEventListener("click", () => toggleDrawer());
 $("#close-drawer").addEventListener("click", closeDrawer);
 $("#scrim").addEventListener("click", closeDrawer);
-window.addEventListener("resize", () => { if (!overlayDrawer()) closeDrawer(); });
 
 function setTab(name) {
   $$(".tab").forEach((t) => {
@@ -255,7 +248,8 @@ function setTab(name) {
     t.setAttribute("aria-selected", on);
     t.tabIndex = on ? 0 : -1; // one tab stop for the whole tab list; arrows move within it
   });
-  $$(".tab-panel").forEach((p) => { p.hidden = p.dataset.panel !== name; });
+  $$(".panel").forEach((p) => { p.hidden = p.dataset.panel !== name; });
+  if (name === "edits") requestAnimationFrame(placeNotes); // positions need the panel visible
 }
 $$(".tab").forEach((t) => t.addEventListener("click", () => setTab(t.dataset.tab)));
 
@@ -473,16 +467,16 @@ $("#export-docx").addEventListener("click", async () => {
   download(await res.blob(), `${$("#title").value || "essay"}.docx`);
 });
 
-// ---------- editor: auto-grow and highlights ----------
+// ---------- editor: auto-grow and markup ----------
 
 function onBodyChange() {
   const body = $("#body");
   const words = body.value.trim().split(/\s+/).filter(Boolean).length;
   $("#word-count").textContent = `${words.toLocaleString()} word${words === 1 ? "" : "s"}`;
-  // Grow with the content so the textarea never scrolls and stays aligned with the backdrop.
+  // Grow with the content so the textarea never scrolls and stays aligned with the mirror.
   body.style.height = "auto";
   body.style.height = `${body.scrollHeight}px`;
-  renderHighlights();
+  renderMarkup();
 }
 $("#body").addEventListener("input", onBodyChange);
 window.addEventListener("resize", onBodyChange);
@@ -515,62 +509,104 @@ function replaceRange(start, end, text) {
   }
 }
 
-function renderHighlights() {
+// One suggestion drawn as red-pencil markup. Only the words that change are struck through,
+// with the replacement written above them; the mirror's text must equal the original exactly.
+function markupFor(s, original) {
+  if (s.revised == null) return el("span", { class: "mk flag", "data-id": s.id }, original); // stock phrase
+  const span = el("span", { class: "mk", "data-id": s.id });
+  for (const seg of diffWords(original, s.revised)) {
+    if (seg.type === "keep") { span.append(seg.del); continue; }
+    const lead = seg.del.match(/^\s*/)[0];
+    const core = seg.del.slice(lead.length).replace(/\s+$/, "");
+    const tail = seg.del.slice(lead.length + core.length);
+    span.append(lead);
+    if (core) span.append(el("span", { class: "del" }, core, seg.ins.trim() ? el("b", { class: "fix" }, seg.ins.trim()) : null));
+    else span.append(el("span", { class: "ins" }, el("b", { class: "caret-fix" }, seg.ins.trim())));
+    span.append(tail);
+  }
+  return span;
+}
+
+function renderMarkup() {
   const text = $("#body").value;
   const nodes = [];
   let at = 0;
   for (const { start, end, s } of suggestionRanges()) {
-    nodes.push(text.slice(at, start));
-    nodes.push(el("mark", { "data-id": s.id, class: s.revised == null ? "generic" : "" }, text.slice(start, end)));
+    nodes.push(text.slice(at, start), markupFor(s, text.slice(start, end)));
     at = end;
   }
   // Trailing newline keeps the last empty line the same height as in the textarea.
   nodes.push(text.slice(at) + "\n");
   $("#backdrop").replaceChildren(...nodes);
+  placeNotes();
+}
+
+const marginBeside = () => matchMedia("(min-width: 1001px)").matches;
+
+// Margin notes sit level with the line they're about, pushed down only to avoid overlapping.
+// On narrow screens the margin is below the page, so notes simply stack in reading order.
+function placeNotes() {
+  const list = $("#suggestion-list");
+  const notes = state.suggestions.filter((s) => s.note.isConnected);
+  const beside = marginBeside() && !$("#panel-edits").hidden && notes.length > 0;
+  list.classList.toggle("placed", beside);
+  if (!beside) {
+    notes.forEach((s) => { s.note.style.top = ""; });
+    list.style.minHeight = "";
+    return;
+  }
+  const origin = list.getBoundingClientRect().top;
+  const wanted = notes.map((s) => {
+    const mark = $(`#backdrop .mk[data-id="${s.id}"]`);
+    return { s, top: mark ? mark.getBoundingClientRect().top - origin - 2 : Infinity };
+  }).sort((a, b) => a.top - b.top);
+  let floor = 0;
+  for (const { s, top } of wanted) {
+    const y = Math.max(Number.isFinite(top) ? top : floor, floor);
+    s.note.style.top = `${y}px`;
+    s.note.classList.toggle("stale", !Number.isFinite(top));
+    floor = y + s.note.offsetHeight + 14;
+  }
+  list.style.minHeight = `${floor}px`;
 }
 
 function setActive(id, on) {
-  $(`#backdrop mark[data-id="${id}"]`)?.classList.toggle("active", on);
+  $(`#backdrop .mk[data-id="${id}"]`)?.classList.toggle("active", on);
+  state.suggestions.find((s) => s.id === id)?.note.classList.toggle("active", on);
 }
 
-// Clicking highlighted text in the draft brings up its suggestion.
+// Clicking marked-up text in the draft points at its note.
 $("#body").addEventListener("click", () => {
   const caret = $("#body").selectionStart;
   const hit = suggestionRanges().find((r) => caret >= r.start && caret <= r.end);
   if (!hit) return;
   setTab("edits");
-  const card = hit.s.card;
-  card.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  card.classList.add("flash");
+  hit.s.note.scrollIntoView({ behavior: "smooth", block: "nearest" });
   setActive(hit.s.id, true);
-  setTimeout(() => { card.classList.remove("flash"); setActive(hit.s.id, false); }, 1600);
+  setTimeout(() => setActive(hit.s.id, false), 1600);
 });
 
 // ---------- review (streamed) ----------
 
-function emptyHint(html) {
-  const p = el("p", { class: "hint" });
-  p.innerHTML = html; // static strings only
-  return p;
+function marginMessage(text) {
+  return el("p", { class: "done-note" }, text);
 }
 
 function clearFeedback() {
   state.suggestions = [];
-  $("#suggestion-list").replaceChildren(
-    emptyHint("Run <strong>Review draft</strong> for edits on each paragraph. Accept the ones you agree with; nothing changes until you do.")
-  );
+  $("#suggestion-list").replaceChildren(marginMessage("Press “Mark it up” and Quill reads each paragraph. Its notes appear here, beside the line they're about."));
   $("#voice-notes").replaceChildren();
   $("#overview-panel").replaceChildren();
   $("#progress").hidden = true;
   updateCounts();
-  renderHighlights();
+  renderMarkup();
 }
 
 function setProgress(text, fraction = null) {
   const p = $("#progress");
   p.hidden = false;
   const fill = el("span");
-  const bar = el("div", { class: fraction == null ? "bar indeterminate" : "bar" }, fill);
+  const bar = el("div", { class: fraction == null ? "bar-line indeterminate" : "bar-line" }, fill);
   if (fraction != null) fill.style.width = `${Math.max(4, Math.round(fraction * 100))}%`;
   p.replaceChildren(el("div", {}, text), bar);
 }
@@ -582,7 +618,7 @@ function setProgressMessage(text) {
 
 function queueText(position) {
   return position === 1
-    ? "You're next. Someone else's essay is being reviewed."
+    ? "You're next. Quill is finishing someone else's essay."
     : `You're ${ordinal(position)} in line. Others are using Quill right now.`;
 }
 
@@ -592,30 +628,30 @@ function updateCounts() {
   const jump = $("#jump-suggestions");
   jump.hidden = n === 0;
   jump.querySelector("span").textContent = `${n}`;
-  jump.setAttribute("aria-label", `${n} suggestion${n === 1 ? "" : "s"}`);
+  jump.setAttribute("aria-label", `${n} note${n === 1 ? "" : "s"}`);
 }
 
 function addSuggestions(items) {
   const list = $("#suggestion-list");
-  list.querySelector(".hint")?.remove();
+  list.querySelector(".done-note")?.remove();
   for (const item of items) {
     const s = { ...item, id: nextId++ };
-    s.card = suggestionCard(s);
+    s.note = noteFor(s);
     state.suggestions.push(s);
-    list.append(s.card);
+    list.append(s.note);
   }
   updateCounts();
-  renderHighlights();
+  renderMarkup();
 }
 
 function removeSuggestion(s) {
   state.suggestions = state.suggestions.filter((x) => x !== s);
-  s.card.remove();
+  s.note.remove();
   if (!state.suggestions.length && !state.run) {
-    $("#suggestion-list").replaceChildren(emptyHint("All suggestions handled. Run <strong>Review draft</strong> again after you revise."));
+    $("#suggestion-list").replaceChildren(marginMessage("That's everything. Mark it up again after you revise."));
   }
   updateCounts();
-  renderHighlights();
+  renderMarkup();
 }
 
 function stopRun() {
@@ -631,9 +667,10 @@ function setRunning(active) {
     const isActive = active && (sel === active || (active !== "#overview" && sel !== "#overview"));
     b.disabled = !state.draftId || (!!active && !isActive);
     b.classList.toggle("running", isActive);
-    if (!b.dataset.icon) b.dataset.icon = b.querySelector("use").getAttribute("href").slice(1);
+    const svg = b.querySelector("svg");
+    if (svg && !b.dataset.icon) b.dataset.icon = svg.querySelector("use").getAttribute("href").slice(1);
     if (!b.dataset.label) b.dataset.label = b.querySelector("span").textContent;
-    b.querySelector("svg").replaceWith(icon(isActive ? "i-stop" : b.dataset.icon));
+    if (svg) svg.replaceWith(icon(isActive ? "i-stop" : b.dataset.icon));
     b.querySelector("span").textContent = isActive ? "Stop" : b.dataset.label;
   }
 }
@@ -665,29 +702,30 @@ async function runStream(trigger, path, onEvent) {
 function startReview(trigger) {
   if (!state.run) {
     setTab("edits");
-    state.suggestions.forEach((s) => s.card.remove());
+    state.suggestions.forEach((s) => s.note.remove());
     state.suggestions = [];
     $("#suggestion-list").replaceChildren();
     $("#voice-notes").replaceChildren();
     updateCounts();
-    renderHighlights();
+    renderMarkup();
   }
   let modelCount = 0;
   runStream(trigger, "/api/review", (event) => {
     if (event.type === "instant") {
-      $("#voice-notes").replaceChildren(...event.voice_notes.map((n) => el("div", { class: "voice-note" }, icon("i-alert"), el("span", {}, n))));
+      $("#voice-notes").replaceChildren(...event.voice_notes.map((n) => el("p", { class: "drift" }, n)));
       addSuggestions(event.suggestions);
     } else if (event.type === "start") {
-      setProgress(`Reviewing paragraph 1 of ${event.total}`, 0);
+      setProgress(`Reading paragraph 1 of ${event.total}…`, 0);
     } else if (event.type === "paragraph") {
       modelCount += event.suggestions.length;
       addSuggestions(event.suggestions.map((s) => ({ ...s, paragraph: event.index })));
       const done = event.index + 1;
-      if (done < event.total) setProgress(`Reviewing paragraph ${done + 1} of ${event.total}`, done / event.total);
+      if (done < event.total) setProgress(`Reading paragraph ${done + 1} of ${event.total}…`, done / event.total);
     } else if (event.type === "done" && state.suggestions.length === 0) {
-      $("#suggestion-list").replaceChildren(emptyHint("No suggestions. This draft reads well as it is."));
+      $("#suggestion-list").replaceChildren(marginMessage("Nothing to mark. This reads well as it is."));
     } else if (event.type === "done" && modelCount === 0) {
-      $("#suggestion-list").prepend(emptyHint("No line edits needed beyond the notes above."));
+      $("#suggestion-list").prepend(marginMessage("No corrections beyond the phrases flagged here."));
+      placeNotes();
     }
   });
 }
@@ -699,66 +737,54 @@ $("#overview").addEventListener("click", () => {
   if (!state.run) $("#overview-panel").replaceChildren();
   let notice = null;
   runStream("#overview", "/api/overview", (event) => {
-    if (event.type === "start") setProgress("Reading the whole essay");
+    if (event.type === "start") setProgress("Reading the whole essay…");
     else if (event.type === "notice") notice = event.message;
     else if (event.type === "overview") {
       renderOverview(event.overview);
-      if (notice) $("#overview-panel").prepend(el("div", { class: "voice-note" }, icon("i-alert"), el("span", {}, notice)));
+      if (notice) $("#overview-panel").prepend(el("p", { class: "notice" }, notice));
     }
   });
 });
 
+// The big-picture feedback, laid out as a short letter in the margin.
 function renderOverview(o) {
   if (!o) {
     $("#overview-panel").replaceChildren(el("p", { class: "error" }, "Couldn't read the feedback. Try again."));
     return;
   }
-  const ratingClass = (r) => r.replace(/\s+/g, "-");
+  const section = (title, rating, text) => el("div", { class: "letter-block" },
+    el("h4", {}, title, rating ? el("span", { class: `r ${rating.replace(/\s+/g, "-")}` }, rating) : null),
+    el("p", {}, text));
   $("#overview-panel").replaceChildren(
-    el("div", { class: "ov-priority" }, el("span", { class: "ov-label" }, "Top priority"), el("p", {}, o.top_priority)),
-    el("div", { class: "ov-list" },
-      ...o.comments.map((c) =>
-        el("div", { class: "ov-item" },
-          el("div", { class: "ov-head" }, el("strong", {}, c.aspect), el("span", { class: `rating ${ratingClass(c.rating)}` }, c.rating)),
-          el("p", {}, c.comment))),
-      el("div", { class: "ov-item" },
-        el("div", { class: "ov-head" }, el("strong", {}, "Keep this"), el("span", { class: "rating strong" }, "working")),
-        el("p", {}, o.strongest_part)),
-    ),
+    el("div", { class: "letter-block" }, el("h4", {}, "Work on this first"), el("p", { class: "first" }, o.top_priority)),
+    ...o.comments.map((c) => section(c.aspect, c.rating, c.comment)),
+    section("Keep this", null, o.strongest_part),
   );
 }
 
-function suggestionCard(s) {
-  const card = el("article", {
-    class: "sg",
+// A margin note: the editor's reason in red pencil, then the choice.
+function noteFor(s) {
+  const note = el("div", {
+    class: "note",
     onmouseenter: () => setActive(s.id, true),
     onmouseleave: () => setActive(s.id, false),
   });
   const done = (accepted) => {
-    const { card: _card, id: _id, ...payload } = s;
+    const { note: _note, id: _id, ...payload } = s;
     api("/api/feedback", { method: "POST", body: { ...payload, draft_id: state.draftId, revised: s.revised ?? "", accepted } }).catch(() => {});
     removeSuggestion(s);
   };
-  const button = (label, iconName, onclick, cls = "") =>
-    el("button", { class: `btn sm ${cls}`, onclick }, icon(iconName), label);
-  const actions = s.revised == null
-    ? [button("Show me", "i-locate", () => highlight(s)),
-       button("Dismiss", "i-x", () => removeSuggestion(s), "ghost")]
-    : [button("Accept", "i-check", () => { if (applyEdit(s)) done(true); }, "primary"),
-       button("Reject", "i-x", () => done(false)),
-       button("Find", "i-locate", () => highlight(s), "ghost")];
-  const category = (s.category || "").toLowerCase();
-  const label = category.charAt(0).toUpperCase() + category.slice(1);
-  const parts = [
-    el("span", { class: "cat" }, icon(`c-${category.replace(/\s+/g, "-")}`), label),
-    // A flagged phrase isn't a deletion, so it's quoted rather than struck through.
-    el("span", { class: s.revised == null ? "quote" : "old" }, s.original),
-    s.revised != null ? el("span", { class: "new" }, s.revised) : null,
-    el("p", { class: "why" }, s.reason),
-    el("div", { class: "row" }, ...actions),
-  ];
-  card.append(...parts.filter(Boolean));
-  return card;
+  const act = (label, onclick, cls = "") => el("button", { class: cls, onclick }, label);
+  note.append(el("span", {}, s.reason));
+  if (s.revised == null) {
+    note.append(el("span", { class: "acts" }, act("Show me", () => highlight(s)), act("Got it", () => removeSuggestion(s))));
+  } else {
+    note.append(el("span", { class: "acts" },
+      act("Accept", () => { if (applyEdit(s)) done(true); }, "yes"),
+      act("Skip", () => done(false)),
+      act("Show me", () => highlight(s))));
+  }
+  return note;
 }
 
 function highlight(s) {
@@ -767,15 +793,15 @@ function highlight(s) {
   if (at === -1) return false;
   body.focus({ preventScroll: true });
   body.setSelectionRange(at, at + s.original.length);
-  // The textarea doesn't scroll itself, so bring the selected line into view.
-  $(`#backdrop mark[data-id="${s.id}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+  // The textarea doesn't scroll itself, so bring the marked line into view.
+  $(`#backdrop .mk[data-id="${s.id}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" });
   return true;
 }
 
 function applyEdit(s) {
   const at = locate(s, $("#body").value);
   if (at === -1) {
-    alert("That text has changed since the review, or now appears more than once, so this suggestion can't be applied automatically. Use Find, or edit it by hand.");
+    alert("That text has changed since Quill read it, or now appears more than once, so this can't be applied automatically. Use Show me, or edit it by hand.");
     return false;
   }
   replaceRange(at, at + s.original.length, s.revised);
@@ -795,7 +821,7 @@ async function loadProfile() {
   const p = await api("/api/profile");
   $("#samples").replaceChildren();
   (p.samples.length ? p.samples : ["", "", ""]).forEach(addSample);
-  $("#voice-summary").textContent = p.samples.length ? p.voice : "Nothing yet. Add samples above.";
+  $("#voice-summary").textContent = p.samples.length ? p.voice : "Nothing yet. Add a few pieces of your writing above.";
 }
 
 $("#save-profile").addEventListener("click", async () => {

@@ -42,7 +42,55 @@
     return all.length === 1 ? all[0] : -1;
   }
 
+  // Word-level diff of a suggestion, for drawing it as an editor's markup: only the words that
+  // change get struck through and rewritten, not the whole quoted sentence. Spaces are their own
+  // tokens so the "keep" and "del" segments concatenate back to `original` exactly.
+  // Returns [{type: "keep"|"change", del: string, ins: string}].
+  function diffWords(original, revised) {
+    const a = original.match(/\s+|[^\s]+/g) || [];
+    const b = revised.match(/\s+|[^\s]+/g) || [];
+    // Longest common subsequence table, built from the end.
+    const lcs = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+    for (let i = a.length - 1; i >= 0; i--) {
+      for (let j = b.length - 1; j >= 0; j--) {
+        lcs[i][j] = a[i] === b[j] ? lcs[i + 1][j + 1] + 1 : Math.max(lcs[i + 1][j], lcs[i][j + 1]);
+      }
+    }
+    const out = [];
+    const push = (type, del, ins) => {
+      const last = out[out.length - 1];
+      if (last && last.type === type) { last.del += del; last.ins += ins; } else out.push({ type, del, ins });
+    };
+    let i = 0, j = 0;
+    while (i < a.length || j < b.length) {
+      if (i < a.length && j < b.length && a[i] === b[j]) { push("keep", a[i], ""); i++; j++; }
+      else if (j < b.length && (i === a.length || lcs[i][j + 1] >= lcs[i + 1][j])) { push("change", "", b[j]); j++; }
+      else { push("change", a[i], ""); i++; }
+    }
+    // A change that only swaps spaces is noise in markup; fold whitespace-only changes into "keep".
+    const segs = out.map((seg) => (seg.type === "change" && !seg.del.trim() && !seg.ins.trim()
+      ? { type: "keep", del: seg.del, ins: "" } : seg));
+    // Two changes separated by at most one kept word read better as one stroke, the way an editor
+    // would mark "me and my brother" -> "my brother and I" rather than as two crossed-out bits.
+    const merged = [];
+    for (const seg of segs) {
+      const prev = merged[merged.length - 1], before = merged[merged.length - 2];
+      if (seg.type === "change" && prev && prev.type === "keep" && before && before.type === "change"
+          && prev.del.trim().split(/\s+/).filter(Boolean).length <= 1) {
+        before.del += prev.del + seg.del;
+        before.ins += prev.del + seg.ins;
+        merged.pop();
+      } else if (seg.type === "change" && prev && prev.type === "change") {
+        prev.del += seg.del; prev.ins += seg.ins;
+      } else {
+        merged.push({ ...seg });
+      }
+    }
+    return merged;
+  }
+
   exports.paragraphSpans = paragraphSpans;
   exports.occurrences = occurrences;
   exports.locate = locate;
+  exports.diffWords = diffWords;
 })(typeof module !== "undefined" ? module.exports : window);
