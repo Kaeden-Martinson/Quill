@@ -25,6 +25,13 @@
       <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
       <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V4M7 9l5-5 5 5M5 15v4h14v-4"/></symbol>
       <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+      <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M12 11v6M9.5 14.5L12 17l2.5-2.5"/></symbol>
+      <symbol id="i-lines" viewBox="0 0 24 24"><path d="M4 7h11M4 12h8M4 17h6"/><path d="M15 19l5-5-2-2-5 5v2z"/></symbol>
+      <symbol id="i-voice" viewBox="0 0 24 24"><path d="M6 8h4v4c0 2.5-1.3 4.3-4 5.5M14 8h4v4c0 2.5-1.3 4.3-4 5.5"/></symbol>
+      <symbol id="i-out" viewBox="0 0 24 24"><path d="M10 5H5v14h5M14 8l4 4-4 4M18 12H9"/></symbol>
       <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"/></symbol>
     </defs>
   </svg>
@@ -47,20 +54,39 @@
 
   <!-- ===================== App ===================== -->
   <div id="app-view" class="app" hidden>
-    <header class="bar">
-      <span class="wordmark">Quill</span>
-      <button id="open-drawer" class="bar-link" aria-label="Your essays" aria-haspopup="true">Essays<svg class="icon"><use href="#i-down"/></svg></button>
-      <span class="bar-title"><span id="crumb-title">No essay open</span></span>
-      <span id="save-status" class="bar-quiet"></span>
+    <header class="bar" id="bar">
+      <button id="home" class="wordmark" aria-label="Quill: back to your essay">Quill</button>
+
+      <nav class="views hide-phone" aria-label="Pages">
+        <button class="view-tab" data-view="write" aria-current="page">Essay</button>
+        <button class="view-tab" data-view="voice">Voice</button>
+        <span class="view-ind" aria-hidden="true"></span>
+      </nav>
+
+      <button id="open-drawer" class="switcher" aria-haspopup="dialog" aria-expanded="false" aria-controls="drawer" title="Switch essays (Ctrl+K)">
+        <svg class="icon"><use href="#i-doc"/></svg>
+        <span id="crumb-title" class="switcher-title">No essay open</span>
+        <svg class="icon chev"><use href="#i-down"/></svg>
+        <kbd class="hide-phone">Ctrl K</kbd>
+      </button>
+      <span id="save-status" class="save-pill" aria-live="polite"></span>
+
       <span class="bar-end">
         <span id="model-status" class="status"><span class="dot"></span><span class="status-text">Checking</span></span>
-        <button class="bar-link hide-phone" data-view="voice">Voice &amp; account</button>
-        <button class="bar-link hide-phone" data-view="write" hidden>Back to essay</button>
-        <button id="theme-toggle" class="icon-btn" aria-label="Switch theme"><svg class="icon"><use href="#i-moon"/></svg></button>
-        <button id="logout" class="bar-link hide-phone">Sign out</button>
         <div class="mode hide-phone" role="group" aria-label="How the page looks">
           <button data-mode="write" aria-pressed="false" title="Just the essay: no markup or margin">Write</button>
           <button data-mode="markup" aria-pressed="true" title="The essay with Quill's notes beside it">Mark-up</button>
+          <span class="mode-thumb" aria-hidden="true"></span>
+        </div>
+        <button id="theme-toggle" class="icon-btn" aria-label="Switch theme"><svg class="icon"><use href="#i-moon"/></svg></button>
+        <div class="account">
+          <button id="account-btn" class="avatar" aria-haspopup="menu" aria-expanded="false" aria-controls="account-menu" aria-label="Account"><span id="avatar-initial"></span></button>
+          <div id="account-menu" class="menu" role="menu" aria-label="Account">
+            <p class="menu-name">Signed in as <strong id="menu-name"></strong></p>
+            <button role="menuitem" data-view="voice"><svg class="icon"><use href="#i-voice"/></svg>Voice and account</button>
+            <button role="menuitem" data-view="write"><svg class="icon"><use href="#i-doc"/></svg>Back to the essay</button>
+            <button role="menuitem" id="logout"><svg class="icon"><use href="#i-out"/></svg>Sign out</button>
+          </div>
         </div>
         <button id="review" class="btn pen hide-phone" disabled><svg class="icon"><use href="#i-pen"/></svg><span>Mark it up</span></button>
       </span>
@@ -69,20 +95,20 @@
     <!-- Essays: a sheet that drops over the desk -->
     <aside id="drawer" class="drawer" aria-label="Your essays">
       <div class="drawer-head">
-        <span class="drawer-title">Your essays</span>
+        <label class="search">
+          <svg class="icon"><use href="#i-search"/></svg>
+          <input id="draft-filter" type="search" placeholder="Find an essay" aria-label="Find an essay" autocomplete="off">
+        </label>
         <button id="close-drawer" class="icon-btn" aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
       </div>
+      <ul id="draft-list" class="draft-list"></ul>
       <div class="drawer-actions">
-        <button id="new-draft" class="btn ink">New essay</button>
-        <button id="import-docx" class="btn quiet">Import a Word file</button>
-        <button class="btn quiet" data-action="compose">Draft from a prompt</button>
+        <button id="new-draft" class="btn ink"><svg class="icon"><use href="#i-plus"/></svg><span>New essay</span></button>
+        <button id="import-docx" class="btn quiet"><svg class="icon"><use href="#i-file"/></svg><span>Import Word</span></button>
+        <button class="btn quiet" data-action="compose"><svg class="icon"><use href="#i-lines"/></svg><span>Draft from a prompt</span></button>
         <input id="import-file" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
       </div>
-      <ul id="draft-list" class="draft-list"></ul>
-      <div class="drawer-nav only-phone">
-        <button class="nav-item" data-view="voice">Voice &amp; account</button>
-        <button id="logout-phone" class="nav-item">Sign out</button>
-      </div>
+      <p class="drawer-keys hide-phone"><kbd>↑</kbd> <kbd>↓</kbd> to choose, <kbd>Enter</kbd> to open, <kbd>Esc</kbd> to close</p>
     </aside>
     <div id="scrim" class="scrim" hidden></div>
 
@@ -126,6 +152,7 @@
 
           <aside id="inspector" class="margin" aria-label="Editor's notes">
             <div class="tabs" role="tablist" aria-label="Margin">
+              <span class="tab-ind" aria-hidden="true"></span>
               <button id="tab-edits" class="tab active" role="tab" data-tab="edits" aria-selected="true" aria-controls="panel-edits">Notes <span id="edit-count" class="count"></span></button>
               <button id="tab-big" class="tab" role="tab" data-tab="big" aria-selected="false" aria-controls="panel-big" tabindex="-1">Letter</button>
               <button id="tab-report" class="tab" role="tab" data-tab="report" aria-selected="false" aria-controls="panel-report" tabindex="-1">Report</button>

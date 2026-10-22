@@ -111,7 +111,9 @@ function currentTheme() {
 function renderThemeButton() {
   const dark = currentTheme() === "dark";
   const btn = $("#theme-toggle");
-  btn.replaceChildren(icon(dark ? "i-sun" : "i-moon"));
+  const svg = icon(dark ? "i-sun" : "i-moon");
+  svg.classList.add("swap");
+  btn.replaceChildren(svg);
   btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
   btn.title = dark ? "Light mode" : "Dark mode";
 }
@@ -143,6 +145,8 @@ function showApp() {
   api("/api/me").then(({ name }) => {
     $("#account-name").textContent = name;
     $("#account-username").value = name;
+    $("#menu-name").textContent = name;
+    $("#avatar-initial").textContent = name.trim().charAt(0).toUpperCase();
   }).catch(() => {});
 }
 
@@ -194,7 +198,6 @@ async function logout() {
   signOut();
 }
 $("#logout").addEventListener("click", logout);
-$("#logout-phone").addEventListener("click", logout);
 
 async function refreshStatus() {
   const status = $("#model-status");
@@ -212,18 +215,48 @@ async function refreshStatus() {
 // ---------- views, drawer, tabs ----------
 
 function setView(view) {
+  const changed = $(`#${view}-view`).hidden;
   $("#write-view").hidden = view !== "write";
   $("#voice-view").hidden = view !== "voice";
   $("#app-view").classList.toggle("voice-mode", view === "voice");
-  // The bar offers whichever view you're not on.
-  $$(".bar [data-view]").forEach((b) => { b.hidden = b.dataset.view === view; });
-  $$(".drawer [data-view]").forEach((b) => b.classList.toggle("active", b.dataset.view === view));
+  $$(".view-tab").forEach((b) => (b.dataset.view === view ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current")));
+  // The account menu offers whichever page you're not on.
+  $$("#account-menu [data-view]").forEach((b) => { b.hidden = b.dataset.view === view; });
   updateCrumb();
   closeDrawer();
-  if (view === "write") requestAnimationFrame(placeNotes);
+  closeMenu();
+  if (changed) window.scrollTo({ top: 0 });
+  if (view === "write") requestAnimationFrame(() => { placeNotes(); moveTabIndicator(); });
 }
 
 $$("[data-view]").forEach((b) => b.addEventListener("click", () => setView(b.dataset.view)));
+$("#home").addEventListener("click", () => setView("write"));
+
+// The bar gets a hairline once the page scrolls under it.
+addEventListener("scroll", () => $("#bar").classList.toggle("scrolled", scrollY > 4), { passive: true });
+
+// ---------- account menu ----------
+
+function toggleMenu(open = !$(".account").classList.contains("open")) {
+  $(".account").classList.toggle("open", open);
+  $("#account-btn").setAttribute("aria-expanded", open);
+  if (open) $("#account-menu [role=menuitem]:not([hidden])").focus();
+}
+const closeMenu = () => {
+  if ($(".account").classList.contains("open")) toggleMenu(false);
+};
+$("#account-btn").addEventListener("click", (e) => { e.stopPropagation(); toggleMenu(); });
+document.addEventListener("click", (e) => { if (!e.target.closest(".account")) closeMenu(); });
+$("#account-menu").addEventListener("keydown", (e) => {
+  const items = $$("#account-menu [role=menuitem]").filter((b) => !b.hidden);
+  const i = items.indexOf(document.activeElement);
+  const next = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: items.length - 1 }[e.key];
+  if (e.key === "Escape") { e.preventDefault(); toggleMenu(false); $("#account-btn").focus(); return; }
+  if (e.key === "Tab") { toggleMenu(false); return; }
+  if (next === undefined) return;
+  e.preventDefault();
+  items[(next + items.length) % items.length].focus();
+});
 
 let drawerOpener = null;
 
@@ -235,9 +268,12 @@ function toggleDrawer(open = !$("#app-view").classList.contains("drawer-open")) 
   // While the drawer covers the page, everything behind it is inert: keyboard and screen-reader
   // focus stay inside the drawer instead of wandering into content you can't see.
   $(".main").inert = overlay;
+  $("#open-drawer").setAttribute("aria-expanded", overlay);
   if (overlay && !wasOpen) {
     drawerOpener = document.activeElement;
-    $("#close-drawer").focus();
+    $("#draft-filter").value = "";
+    renderDraftList();
+    $("#draft-filter").focus();
   } else if (!overlay && wasOpen) {
     if (drawerOpener?.isConnected && !drawerOpener.closest("[inert]")) drawerOpener.focus();
     drawerOpener = null;
@@ -256,10 +292,20 @@ function setTab(name) {
     t.tabIndex = on ? 0 : -1; // one tab stop for the whole tab list; arrows move within it
   });
   $$(".panel").forEach((p) => { p.hidden = p.dataset.panel !== name; });
+  moveTabIndicator();
   if (name === "edits") requestAnimationFrame(placeNotes); // positions need the panel visible
   if (name === "report") renderReport();
 }
 $$(".tab").forEach((t) => t.addEventListener("click", () => setTab(t.dataset.tab)));
+
+function moveTabIndicator() {
+  const tab = $(".tab.active");
+  const ind = $(".tab-ind");
+  if (!tab || !tab.offsetWidth) return;
+  ind.style.width = `${tab.offsetWidth}px`;
+  ind.style.transform = `translateX(${tab.offsetLeft}px)`;
+}
+addEventListener("resize", moveTabIndicator);
 
 // Arrow keys, Home and End move between tabs (the standard keyboard pattern for tab lists).
 $(".tabs").addEventListener("keydown", (e) => {
@@ -275,10 +321,7 @@ $(".tabs").addEventListener("keydown", (e) => {
 });
 
 function updateCrumb() {
-  const essay = !$("#write-view").hidden;
-  $("#crumb-title").textContent = essay
-    ? (state.draftId ? $("#title").value.trim() || "Untitled essay" : "No essay open")
-    : "Voice and account";
+  $("#crumb-title").textContent = state.draftId ? $("#title").value.trim() || "Untitled essay" : "No essay open";
 }
 
 function setDraftControls(enabled) {
@@ -286,7 +329,12 @@ function setDraftControls(enabled) {
 }
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeDrawer();
+  if (e.key === "Escape") { closeDrawer(); closeMenu(); }
+  // Ctrl+K (Cmd+K on a Mac) opens the essay switcher from anywhere.
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k" && !$("#app-view").hidden) {
+    e.preventDefault();
+    toggleDrawer();
+  }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s" && state.draftId) {
     e.preventDefault();
     saveVersion("Manual save");
@@ -312,18 +360,43 @@ $$(".mode button").forEach((b) => b.addEventListener("click", () => setMode(b.da
 
 // ---------- drafts ----------
 
+let drafts = [];
+
 async function loadDrafts() {
-  const drafts = await api("/api/drafts");
+  drafts = await api("/api/drafts");
+  renderDraftList();
+}
+
+// The essay list, narrowed by the search box. Arrow keys move through it from the search box.
+function renderDraftList() {
+  const q = $("#draft-filter").value.trim().toLowerCase();
+  const shown = drafts.filter((d) => d.title.toLowerCase().includes(q));
   $("#draft-list").replaceChildren(
-    ...(drafts.length
-      ? drafts.map((d) =>
+    ...(shown.length
+      ? shown.map((d) =>
           el("li", {},
-            el("button", { class: d.id === state.draftId ? "active" : "", onclick: () => openDraft(d.id) },
+            el("button", { class: d.id === state.draftId ? "active" : "", "aria-current": d.id === state.draftId ? "true" : "false", onclick: () => openDraft(d.id) },
               el("span", { class: "d-title" }, d.title),
               el("span", { class: "d-meta" }, `${d.versions} version${d.versions === 1 ? "" : "s"} · ${fmtDate(d.updated)}`))))
-      : [el("li", { class: "empty-list" }, "No essays yet.")])
+      : [el("li", { class: "empty-list" }, drafts.length ? "No essay by that name." : "No essays yet. Start one below.")])
   );
 }
+
+$("#draft-filter").addEventListener("input", renderDraftList);
+$("#drawer").addEventListener("keydown", (e) => {
+  if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) return;
+  const items = $$("#draft-list button");
+  if (!items.length) return;
+  const i = items.indexOf(document.activeElement);
+  if (e.key === "Enter") {
+    if (document.activeElement === $("#draft-filter")) { e.preventDefault(); items[0].click(); }
+    return;
+  }
+  e.preventDefault();
+  if (e.key === "ArrowDown") items[Math.min(items.length - 1, i + 1)].focus();
+  else if (i <= 0) $("#draft-filter").focus();
+  else items[i - 1].focus();
+});
 
 async function newDraft() {
   await saveVersion("Switched essays");
@@ -378,6 +451,7 @@ async function openDraft(id) {
 
 function renderVersions(versions) {
   $("#version-count").textContent = versions.length || "";
+  moveTabIndicator();
   $("#version-list").replaceChildren(
     ...[...versions].reverse().map((v) =>
       el("li", {},
@@ -905,6 +979,7 @@ const grammarFixes = () => state.suggestions.filter((s) => s.category === "gramm
 function updateCounts() {
   const n = state.suggestions.length;
   $("#edit-count").textContent = n || "";
+  moveTabIndicator();
   const g = grammarFixes().length;
   $("#bulk").hidden = n === 0;
   $("#accept-grammar").hidden = g < 2;
@@ -931,7 +1006,8 @@ function addSuggestions(items) {
 function removeSuggestion(s) {
   const i = state.suggestions.indexOf(s);
   state.suggestions = state.suggestions.filter((x) => x !== s);
-  s.note.remove();
+  s.note.classList.add("leaving");
+  setTimeout(() => s.note.remove(), matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 180);
   // Keyboard users land on the next note instead of losing their place.
   if (state.current === s) setCurrent(state.suggestions[Math.min(i, state.suggestions.length - 1)] || null);
   if (!state.suggestions.length && !state.run) {
