@@ -212,19 +212,16 @@ async function refreshStatus() {
   }
 }
 
-// ---------- views, drawer, tabs ----------
+// ---------- views, sidebar, tabs ----------
 
 function setView(view) {
   const changed = $(`#${view}-view`).hidden;
   $("#write-view").hidden = view !== "write";
   $("#voice-view").hidden = view !== "voice";
   $("#app-view").classList.toggle("voice-mode", view === "voice");
-  $$(".view-tab").forEach((b) => (b.dataset.view === view ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current")));
-  // The account menu offers whichever page you're not on.
-  $$("#account-menu [data-view]").forEach((b) => { b.hidden = b.dataset.view === view; });
   updateCrumb();
-  closeDrawer();
-  closeMenu();
+  syncSidebar();
+  closeSide();
   if (changed) window.scrollTo({ top: 0 });
   if (view === "write") requestAnimationFrame(() => { placeNotes(); moveTabIndicator(); });
 }
@@ -235,54 +232,182 @@ $("#home").addEventListener("click", () => setView("write"));
 // The bar gets a hairline once the page scrolls under it.
 addEventListener("scroll", () => $("#bar").classList.toggle("scrolled", scrollY > 4), { passive: true });
 
-// ---------- account menu ----------
+// ---------- sidebar ----------
+// Wide screens: always there, and it can shrink to a rail of icons (remembered).
+// Narrow screens: it slides in over the page from the menu button.
 
-function toggleMenu(open = !$(".account").classList.contains("open")) {
-  $(".account").classList.toggle("open", open);
-  $("#account-btn").setAttribute("aria-expanded", open);
-  if (open) $("#account-menu [role=menuitem]:not([hidden])").focus();
+const overlayMode = () => matchMedia("(max-width: 900px)").matches;
+
+// The margin sits beside the essay only when there's room for both, which depends on the
+// sidebar as well as the window, so it follows the content area's actual width.
+new ResizeObserver(([entry]) => {
+  const narrow = entry.contentRect.width < 860;
+  if (narrow === $("#app-view").classList.contains("narrow")) return;
+  $("#app-view").classList.toggle("narrow", narrow);
+  requestAnimationFrame(() => { placeNotes(); moveTabIndicator(); });
+}).observe($(".content"));
+
+function setCollapsed(collapsed) {
+  $("#app-view").classList.toggle("side-collapsed", collapsed);
+  $("#collapse").setAttribute("aria-expanded", !collapsed);
+  $("#collapse").setAttribute("aria-label", collapsed ? "Expand the sidebar" : "Collapse the sidebar");
+  storage("quill-side", collapsed ? "collapsed" : "open");
+  // In the rail, icons are named by their tooltips.
+  $$("#sidebar [data-tip]").forEach((b) => (collapsed ? b.setAttribute("title", b.dataset.tip) : b.removeAttribute("title")));
+  requestAnimationFrame(() => { placeNotes(); moveTabIndicator(); renderGutter(); });
 }
-const closeMenu = () => {
-  if ($(".account").classList.contains("open")) toggleMenu(false);
-};
-$("#account-btn").addEventListener("click", (e) => { e.stopPropagation(); toggleMenu(); });
-document.addEventListener("click", (e) => { if (!e.target.closest(".account")) closeMenu(); });
-$("#account-menu").addEventListener("keydown", (e) => {
-  const items = $$("#account-menu [role=menuitem]").filter((b) => !b.hidden);
+$("#collapse").addEventListener("click", () => setCollapsed(!$("#app-view").classList.contains("side-collapsed")));
+
+let sideOpener = null;
+
+function toggleSide(open = !$("#app-view").classList.contains("side-open")) {
+  if (!overlayMode()) return;
+  const wasOpen = $("#app-view").classList.contains("side-open");
+  $("#app-view").classList.toggle("side-open", open);
+  $("#scrim").hidden = !open;
+  // While the sidebar covers the page, everything behind it is inert: keyboard and screen-reader
+  // focus stay inside it instead of wandering into content you can't see.
+  $(".content").inert = open;
+  $("#open-side").setAttribute("aria-expanded", open);
+  if (open && !wasOpen) {
+    sideOpener = document.activeElement;
+    $("#close-side").focus();
+  } else if (!open && wasOpen) {
+    if (sideOpener?.isConnected && !sideOpener.closest("[inert]")) sideOpener.focus();
+    sideOpener = null;
+  }
+}
+const closeSide = () => toggleSide(false);
+$("#open-side").addEventListener("click", () => toggleSide(true));
+$("#close-side").addEventListener("click", closeSide);
+$("#scrim").addEventListener("click", closeSide);
+// Growing the window past the breakpoint leaves overlay mode cleanly.
+matchMedia("(max-width: 900px)").addEventListener("change", (e) => {
+  if (!e.matches) {
+    $("#app-view").classList.remove("side-open");
+    $("#scrim").hidden = true;
+    $(".content").inert = false;
+  }
+});
+
+// Find an essay: expands the sidebar (or slides it in) and puts the cursor in the search box.
+function findEssay() {
+  if (overlayMode()) toggleSide(true);
+  else if ($("#app-view").classList.contains("side-collapsed")) setCollapsed(false);
+  $("#draft-filter").focus();
+  $("#draft-filter").select();
+}
+$(".search").addEventListener("click", (e) => {
+  if ($("#app-view").classList.contains("side-collapsed")) { e.preventDefault(); findEssay(); }
+});
+
+// "This essay": jump straight to a margin tab.
+$$(".side-item[data-goto]").forEach((b) => b.addEventListener("click", () => {
+  setView("write");
+  if (writeMode()) setMode("markup"); // the margin is hidden in Write mode
+  setTab(b.dataset.goto);
+  $("#inspector").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}));
+
+// Which sidebar items are "here": the open essay, the margin tab, or the voice page.
+function syncSidebar() {
+  const onVoice = !$("#voice-view").hidden;
+  const tab = $(".tab.active")?.dataset.tab;
+  $$(".side-item").forEach((b) => {
+    const here = b.dataset.view ? onVoice && b.dataset.view === "voice" : !onVoice && !!state.draftId && b.dataset.goto === tab;
+    here ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current");
+  });
+  $("#side-essay").hidden = !state.draftId;
+  $("#side-notes").textContent = $("#edit-count").textContent;
+  $("#side-versions").textContent = $("#version-count").textContent;
+}
+
+// ---------- an essay's actions menu ----------
+
+const itemMenu = { draft: null, opener: null };
+
+function openItemMenu(draft, button) {
+  const menu = $("#item-menu");
+  if (itemMenu.draft === draft && menu.classList.contains("open")) { closeItemMenu(); return; }
+  itemMenu.draft = draft;
+  itemMenu.opener = button;
+  const r = button.getBoundingClientRect();
+  menu.classList.add("open");
+  const below = r.bottom + 6 + menu.offsetHeight < innerHeight;
+  menu.style.left = `${Math.min(r.left, innerWidth - menu.offsetWidth - 8)}px`;
+  menu.style.top = `${below ? r.bottom + 6 : r.top - menu.offsetHeight - 6}px`;
+  button.setAttribute("aria-expanded", "true");
+  menu.querySelector("[role=menuitem]").focus();
+}
+
+function closeItemMenu(refocus = false) {
+  const menu = $("#item-menu");
+  if (!menu.classList.contains("open")) return;
+  menu.classList.remove("open");
+  itemMenu.opener?.setAttribute("aria-expanded", "false");
+  if (refocus) itemMenu.opener?.focus();
+}
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest("#item-menu, .d-more")) closeItemMenu();
+});
+addEventListener("resize", () => closeItemMenu());
+$(".side-scroll").addEventListener("scroll", () => closeItemMenu(), { passive: true });
+
+$("#item-menu").addEventListener("keydown", (e) => {
+  const items = $$("#item-menu [role=menuitem]");
   const i = items.indexOf(document.activeElement);
   const next = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: items.length - 1 }[e.key];
-  if (e.key === "Escape") { e.preventDefault(); toggleMenu(false); $("#account-btn").focus(); return; }
-  if (e.key === "Tab") { toggleMenu(false); return; }
+  if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); closeItemMenu(true); return; }
+  if (e.key === "Tab") { closeItemMenu(); return; }
   if (next === undefined) return;
   e.preventDefault();
   items[(next + items.length) % items.length].focus();
 });
 
-let drawerOpener = null;
-
-function toggleDrawer(open = !$("#app-view").classList.contains("drawer-open")) {
-  const overlay = open;
-  const wasOpen = $("#app-view").classList.contains("drawer-open");
-  $("#app-view").classList.toggle("drawer-open", overlay);
-  $("#scrim").hidden = !overlay;
-  // While the drawer covers the page, everything behind it is inert: keyboard and screen-reader
-  // focus stay inside the drawer instead of wandering into content you can't see.
-  $(".main").inert = overlay;
-  $("#open-drawer").setAttribute("aria-expanded", overlay);
-  if (overlay && !wasOpen) {
-    drawerOpener = document.activeElement;
-    $("#draft-filter").value = "";
-    renderDraftList();
-    $("#draft-filter").focus();
-  } else if (!overlay && wasOpen) {
-    if (drawerOpener?.isConnected && !drawerOpener.closest("[inert]")) drawerOpener.focus();
-    drawerOpener = null;
+$("#item-menu").addEventListener("click", async (e) => {
+  const act = e.target.closest("[data-act]")?.dataset.act;
+  const d = itemMenu.draft;
+  if (!act || !d) return;
+  closeItemMenu();
+  if (act === "open") openDraft(d.id);
+  else if (act === "rename") startRename(d);
+  else if (act === "delete") confirmDelete(d);
+  else if (act === "word") {
+    if (d.id === state.draftId) await saveVersion("Before Word export");
+    const res = await request(`/api/drafts/${d.id}/export.docx`);
+    download(await res.blob(), `${d.title || "essay"}.docx`);
   }
+});
+
+// Rename in place: the title becomes a text field; Enter saves, Escape cancels.
+function startRename(d) {
+  const row = $(`#draft-list li[data-id="${d.id}"]`);
+  if (!row) return;
+  const input = el("input", { class: "rename", value: d.title, maxlength: "200", "aria-label": "Essay title" });
+  row.replaceChildren(input);
+  input.focus();
+  input.select();
+  let done = false;
+  const finish = async (save) => {
+    if (done) return;
+    done = true;
+    const title = input.value.trim();
+    if (save && title && title !== d.title) {
+      try {
+        await api(`/api/drafts/${d.id}`, { method: "PATCH", body: { title } });
+        if (d.id === state.draftId) { $("#title").value = title; updateCrumb(); }
+      } catch (err) { alert(`Couldn't rename: ${err.message}`); }
+    }
+    await loadDrafts();
+    $(`#draft-list li[data-id="${d.id}"] .d-open`)?.focus();
+  };
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); finish(true); }
+    if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); finish(false); }
+  });
+  input.addEventListener("blur", () => finish(true));
 }
-const closeDrawer = () => toggleDrawer(false);
-$("#open-drawer").addEventListener("click", () => toggleDrawer());
-$("#close-drawer").addEventListener("click", closeDrawer);
-$("#scrim").addEventListener("click", closeDrawer);
 
 function setTab(name) {
   $$(".tab").forEach((t) => {
@@ -293,6 +418,7 @@ function setTab(name) {
   });
   $$(".panel").forEach((p) => { p.hidden = p.dataset.panel !== name; });
   moveTabIndicator();
+  syncSidebar();
   if (name === "edits") requestAnimationFrame(placeNotes); // positions need the panel visible
   if (name === "report") renderReport();
 }
@@ -329,11 +455,11 @@ function setDraftControls(enabled) {
 }
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") { closeDrawer(); closeMenu(); }
-  // Ctrl+K (Cmd+K on a Mac) opens the essay switcher from anywhere.
+  if (e.key === "Escape") { closeItemMenu(); closeSide(); }
+  // Ctrl+K (Cmd+K on a Mac) finds an essay from anywhere.
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k" && !$("#app-view").hidden) {
     e.preventDefault();
-    toggleDrawer();
+    findEssay();
   }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s" && state.draftId) {
     e.preventDefault();
@@ -373,19 +499,28 @@ function renderDraftList() {
   const shown = drafts.filter((d) => d.title.toLowerCase().includes(q));
   $("#draft-list").replaceChildren(
     ...(shown.length
-      ? shown.map((d) =>
-          el("li", {},
-            el("button", { class: d.id === state.draftId ? "active" : "", "aria-current": d.id === state.draftId ? "true" : "false", onclick: () => openDraft(d.id) },
+      ? shown.map((d) => {
+          const here = d.id === state.draftId;
+          return el("li", { "data-id": d.id, class: here ? "active" : "" },
+            el("button", { class: "d-open", "aria-current": here ? "page" : "false", title: d.title,
+              onclick: () => openDraft(d.id), oncontextmenu: (e) => { e.preventDefault(); openItemMenu(d, e.currentTarget.nextSibling); } },
+              el("svg", {}),
               el("span", { class: "d-title" }, d.title),
-              el("span", { class: "d-meta" }, `${d.versions} version${d.versions === 1 ? "" : "s"} · ${fmtDate(d.updated)}`))))
-      : [el("li", { class: "empty-list" }, drafts.length ? "No essay by that name." : "No essays yet. Start one below.")])
+              el("span", { class: "d-meta" }, `${d.versions} version${d.versions === 1 ? "" : "s"} · ${fmtDate(d.updated)}`)),
+            el("button", { class: "d-more", "aria-label": `Actions for ${d.title}`, "aria-haspopup": "menu", "aria-expanded": "false",
+              onclick: (e) => { e.stopPropagation(); openItemMenu(d, e.currentTarget); } }, icon("i-dots")));
+        })
+      : [el("li", { class: "empty-list" }, drafts.length ? "No essay by that name." : "No essays yet. Start one above.")])
   );
+  // el() can't make SVG; swap the placeholder for the document icon (shown in the collapsed rail).
+  $$("#draft-list .d-open > svg").forEach((svg) => svg.replaceWith(icon("i-doc")));
 }
 
 $("#draft-filter").addEventListener("input", renderDraftList);
-$("#drawer").addEventListener("keydown", (e) => {
-  if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) return;
-  const items = $$("#draft-list button");
+$("#sidebar").addEventListener("keydown", (e) => {
+  if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key) || e.target.closest("#item-menu, .rename")) return;
+  if (!e.target.closest(".search, #draft-list")) return;
+  const items = $$("#draft-list .d-open");
   if (!items.length) return;
   const i = items.indexOf(document.activeElement);
   if (e.key === "Enter") {
@@ -452,6 +587,7 @@ async function openDraft(id) {
 function renderVersions(versions) {
   $("#version-count").textContent = versions.length || "";
   moveTabIndicator();
+  syncSidebar();
   $("#version-list").replaceChildren(
     ...[...versions].reverse().map((v) =>
       el("li", {},
@@ -534,23 +670,34 @@ $("#version-dialog").addEventListener("close", async () => {
   }
 });
 
-$("#delete-draft").addEventListener("click", () => {
-  $("#delete-title").textContent = $("#title").value.trim() || "Untitled essay";
-  $("#delete-versions").textContent = $("#version-count").textContent || "0";
+// Deleting works on any essay: the open one (History tab) or one picked from the sidebar.
+let deleteTarget = null;
+
+function confirmDelete(d) {
+  deleteTarget = d;
+  $("#delete-title").textContent = d.title || "Untitled essay";
+  $("#delete-versions").textContent = d.versions || "0";
   $("#delete-dialog").returnValue = "";
   $("#delete-dialog").showModal();
-});
+}
+
+$("#delete-draft").addEventListener("click", () => confirmDelete({
+  id: state.draftId, title: $("#title").value.trim(), versions: $("#version-count").textContent,
+}));
 
 $("#delete-dialog").addEventListener("close", async () => {
-  if ($("#delete-dialog").returnValue !== "delete" || !state.draftId) return;
-  const id = state.draftId;
-  stopRun();
+  const target = deleteTarget;
+  deleteTarget = null;
+  if ($("#delete-dialog").returnValue !== "delete" || !target) return;
+  const id = target.id;
+  if (id === state.draftId) stopRun();
   try {
     await api(`/api/drafts/${id}`, { method: "DELETE" });
   } catch (err) {
     alert(`Couldn't delete: ${err.message}`);
     return;
   }
+  if (id !== state.draftId) { loadDrafts(); return; }
   // Forget the essay entirely so no autosave can recreate a version for it.
   state.draftId = null;
   state.lastSaved = "";
@@ -564,6 +711,7 @@ $("#delete-dialog").addEventListener("close", async () => {
   setDraftControls(false);
   clearFeedback();
   updateCrumb();
+  syncSidebar();
   loadDrafts();
 });
 
@@ -709,7 +857,7 @@ function selectText(start, end) {
   if (rect) window.scrollBy({ top: rect.top - window.innerHeight / 3, behavior: "smooth" });
 }
 
-const marginBeside = () => matchMedia("(min-width: 1001px)").matches;
+const marginBeside = () => !$("#app-view").classList.contains("narrow");
 
 // Margin notes sit level with the line they're about, pushed down only to avoid overlapping.
 // On narrow screens the margin is below the page, so notes simply stack in reading order.
@@ -980,6 +1128,7 @@ function updateCounts() {
   const n = state.suggestions.length;
   $("#edit-count").textContent = n || "";
   moveTabIndicator();
+  syncSidebar();
   const g = grammarFixes().length;
   $("#bulk").hidden = n === 0;
   $("#accept-grammar").hidden = g < 2;
@@ -1336,7 +1485,7 @@ function voiceName() {
 }
 
 function openCompose() {
-  closeDrawer();
+  closeSide();
   $("#compose-voice").textContent = voiceName();
   if (!composeRun) composeProgress.hide();
   $("#compose-dialog").showModal();
@@ -1621,5 +1770,6 @@ $("#password-form").addEventListener("submit", async (e) => {
 // ---------- boot ----------
 
 setMode(storage("quill-mode") === "write" ? "write" : "markup");
+setCollapsed(storage("quill-side") === "collapsed");
 state.token = storage("quill-token");
 state.token ? showApp() : signOut();
