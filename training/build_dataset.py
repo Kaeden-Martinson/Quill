@@ -180,7 +180,10 @@ def app_examples():
     return out
 
 
-def main(limit=6000):
+# Round 6 showed the mix matters: with 25% casual planted-error examples it caught more common
+# mistakes but lost broader fixes (agreement in formal prose, comma splices) that CoEdIT teaches.
+# More CoEdIT keeps casual examples near the share they had when both were learned well.
+def main(limit=8500):
     data = coedit_examples(limit)
     casual = casual_examples()
     data += casual
@@ -198,4 +201,4 @@ def main(limit=6000):
 
 
 if __name__ == "__main__":
-    main(int(sys.argv[1]) if len(sys.argv) > 1 else 6000)
+    main(int(sys.argv[1])) if len(sys.argv) > 1 else main()
