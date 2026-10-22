@@ -7,6 +7,7 @@ import os
 import secrets
 from datetime import datetime
 
+import httpx
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import FileResponse, PlainTextResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -15,11 +16,12 @@ from pydantic import BaseModel, Field
 import authorship
 import db
 import editor
+import lab
 import security
 import style
 import voices
 import wordfiles
-from config import FRONTEND_DIR, MODEL, PASSCODE
+from config import DRAFT_OPTIONS, EDIT_OPTIONS, FRONTEND_DIR, LETTER_OPTIONS, MODEL, PASSCODE
 
 if PASSCODE == "change-me":
     print("WARNING: QUILL_PASSCODE is the default. Set it before sharing the link.")
@@ -434,6 +436,41 @@ async def compose(body: DraftRequest, user=Depends(current_user)):
             yield event
 
     return ndjson([], save(editor.draft_stream(prompt)), on_finish=lambda: active_reviews.release(user["id"]))
+
+
+# ---------- settings lab ----------
+
+class LabIn(BaseModel):
+    mode: str = Field(pattern="^(edit|draft)$")
+    text: str = Field(min_length=1, max_length=4000)
+    settings: dict[str, float | None] = {}
+
+
+@app.get("/api/lab")
+async def lab_defaults(user=Depends(current_user)):
+    """The settings each job really runs with, so the lab can start from them."""
+    return {"edit": await lab.effective(MODEL, EDIT_OPTIONS),
+            "letter": await lab.effective(editor.OVERVIEW_MODEL, LETTER_OPTIONS),
+            "draft": await lab.effective(editor.OVERVIEW_MODEL, DRAFT_OPTIONS),
+            "limits": lab.LIMITS, "candidates": lab.CANDIDATES}
+
+
+@app.post("/api/lab")
+async def lab_run(body: LabIn, user=Depends(current_user)):
+    """One run with the chosen settings; the live app's settings are untouched."""
+    claim_review(user)
+    try:
+        profile = load_profile(user["id"])
+        if body.mode == "edit":
+            voice, sample = writer_voice(profile, body.text), None
+        else:
+            voice, sample = voices.describe(profile, "\n\n".join(profile["samples"])), voices.sample_for(profile)
+        try:
+            return await lab.run(body.mode, body.text.strip(), voice, sample, lab.clean_settings(body.settings))
+        except httpx.HTTPError as exc:
+            raise HTTPException(502, f"The writing model isn't responding: {exc}") from exc
+    finally:
+        active_reviews.release(user["id"])
 
 
 class FeedbackIn(BaseModel):

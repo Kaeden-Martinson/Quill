@@ -205,6 +205,46 @@
     };
   }
 
+  // ---------- settings lab ----------
+
+  // Which of a word's candidates a set of sampling settings would allow, in the order Ollama
+  // applies them: top_k, then temperature, then top_p, then min_p. cands is [[token, chance], ...]
+  // (the model's own chances, likeliest first). Only the top candidates are known, so chances
+  // after temperature are shared out among those. Returns one entry per candidate:
+  // {token, p, q (chance after temperature), kept, cutBy, chance (of being picked)}.
+  function applyCutoffs(cands, s) {
+    const rows = cands.map(([token, p]) => ({ token, p, q: 0, kept: true, cutBy: null, chance: 0 }))
+      .sort((a, b) => b.p - a.p);
+    if (!rows.length) return rows;
+    const cut = (row, by) => { if (row.kept) { row.kept = false; row.cutBy = by; } };
+    if (!s.temperature) { // 0 means always the likeliest
+      rows.forEach((r, i) => (i ? cut(r, "temperature") : null));
+      rows[0].q = 1;
+      rows[0].chance = 1;
+      return rows;
+    }
+    if (s.top_k > 0) rows.forEach((r, i) => { if (i >= s.top_k) cut(r, "top_k"); });
+    const live = () => rows.filter((r) => r.kept);
+    const weights = live().map((r) => r.p ** (1 / s.temperature));
+    const total = weights.reduce((a, b) => a + b, 0);
+    live().forEach((r, i) => { r.q = weights[i] / total; });
+    if (s.top_p != null && s.top_p < 1) {
+      let sum = 0;
+      for (const r of live()) {
+        if (sum >= s.top_p) cut(r, "top_p");
+        else sum += r.q;
+      }
+    }
+    if (s.min_p > 0) {
+      const top = Math.max(...live().map((r) => r.q));
+      live().forEach((r) => { if (r.q < s.min_p * top) cut(r, "min_p"); });
+    }
+    const keptTotal = live().reduce((a, r) => a + r.q, 0);
+    live().forEach((r) => { r.chance = r.q / keptTotal; });
+    return rows;
+  }
+
+  exports.applyCutoffs = applyCutoffs;
   exports.paragraphSpans = paragraphSpans;
   exports.occurrences = occurrences;
   exports.locate = locate;

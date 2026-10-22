@@ -214,11 +214,15 @@ async function refreshStatus() {
 
 // ---------- views, sidebar, tabs ----------
 
+const VIEWS = ["write", "voice", "lab"];
+const currentView = () => VIEWS.find((v) => !$(`#${v}-view`).hidden);
+
 function setView(view) {
   const changed = $(`#${view}-view`).hidden;
-  $("#write-view").hidden = view !== "write";
-  $("#voice-view").hidden = view !== "voice";
-  $("#app-view").classList.toggle("voice-mode", view === "voice");
+  for (const v of VIEWS) $(`#${v}-view`).hidden = v !== view;
+  $("#app-view").classList.toggle("away", view !== "write"); // no essay tools on other pages
+  closeWordPop();
+  if (view === "lab") openLab();
   updateCrumb();
   syncSidebar();
   closeSide();
@@ -311,10 +315,10 @@ $$(".side-item[data-goto]").forEach((b) => b.addEventListener("click", () => {
 
 // Which sidebar items are "here": the open essay, the margin tab, or the voice page.
 function syncSidebar() {
-  const onVoice = !$("#voice-view").hidden;
+  const view = currentView();
   const tab = $(".tab.active")?.dataset.tab;
   $$(".side-item").forEach((b) => {
-    const here = b.dataset.view ? onVoice && b.dataset.view === "voice" : !onVoice && !!state.draftId && b.dataset.goto === tab;
+    const here = b.dataset.view ? b.dataset.view === view : view === "write" && !!state.draftId && b.dataset.goto === tab;
     here ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current");
   });
   $("#side-essay").hidden = !state.draftId;
@@ -1741,6 +1745,294 @@ $("#ignore-form").addEventListener("submit", async (e) => {
   input.value = "";
   renderIgnored();
 });
+
+// ---------- settings lab ----------
+
+const SLIDERS = [
+  { name: "temperature", label: "Temperature", min: 0, max: 2, step: 0.05,
+    hint: (v) => (v === 0 ? "Always the likeliest word." : v < 0.5 ? "Mostly the likeliest words." : v <= 1 ? "Natural variety." : "Loose; can wander.") },
+  { name: "top_p", label: "top_p", min: 0, max: 1, step: 0.01,
+    hint: (v) => (v >= 1 ? "Off: every word stays in the running." : `Keeps the likeliest words until they add up to ${Math.round(v * 100)}%.`) },
+  { name: "min_p", label: "min_p", min: 0, max: 0.5, step: 0.01,
+    hint: (v) => (v <= 0 ? "Off." : `Drops words less than ${Math.round(v * 100)}% as likely as the top one.`) },
+  { name: "top_k", label: "top_k", min: 0, max: 100, step: 1,
+    hint: (v) => (v <= 0 ? "Off." : `Only the ${v} likeliest words can be picked.`) },
+];
+const OFF = { temperature: 0, top_p: 1, min_p: 0, top_k: 0 };
+const PRESETS = [
+  { id: "edit", label: "Quill's edits" },
+  { id: "draft", label: "Quill's drafting" },
+  { id: "strict", label: "Likeliest only", values: { ...OFF } },
+  { id: "loose", label: "Loose", values: { ...OFF, temperature: 1.3 } },
+];
+
+const labState = { defaults: null, cols: {}, ready: false };
+
+function labMode() {
+  return $('input[name="lab-mode"]:checked').value;
+}
+
+function presetValues(id) {
+  const preset = PRESETS.find((p) => p.id === id);
+  if (preset.values) return { ...preset.values };
+  // Quill's own settings for that job; anything it leaves unset is shown as off.
+  return { ...OFF, ...labState.defaults?.[id] };
+}
+
+function buildColumn(col, start) {
+  const box = $(`.lab-col[data-col="${col}"]`);
+  const c = (labState.cols[col] = { values: presetValues(start), result: null, ranWith: null });
+  const sliders = SLIDERS.map((s) => {
+    const input = el("input", { type: "range", min: s.min, max: s.max, step: s.step, "aria-label": `${s.label} for ${col.toUpperCase()}` });
+    const value = el("output", {});
+    const hint = el("p", { class: "lab-hint" });
+    const show = () => {
+      const v = Number(input.value);
+      value.textContent = s.name === "top_k" ? String(v) : v.toFixed(2);
+      hint.textContent = s.hint(v);
+      // The cutoffs do nothing when temperature is 0, so say so instead of letting them look active.
+      const idle = s.name !== "temperature" && c.values.temperature === 0;
+      row.classList.toggle("idle", idle);
+      if (idle) hint.textContent = "No effect at temperature 0.";
+    };
+    input.addEventListener("input", () => {
+      c.values[s.name] = Number(input.value);
+      c.values.preset = null;
+      box.querySelectorAll(".lab-presets button").forEach((b) => b.setAttribute("aria-pressed", "false"));
+      refreshColumn(col);
+    });
+    const row = el("div", { class: "lab-slider" }, el("label", {}, s.label, value), input, hint);
+    return { s, input, show };
+  });
+  c.sliders = sliders;
+  const presets = el("div", { class: "lab-presets", role: "group", "aria-label": "Start from" },
+    ...PRESETS.map((p) => el("button", { type: "button", "aria-pressed": String(p.id === start), onclick: (e) => {
+      c.values = presetValues(p.id);
+      box.querySelectorAll(".lab-presets button").forEach((b) => b.setAttribute("aria-pressed", String(b === e.currentTarget)));
+      refreshColumn(col);
+    } }, p.label)));
+  const run = el("button", { class: "btn quiet lab-run", type: "button", onclick: () => runLab([col]) }, icon("i-play"), el("span", {}, `Run ${col.toUpperCase()}`));
+  c.out = el("div", { class: "lab-out", "aria-live": "polite" }, el("p", { class: "none" }, "Run it to see the result here."));
+  c.progress = new Progress(el("div", { class: "progress", hidden: "" }));
+  box.replaceChildren(
+    el("header", { class: "lab-col-head" }, el("span", { class: "lab-badge" }, col.toUpperCase()), presets),
+    ...sliders.map((x) => x.input.closest(".lab-slider") || x.input.parentElement),
+    run, c.progress.root, c.out);
+  refreshColumn(col);
+}
+
+function refreshColumn(col) {
+  const c = labState.cols[col];
+  for (const { s, input, show } of c.sliders) {
+    input.value = c.values[s.name];
+    show();
+  }
+  // A result made with other settings is marked, so it's never mistaken for these.
+  const box = $(`.lab-col[data-col="${col}"]`);
+  box.classList.toggle("stale", !!c.ranWith && SLIDERS.some(({ name }) => c.ranWith[name] !== c.values[name]));
+}
+
+async function openLab() {
+  if (!labState.defaults) {
+    try {
+      labState.defaults = await api("/api/lab");
+    } catch (err) {
+      $(".lab-cols").replaceChildren(el("p", { class: "error" }, err.message));
+      return;
+    }
+  }
+  if (!labState.ready) {
+    buildColumn("a", "edit");
+    buildColumn("b", "loose");
+    setLabMode();
+    labState.ready = true;
+  }
+  if (!$("#lab-text").value.trim()) fillFromEssay();
+}
+
+const LAB_PLACEHOLDER = {
+  edit: "Paste one paragraph. A few mistakes make the differences easier to see.",
+  draft: "What should the draft be about? One or two sentences is plenty; drafts here are short.",
+};
+
+function setLabMode() {
+  $("#lab-text").placeholder = LAB_PLACEHOLDER[labMode()];
+  $("#lab-fill").hidden = labMode() !== "edit";
+  $(".lab-input-foot .aside").hidden = labMode() !== "edit";
+}
+$$('input[name="lab-mode"]').forEach((r) => r.addEventListener("change", () => {
+  setLabMode();
+  // Each mode starts A from Quill's own settings for that job.
+  const a = labState.cols.a;
+  if (a) {
+    a.values = presetValues(labMode() === "edit" ? "edit" : "draft");
+    $$('.lab-col[data-col="a"] .lab-presets button').forEach((b, i) => b.setAttribute("aria-pressed", String(PRESETS[i].id === (labMode() === "edit" ? "edit" : "draft"))));
+    refreshColumn("a");
+  }
+}));
+
+// The open essay's first paragraph with something to fix, or just its first paragraph.
+function fillFromEssay() {
+  const text = $("#body").value;
+  const paras = paragraphSpans(text).map((p) => text.slice(p.start, p.end));
+  if (!paras.length || labMode() !== "edit") return;
+  const marked = state.suggestions.find((s) => s.paragraph != null && paras[s.paragraph]);
+  $("#lab-text").value = marked ? paras[marked.paragraph] : paras[0];
+}
+$("#lab-fill").addEventListener("click", fillFromEssay);
+
+async function runLab(cols) {
+  const text = $("#lab-text").value.trim();
+  if (!text) { $("#lab-text").focus(); return; }
+  const mode = labMode();
+  // One seed for every column in this run means the random draws match, so differences come
+  // from the settings alone.
+  const seed = $("#lab-same-seed").checked ? Math.floor(Math.random() * 1e6) : null;
+  const buttons = $$(".lab-run, #lab-run-both");
+  buttons.forEach((b) => { b.disabled = true; });
+  try {
+    for (const col of cols) { // one at a time: each run holds the model
+      const c = labState.cols[col];
+      const settings = { ...c.values, seed: seed ?? Math.floor(Math.random() * 1e6) };
+      delete settings.preset;
+      c.out.replaceChildren();
+      c.progress.start(mode === "edit" ? "Reading the paragraph" : "Writing a short draft", { kind: `lab-${mode}`, expected: mode === "edit" ? 6 : 30 });
+      try {
+        c.result = await api("/api/lab", { method: "POST", body: { mode, text, settings } });
+        c.ranWith = { ...settings };
+        c.progress.finish();
+        renderLabResult(col, text);
+      } catch (err) {
+        c.progress.fail(err.message);
+      }
+      refreshColumn(col);
+    }
+  } finally {
+    buttons.forEach((b) => { b.disabled = false; });
+  }
+}
+$("#lab-run-both").addEventListener("click", () => runLab(["a", "b"]));
+$("#lab-shade").addEventListener("change", (e) => $("#lab-view").classList.toggle("no-shade", !e.target.checked));
+
+// A field's tokens as words you can click. Shading grows as the model's chance for the word drops.
+function tokenRun(field, col) {
+  const frag = document.createDocumentFragment();
+  field.tokens.forEach((t, i) => {
+    const tok = el("span", { class: "tok", tabindex: "0", "data-col": col, "data-f": field.id, "data-i": i,
+      title: `${(t.p * 100).toFixed(1)}%` }, t.text);
+    tok.style.setProperty("--doubt", Math.min(1, (1 - t.p) * 1.6).toFixed(3));
+    if (t.cands.length && t.cands[0][0] !== t.tok) tok.classList.add("surprise");
+    frag.append(tok);
+  });
+  return frag;
+}
+
+function renderLabResult(col, text) {
+  const c = labState.cols[col];
+  const r = c.result;
+  r.fields.forEach((f, i) => { f.id = i; });
+  const all = r.fields.flatMap((f) => f.tokens);
+  const surprises = all.filter((t) => t.cands.length && t.cands[0][0] !== t.tok).length;
+  const avg = all.length ? all.reduce((a, t) => a + t.p, 0) / all.length : 0;
+  const stats = el("p", { class: "lab-stats" },
+    `${r.seconds}s · ${all.length} word pieces · ${surprises} not the top pick · average chance ${Math.round(avg * 100)}%`);
+  const byKey = (key, item) => r.fields.find((f) => f.key === key && f.item === item);
+  // Clickable words when Ollama reported their chances, plain text when it didn't.
+  const words = (field, fallback) => (r.chances && field ? tokenRun(field, col) : fallback);
+  const parts = [r.chances ? stats : el("p", { class: "lab-stats" }, `${r.seconds}s`)];
+  if (!r.chances) {
+    parts.push(el("p", { class: "notice" }, "This model doesn't report its word chances through Ollama (it only gives them for the first word), so the words here can't be inspected. The settings still apply, so you can compare the two drafts."));
+  }
+  if (!r.complete) parts.push(el("p", { class: "notice" }, "The answer was cut off or didn't come back as valid JSON, which looser settings can cause."));
+  if (r.mode === "edit") {
+    const shown = r.suggestions.filter((s) => s.shown);
+    let applied = text;
+    for (const s of shown) applied = applied.replace(s.original, s.revised);
+    const preview = el("p", { class: "lab-preview" });
+    for (const seg of diffWords(text, applied)) {
+      if (seg.type === "keep") preview.append(seg.del);
+      else preview.append(seg.del.trim() ? el("del", {}, seg.del) : "", seg.ins.trim() ? el("ins", {}, seg.ins) : "");
+    }
+    parts.push(el("h4", {}, shown.length ? "The paragraph with these edits" : "No edits"), preview);
+    r.suggestions.forEach((s, i) => {
+      const revised = byKey("revised", i);
+      const reason = byKey("reason", i);
+      parts.push(el("div", { class: `lab-edit${s.shown ? "" : " hidden-edit"}` },
+        el("span", { class: "lab-cat" }, s.category || "edit", s.shown ? null : " · Quill would hide this: the quote isn't in the paragraph or nothing changed"),
+        el("p", { class: "lab-revised" }, words(revised, s.revised)),
+        el("p", { class: "lab-reason" }, words(reason, s.reason))));
+    });
+  } else {
+    const title = byKey("title", null);
+    parts.push(el("h4", { class: "lab-title" }, words(title, r.title)));
+    if (r.chances) r.fields.filter((f) => f.key === "paragraphs").forEach((f) => parts.push(el("p", { class: "lab-para" }, tokenRun(f, col))));
+    else r.paragraphs.forEach((text) => parts.push(el("p", { class: "lab-para" }, text)));
+  }
+  c.out.replaceChildren(...parts);
+}
+
+// ---------- word inspector ----------
+
+function openWordPop(tok) {
+  const c = labState.cols[tok.dataset.col];
+  const field = c.result.fields[Number(tok.dataset.f)];
+  const t = field.tokens[Number(tok.dataset.i)];
+  const settings = c.ranWith;
+  const rows = applyCutoffs(t.cands, settings);
+  const shown = (s) => JSON.stringify(s).slice(1, -1).replace(/^ /, "␣").replace(/ $/, "␣") || "∅";
+  const pct = (x) => (x >= 0.1 ? `${(x * 100).toFixed(1)}%` : x > 0 ? `${(x * 100).toFixed(2)}%` : "0%");
+  const why = { temperature: "temperature 0", top_k: "top_k", top_p: "top_p", min_p: "min_p" };
+  const known = t.cands.reduce((a, [, p]) => a + p, 0);
+  // Set through the style object: the page's security policy blocks inline style attributes.
+  const bar = (p) => { const b = el("span", { class: "bar" }); b.style.setProperty("--w", `${Math.max(1, Math.round(p * 100))}%`); return b; };
+  const pop = $("#word-pop");
+  pop.replaceChildren(
+    el("div", { class: "pop-head" },
+      el("strong", {}, `“${t.text.trim() || t.text}”`),
+      el("span", {}, ` was picked. The model gave it ${pct(t.p)}.`),
+      el("button", { class: "icon-btn", "aria-label": "Close", onclick: closeWordPop }, icon("i-x"))),
+    el("p", { class: "pop-sub" }, `With ${describeSettings(settings)}:`),
+    el("table", { class: "cands" },
+      el("thead", {}, el("tr", {}, el("th", {}, "Candidate"), el("th", {}, "Model"), el("th", {}, "After settings"), el("th", {}, ""))),
+      el("tbody", {}, ...rows.map((r) => el("tr", { class: `${r.kept ? "kept" : "cut"}${r.token === t.tok ? " picked" : ""}` },
+        el("td", { class: "cand" }, bar(r.p), shown(r.token)),
+        el("td", {}, pct(r.p)),
+        el("td", {}, r.kept ? pct(r.chance) : "—"),
+        el("td", { class: "why" }, r.kept ? "kept" : `cut by ${why[r.cutBy]}`))))),
+    el("p", { class: "pop-sub" }, known < 0.999
+      ? `These 10 cover ${pct(known)} of the model's chances; the rest is spread over thousands of other words.`
+      : "These 10 cover essentially all of the model's chances."),
+  );
+  pop.hidden = false;
+  const r = tok.getBoundingClientRect();
+  const below = r.bottom + 8 + pop.offsetHeight < innerHeight;
+  pop.style.left = `${Math.max(8, Math.min(r.left, innerWidth - pop.offsetWidth - 8))}px`;
+  pop.style.top = `${below ? r.bottom + 8 : Math.max(8, r.top - pop.offsetHeight - 8)}px`;
+  $$(".tok.open").forEach((x) => x.classList.remove("open"));
+  tok.classList.add("open");
+  wordPopFrom = tok;
+}
+let wordPopFrom = null;
+const describeSettings = (s) => (s.temperature === 0 ? "temperature 0" : `temperature ${s.temperature}, top_p ${s.top_p}, min_p ${s.min_p}, top_k ${s.top_k || "off"}`);
+
+function closeWordPop(refocus = false) {
+  if ($("#word-pop").hidden) return;
+  $("#word-pop").hidden = true;
+  $$(".tok.open").forEach((x) => x.classList.remove("open"));
+  if (refocus === true) wordPopFrom?.focus();
+}
+
+$("#lab-view").addEventListener("click", (e) => {
+  const tok = e.target.closest(".tok");
+  if (tok) { e.stopPropagation(); openWordPop(tok); }
+});
+$("#lab-view").addEventListener("keydown", (e) => {
+  const tok = e.target.closest(".tok");
+  if (tok && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openWordPop(tok); }
+});
+document.addEventListener("click", (e) => { if (!e.target.closest("#word-pop")) closeWordPop(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeWordPop(true); });
+addEventListener("resize", () => closeWordPop());
 
 // ---------- account ----------
 
