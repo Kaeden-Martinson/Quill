@@ -8,8 +8,10 @@ DB_PATH = DATA_DIR / "quill.db"
 FRONTEND_DIR = ROOT / "frontend"
 
 OLLAMA_URL = os.environ.get("QUILL_OLLAMA_URL", "http://127.0.0.1:11434")
-# Swap this for your fine-tuned model once it's built, e.g. "quill-editor".
+# Line edits. Swap for a fine-tuned model once one beats the default on training/eval.py.
 MODEL = os.environ.get("QUILL_MODEL", "gemma4:e4b")
+# Big-picture feedback is a different task; the fine-tuned editors are only trained on line edits.
+OVERVIEW_MODEL = os.environ.get("QUILL_OVERVIEW_MODEL", "gemma4:e4b")
 
 # Shared passcode for family and friends. Set it before sharing the link.
 PASSCODE = os.environ.get("QUILL_PASSCODE", "change-me")

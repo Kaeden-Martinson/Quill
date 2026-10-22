@@ -11,7 +11,7 @@ from collections import deque
 
 import httpx
 
-from config import MAX_CONCURRENT_REVIEWS, MODEL, OLLAMA_URL
+from config import MAX_CONCURRENT_REVIEWS, MODEL, OLLAMA_URL, OVERVIEW_MODEL
 
 CATEGORIES = ["clarity", "flow", "argument", "evidence", "concision", "grammar", "word choice"]
 
@@ -179,12 +179,12 @@ def parse_reply(content):
     return obj if isinstance(obj, dict) else None
 
 
-async def chat(client, system, prompt, schema):
+async def chat(client, system, prompt, schema, model=MODEL):
     num_ctx = context_size(system, prompt) or CONTEXT_STEPS[-1]
     resp = await client.post(
         f"{OLLAMA_URL}/api/chat",
         json={
-            "model": MODEL,
+            "model": model,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
             "format": schema,
             "stream": False,
@@ -251,7 +251,7 @@ async def overview_stream(text, voice, goal=""):
             )}
         prompt = header + '"""\n' + "\n\n".join(kept) + '\n"""'
         async with httpx.AsyncClient() as client:
-            result = await chat(client, OVERVIEW_SYSTEM, prompt, OVERVIEW_SCHEMA)
+            result = await chat(client, OVERVIEW_SYSTEM, prompt, OVERVIEW_SCHEMA, model=OVERVIEW_MODEL)
         yield {"type": "overview", "overview": result}
         yield {"type": "done"}
     finally:
@@ -263,6 +263,6 @@ async def model_available():
         async with httpx.AsyncClient() as client:
             resp = await client.get(f"{OLLAMA_URL}/api/tags", timeout=5)
         names = {m["name"] for m in resp.json().get("models", [])}
-        return MODEL in names or f"{MODEL}:latest" in names
+        return all(m in names or f"{m}:latest" in names for m in {MODEL, OVERVIEW_MODEL})
     except httpx.HTTPError:
         return False

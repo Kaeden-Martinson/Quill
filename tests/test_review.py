@@ -23,6 +23,27 @@ def test_review_streams_instant_checks_then_each_paragraph(client, user, fake_mo
     assert events[3]["suggestions"] == []
 
 
+def test_without_samples_the_voice_is_measured_from_the_draft(client, user, fake_model):
+    _, h = user
+    casual = "I'm not gonna lie. It's weird. We didn't care, and honestly? It's fine."
+    stream_events(client.post("/api/review", headers=h, json={"body": casual}))
+    assert "No writing samples yet" not in fake_model[-1]
+    assert "Uses contractions freely" in fake_model[-1]
+
+
+def test_big_picture_uses_the_overview_model(client, user, monkeypatch):
+    _, h = user
+    used = []
+
+    async def chat(client, system, prompt, schema, model=None):
+        used.append(model)
+        return {"strongest_part": "s", "top_priority": "p", "comments": []}
+
+    monkeypatch.setattr(editor, "chat", chat)
+    stream_events(client.post("/api/overview", headers=h, json={"body": "One paragraph."}))
+    assert used == [editor.OVERVIEW_MODEL]
+
+
 def test_model_failure_becomes_an_error_event(client, user, monkeypatch):
     _, h = user
 

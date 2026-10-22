@@ -248,6 +248,16 @@ def ndjson(first_events, model_events, on_finish=None):
                              headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
+def writer_voice(stats, draft):
+    """Voice guidance for the model: from saved samples if there are any, otherwise from the draft.
+
+    The draft is the writer's own text too, and the fine-tuned editor was trained with a voice
+    measured from each paragraph; "no samples yet" only ever appeared on formal examples, which
+    makes it edit casual writing as if it were formal.
+    """
+    return style.describe_voice(stats or style.profile_stats([draft]))
+
+
 @app.post("/api/review")
 async def review(body: ReviewIn, user=Depends(current_user)):
     claim_review(user)
@@ -263,7 +273,7 @@ async def review(body: ReviewIn, user=Depends(current_user)):
         "suggestions": flags,
         "voice_notes": style.compare(body.body, stats),
     }
-    return ndjson([instant], editor.review_stream(body.body, style.describe_voice(stats), body.goal),
+    return ndjson([instant], editor.review_stream(body.body, writer_voice(stats, body.body), body.goal),
                   on_finish=lambda: active_reviews.release(user["id"]))
 
 
@@ -271,7 +281,7 @@ async def review(body: ReviewIn, user=Depends(current_user)):
 async def overview(body: ReviewIn, user=Depends(current_user)):
     claim_review(user)
     stats = load_profile(user["id"])["stats"]
-    return ndjson([], editor.overview_stream(body.body, style.describe_voice(stats), body.goal),
+    return ndjson([], editor.overview_stream(body.body, writer_voice(stats, body.body), body.goal),
                   on_finish=lambda: active_reviews.release(user["id"]))
 
 

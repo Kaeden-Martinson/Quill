@@ -35,7 +35,8 @@ from config import OLLAMA_URL  # noqa: E402
 from editor import SUGGESTION_SCHEMA, SYSTEM, parse_reply  # noqa: E402
 from style import GENERIC_PHRASES, generic_phrase_flags  # noqa: E402
 
-NUMBER_RE = re.compile(r"\d[\d,.]*")
+# Digits with inner separators only ("2,000", "3.8"), so "7:30," and "7:30" read as the same numbers.
+NUMBER_RE = re.compile(r"\d+(?:[.,]\d+)*")
 
 
 def ask(model, case):

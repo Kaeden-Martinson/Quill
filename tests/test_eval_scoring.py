@@ -27,5 +27,11 @@ def test_fixing_something_nearby_does_not_break_it():
     assert not ev.breaks([{"original": "Eleven miles. Their was", "revised": "Eleven miles. There was"}], "Eleven miles.")
 
 
+def test_punctuation_after_a_number_is_not_a_new_number():
+    assert set(ev.NUMBER_RE.findall("At 7:30, no one learns.")) == set(ev.NUMBER_RE.findall("Nobody learns at 7:30."))
+    assert ev.NUMBER_RE.findall("It cost 2,000 dollars, or 3.8 percent.") == ["2,000", "3.8"]
+    assert set(ev.NUMBER_RE.findall("about 40 students")) - set(ev.NUMBER_RE.findall("about 4 students")) == {"40"}
+
+
 def test_contractions_are_counted():
     assert len(ev.CONTRACTION.findall("I'm sure it's fine, didn't you say?")) == 3
