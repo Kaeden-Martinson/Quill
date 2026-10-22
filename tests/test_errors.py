@@ -71,5 +71,19 @@ def test_fewer_less():
     assert "fewer mistakes" in s["reason"]
 
 
+def test_two_mistakes_can_share_a_sentence():
+    text = "By junior year I was the one whose job it was, and my coach and I started practice rounds."
+    wrong1, s1 = errors.plant(text, "whose-who's", random.Random(0))
+    wrong2, s2 = errors.plant(wrong1, "me-and", random.Random(0), within=s1["original"])
+    assert "who's job" in s2["original"] and "me and my coach" in s2["original"]
+    assert s2["revised"] == s1["original"]                 # undoing the second leaves the first
+    assert wrong2.replace(s2["original"], s1["revised"], 1) == text   # fixing both restores the text
+
+
+def test_within_limits_planting_to_that_sentence():
+    text = "My dad and I went home. My sister and I stayed."
+    assert errors.plant(text, "me-and", random.Random(0), within="My sister and I stayed.")[1]["original"] == "Me and my sister stayed."
+
+
 def test_rules_that_do_not_apply_return_none():
     assert errors.plant("Short and sweet.", "whose-who's", random.Random(0)) is None

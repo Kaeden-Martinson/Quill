@@ -56,14 +56,16 @@ def sentences(text):
     return [(m.start(), m.end()) for m in re.finditer(r"[^.!?]+[.!?]+[\"')\]]*\s*|[^.!?]+$", text)]
 
 
-def plant(text, rule_name, rng):
+def plant(text, rule_name, rng, within=None):
     """Plants one error of the given kind in a random eligible sentence.
 
+    `within` (a sentence of `text`) restricts it to that sentence, to put two mistakes in one.
     Returns (text_with_error, suggestion) or None if the rule has nowhere to apply.
     The suggestion quotes the whole erroneous sentence and restores it exactly.
     """
     name, pattern, repl, why = next(r for r in RULES if r[0] == rule_name)
-    spans = [(s, e) for s, e in sentences(text) if re.search(pattern, text[s:e])]
+    spans = [(s, e) for s, e in sentences(text) if re.search(pattern, text[s:e])
+             and (within is None or text[s:e].strip() == within)]
     if not spans:
         return None
     start, end = rng.choice(spans)

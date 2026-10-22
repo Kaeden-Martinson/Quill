@@ -99,7 +99,7 @@ CASUAL = Path(__file__).resolve().parent / "data-casual" / "paragraphs.jsonl"
 GOALS = ["personal blog post", "college application", "personal essay", "scholarship essay", "op-ed", "not specified"]
 
 
-def casual_examples(variants=2):
+def casual_examples(variants=3):
     """Casual paragraphs with code-planted errors: fix only the error, keep the voice.
 
     The voice line is measured from the paragraph itself, so the model learns to read it (every
@@ -112,7 +112,10 @@ def casual_examples(variants=2):
     # Prefer the rule planted least so far. Otherwise its/it's (possible in nearly every casual
     # paragraph) crowds out rarer mistakes like whose/who's and could of.
     used = {rule[0]: 0 for rule in errors.RULES}
-    max_per_rule = 70
+    # The most common real mistakes get more room. With one cap for all, round 4 caught only 73%
+    # of its/it's and 17% of your/you're on the held-out test, though they're what people get wrong most.
+    common = {"its-it's", "your-you're", "a-lot", "then-than", "there-their"}
+    cap = lambda rule: 160 if rule in common else 110
     for line in open(CASUAL, encoding="utf-8-sig"):  # tolerate a BOM if the file was edited by hand
         # Straight quotes, so the error rules can see contractions like "It's".
         paragraph = json.loads(line)["paragraph"].translate(
@@ -120,20 +123,38 @@ def casual_examples(variants=2):
         voice = describe_voice(profile_stats([paragraph]))
         for _ in range(variants):
             text, suggestions = paragraph, []
-            rules = [r for r in errors.applicable(paragraph) if used[r] < max_per_rule]
+            rules = [r for r in errors.applicable(paragraph) if used[r] < cap(r)]
             random.shuffle(rules)
             rules.sort(key=lambda name: used[name])  # stable: ties stay shuffled
             if rules and random.random() > CLEAN_PARAGRAPH_SHARE:
-                for rule in rules[: 2 if random.random() < 0.25 else 1]:
-                    planted = errors.plant(text, rule, random)
-                    # A second error must land in a different sentence, or the first quote goes stale.
-                    if planted and all(s["original"] not in planted[1]["original"] and planted[1]["original"] not in s["original"]
-                                       for s in suggestions):
-                        new_text, s = planted
-                        if all(old["original"] in new_text for old in suggestions):
-                            text = new_text
-                            suggestions.append(s)
-                            used[rule] += 1
+                want = 2 if random.random() < 0.35 else 1
+                # Half the two-mistake examples put both in one sentence. Round 4 had only ever seen
+                # one mistake per sentence and fixed just the first ("who's job ... me and my coach").
+                same_sentence = want == 2 and random.random() < 0.5
+                planted_count = 0
+                for rule in rules:
+                    if planted_count == want:
+                        break
+                    within = suggestions[0]["original"] if same_sentence and suggestions else None
+                    planted = errors.plant(text, rule, random, within=within)
+                    if not planted:
+                        continue
+                    new_text, s = planted
+                    if within:
+                        # One suggestion fixing both: the sentence with both mistakes -> fully correct.
+                        first = suggestions[0]
+                        if s["revised"] != first["original"]:
+                            continue
+                        suggestions[0] = {"original": s["original"], "revised": first["revised"],
+                                          "reason": f"{first['reason']} {s['reason']}", "category": first["category"]}
+                    elif all(old["original"] not in s["original"] and s["original"] not in old["original"]
+                             and old["original"] in new_text for old in suggestions):
+                        suggestions.append(s)  # a different sentence, so earlier quotes stay valid
+                    else:
+                        continue
+                    text = new_text
+                    used[rule] += 1
+                    planted_count += 1
             examples.append(example(text, suggestions, voice=voice, goal=random.choice(GOALS)))
     return examples
 

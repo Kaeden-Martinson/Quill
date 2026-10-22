@@ -8,6 +8,7 @@ fragments, slang and contractions, is what the model learns to leave alone.
 Writes training/data-casual/paragraphs.jsonl; rerunning continues where it stopped.
 """
 import json
+import os
 import random
 import re
 import sys
@@ -22,6 +23,10 @@ from config import OLLAMA_URL  # noqa: E402
 from style import generic_phrase_flags, sentences  # noqa: E402
 
 OUT = HERE / "data-casual" / "paragraphs.jsonl"
+# The held-out test set: different topics and styles, its own file, never used for training.
+HELDOUT = os.environ.get("QUILL_HELDOUT") == "1"
+if HELDOUT:
+    OUT = HERE / "data-heldout" / "paragraphs.jsonl"
 MODEL = "gemma4:e4b"
 
 TOPICS = [
@@ -41,6 +46,21 @@ STYLES = [
     "plain and direct, with a one-word sentence for emphasis",
     "excited and casual, with a little slang like gonna or kinda",
 ]
+if HELDOUT:
+    TOPICS = [
+        "why a historical event still matters", "a book you had to read for class", "whether homework should exist",
+        "how a science experiment surprised you", "social media and friendships", "a community problem and a fix",
+        "what a coach or mentor taught you", "the case for a later school start", "learning a second language",
+        "a time you changed your mind", "money and first jobs", "why a hobby is underrated", "a local tradition",
+        "the ethics of a new technology", "a character from a novel", "climate change in your town",
+    ]
+    STYLES = [
+        "clear and measured, like a good class essay, few contractions",
+        "persuasive and confident, with one rhetorical question",
+        "reflective and personal, mixing long and short sentences",
+        "plain and analytical, like a history or English paper",
+        "casual and direct, like a blog post, with contractions",
+    ]
 SCHEMA = {"type": "object", "properties": {"paragraph": {"type": "string"}}, "required": ["paragraph"]}
 CONTRACTION = re.compile(r"\b\w+'(?:s|t|re|ve|ll|d|m)\b", re.I)
 # Curly quotes would hide contractions from the error rules ("It’s" never matches "It's").
@@ -72,7 +92,8 @@ def prompt(rng, need=None):
 
 def usable(p):
     n = len(sentences(p))
-    return (2 <= n <= 6 and len(p) <= 700 and CONTRACTION.search(p)
+    # Held-out styles include formal writing, which may have no contractions.
+    return (2 <= n <= 6 and len(p) <= 700 and (HELDOUT or CONTRACTION.search(p))
             and not generic_phrase_flags(p) and "\n" not in p.strip())
 
 
