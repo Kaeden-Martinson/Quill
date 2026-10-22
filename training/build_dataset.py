@@ -102,6 +102,10 @@ def casual_examples(variants=2):
         return []
     from style import describe_voice, profile_stats
     examples = []
+    # Prefer the rule planted least so far. Otherwise its/it's (possible in nearly every casual
+    # paragraph) crowds out rarer mistakes like whose/who's and could of.
+    used = {rule[0]: 0 for rule in errors.RULES}
+    max_per_rule = 70
     for line in open(CASUAL, encoding="utf-8-sig"):  # tolerate a BOM if the file was edited by hand
         # Straight quotes, so the error rules can see contractions like "It's".
         paragraph = json.loads(line)["paragraph"].translate(
@@ -109,8 +113,9 @@ def casual_examples(variants=2):
         voice = describe_voice(profile_stats([paragraph]))
         for _ in range(variants):
             text, suggestions = paragraph, []
-            rules = errors.applicable(paragraph)
+            rules = [r for r in errors.applicable(paragraph) if used[r] < max_per_rule]
             random.shuffle(rules)
+            rules.sort(key=lambda name: used[name])  # stable: ties stay shuffled
             if rules and random.random() > CLEAN_PARAGRAPH_SHARE:
                 for rule in rules[: 2 if random.random() < 0.25 else 1]:
                     planted = errors.plant(text, rule, random)
@@ -121,6 +126,7 @@ def casual_examples(variants=2):
                         if all(old["original"] in new_text for old in suggestions):
                             text = new_text
                             suggestions.append(s)
+                            used[rule] += 1
             examples.append(example(text, suggestions, voice=voice, goal=random.choice(GOALS)))
     return examples
 

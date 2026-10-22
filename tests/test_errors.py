@@ -34,5 +34,18 @@ def test_explanations_name_the_words():
     assert "My brother and I" in s["reason"] and "Me and" in s["reason"]
 
 
+def test_every_rule_fires_somewhere_and_is_undone_exactly():
+    texts = [PARA,
+             "You're gonna laugh, but I could have sworn it. A lot of people say that. The guy whose dog it was shrugged. I'd rather lose my keys.",
+             "My dad's truck broke down, and then we waited too long. The town where I grew up has its own rules."]
+    fired = set()
+    for text in texts:
+        for rule in errors.applicable(text):
+            wrong, s = errors.plant(text, rule, random.Random(0))
+            assert wrong.replace(s["original"], s["revised"], 1) == text, rule
+            fired.add(rule)
+    assert fired == {r[0] for r in errors.RULES}
+
+
 def test_rules_that_do_not_apply_return_none():
     assert errors.plant("Short and sweet.", "whose-who's", random.Random(0)) is None

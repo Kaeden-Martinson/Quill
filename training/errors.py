@@ -31,6 +31,18 @@ RULES = [
      "With “{subject}” the verb is “were”, not “was”."),
     ("lose-loose", r"\b(lose|losing)\b", lambda m: {"lose": "loose", "losing": "loosing"}[m.group(1)],
      "“{right}” means to misplace or not win; “{wrong}” means not tight."),
+    ("too-to", r"\b([Tt])oo (much|many|late|early|long|hard|tired|loud|small|big|far|close|busy|scared|cold|hot)\b",
+     r"\1o \2",
+     "It should be “{right}”; “too” means “more than enough”, while “to” is for direction."),
+    ("where-were", r"\b([Ww])here (I|we|you|they|he|she|it|my|our|the)\b", r"\1ere \2",
+     "“Where” is about a place; “were” is a past form of “be”."),
+    ("then-than", r"\b(and|but|until|since|just) then\b", r"\1 than",
+     "“Then” is about time; “than” is only for comparisons."),
+    ("possessive", r"\b([Mm]y|[Oo]ur|[Hh]is|[Hh]er|[Tt]heir) (dad|mom|mother|father|brother|sister|friend|teacher|coach|boss|grandma|grandpa|roommate|neighbor)'s\b",
+     r"\1 \2s",
+     "“{right}” needs the apostrophe to show it belongs to them."),
+    ("its-possessive", r"\b([Ii])ts\b", r"\1t's",
+     "Here “{right}” means “belonging to it”, which has no apostrophe; “it's” means “it is”."),
 ]
 
 
