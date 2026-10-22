@@ -11,6 +11,7 @@ from collections import deque
 
 import httpx
 
+import rules
 from config import MAX_CONCURRENT_REVIEWS, MODEL, OLLAMA_URL, OVERVIEW_MODEL
 
 CATEGORIES = ["clarity", "flow", "argument", "evidence", "concision", "grammar", "word choice"]
@@ -208,10 +209,12 @@ async def review_paragraph(client, paragraph, voice, goal):
     result = await chat(client, SYSTEM, prompt, SUGGESTION_SCHEMA)
     items = (result or {}).get("suggestions", [])
     # Drop anything the model didn't actually quote or didn't change.
-    return [
+    kept = [
         s for s in items
         if s.get("original") and s["original"] in paragraph and s.get("revised") != s["original"]
     ]
+    # Then add the near-certain mechanical fixes the model missed ("Its weird how...").
+    return rules.apply(paragraph, kept)
 
 
 async def review_stream(text, voice, goal=""):

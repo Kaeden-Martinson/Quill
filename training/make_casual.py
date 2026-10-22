@@ -24,9 +24,10 @@ from style import generic_phrase_flags, sentences  # noqa: E402
 
 OUT = HERE / "data-casual" / "paragraphs.jsonl"
 # The held-out test set: different topics and styles, its own file, never used for training.
-HELDOUT = os.environ.get("QUILL_HELDOUT") == "1"
+HELDOUT = os.environ.get("QUILL_HELDOUT") in ("1", "confirm")
 if HELDOUT:
-    OUT = HERE / "data-heldout" / "paragraphs.jsonl"
+    # "confirm" is a second, untouched test set, for checking results after tuning on the first.
+    OUT = HERE / ("data-confirm" if os.environ["QUILL_HELDOUT"] == "confirm" else "data-heldout") / "paragraphs.jsonl"
 MODEL = "gemma4:e4b"
 
 TOPICS = [
@@ -104,7 +105,7 @@ def main(target, need=None):
     have = sum(1 for _ in open(OUT, encoding="utf-8")) if OUT.exists() else 0
     if need:
         target += have
-    rng = random.Random(have)  # different topics after a restart
+    rng = random.Random(have + (10_000 if "confirm" in str(OUT) else 0))  # different topics after a restart
     with open(OUT, "a", encoding="utf-8") as out, httpx.Client(timeout=300) as client:
         while have < target:
             r = client.post(f"{OLLAMA_URL}/api/chat", json={

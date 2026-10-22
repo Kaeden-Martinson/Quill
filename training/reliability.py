@@ -15,6 +15,7 @@ Targets for "reliable":
   extra       <= 0.15 unneeded word changes per paragraph
 """
 import json
+import os
 import random
 import re
 import sys
@@ -28,13 +29,17 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "backend"))
 sys.path.insert(0, str(HERE))
 import errors  # noqa: E402
+import rules  # noqa: E402
 from config import OLLAMA_URL  # noqa: E402
 from editor import SUGGESTION_SCHEMA, SYSTEM, parse_reply  # noqa: E402
 from style import describe_voice, profile_stats  # noqa: E402
 
-PARAGRAPHS = HERE / "data-heldout" / "paragraphs.jsonl"
-CASES = HERE / "data-heldout" / "cases.jsonl"
+# QUILL_TESTSET=confirm scores the second, untouched set instead.
+_SET = HERE / ("data-confirm" if os.environ.get("QUILL_TESTSET") == "confirm" else "data-heldout")
+PARAGRAPHS = _SET / "paragraphs.jsonl"
+CASES = _SET / "cases.jsonl"
 TARGETS = {"fixed": 0.90, "perfect": 0.80, "untouched": 0.95, "extra": 0.15}
+NO_RULES = "--no-rules" in sys.argv  # score the model alone
 WORDS = re.compile(r"\S+")
 
 
@@ -92,8 +97,10 @@ def ask(client, model, text):
     }, timeout=600).json()
     reply = parse_reply(r.get("message", {}).get("content", "")) or {}
     # Exactly the app's filter: quotes that exist in the paragraph and actually change something.
-    return [s for s in reply.get("suggestions", [])
+    kept = [s for s in reply.get("suggestions", [])
             if s.get("original") and s["original"] in text and s.get("revised") not in (None, s["original"])]
+    # And the app's grammar rules on top, so this measures what users actually get.
+    return kept if NO_RULES else rules.apply(text, kept)
 
 
 def score(model):
@@ -101,7 +108,8 @@ def score(model):
     t = dict(planted=0, fixed=0, perfect=0, clean=0, untouched=0, extra=0, seconds=0.0)
     out_dir = HERE / "eval_results"
     out_dir.mkdir(exist_ok=True)
-    with httpx.Client() as client, open(out_dir / f"heldout-{model.replace(':', '_')}.jsonl", "w", encoding="utf-8") as log:
+    label = f"{_SET.name}-{model.replace(':', '_')}"
+    with httpx.Client() as client, open(out_dir / f"{label}.jsonl", "w", encoding="utf-8") as log:
         for i, c in enumerate(cases, 1):
             print(f"  [{model}] {i}/{len(cases)}", end="\r", flush=True)
             start = time.perf_counter()
