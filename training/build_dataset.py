@@ -115,7 +115,9 @@ def casual_examples(variants=3):
     # The most common real mistakes get more room. With one cap for all, round 4 caught only 73%
     # of its/it's and 17% of your/you're on the held-out test, though they're what people get wrong most.
     common = {"its-it's", "your-you're", "a-lot", "then-than", "there-their"}
-    cap = lambda rule: 160 if rule in common else 110
+    # its/it's is still the most-missed mistake on the untouched confirmation set (81%), so it
+    # gets the most room of all.
+    cap = lambda rule: 260 if rule == "its-it's" else 160 if rule in common else 110
     for line in open(CASUAL, encoding="utf-8-sig"):  # tolerate a BOM if the file was edited by hand
         # Straight quotes, so the error rules can see contractions like "It's".
         paragraph = json.loads(line)["paragraph"].translate(
@@ -127,7 +129,7 @@ def casual_examples(variants=3):
             random.shuffle(rules)
             rules.sort(key=lambda name: used[name])  # stable: ties stay shuffled
             if rules and random.random() > CLEAN_PARAGRAPH_SHARE:
-                want = 2 if random.random() < 0.35 else 1
+                want = 2 if random.random() < 0.45 else 1  # two-mistake paragraphs were 7/12 on the confirmation set
                 # Half the two-mistake examples put both in one sentence. Round 4 had only ever seen
                 # one mistake per sentence and fixed just the first ("who's job ... me and my coach").
                 same_sentence = want == 2 and random.random() < 0.5

@@ -78,6 +78,9 @@ NEEDS = {
     "me-and": ("Somewhere, use a person and yourself together as the subject, written correctly "
                "with you last, like \"my sister and I drove\" or \"the coach and I talked\"."),
     "fewer-less": "Somewhere, use the word \"fewer\" correctly with something countable, like \"fewer people\".",
+    "its-it's": ("Start at least one sentence with \"It's\" (meaning \"it is\"), like \"It's strange how...\" "
+                 "or \"It's not that...\", and use \"it's\" once more somewhere else."),
+    "your-you're": "Somewhere, use \"you're\" (meaning \"you are\") at least twice, talking to the reader.",
 }
 
 
