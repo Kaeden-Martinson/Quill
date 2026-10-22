@@ -15,7 +15,7 @@ from pathlib import Path
 from datasets import load_dataset
 
 import errors
-from reasons import main_change, reason_for
+from reasons import all_changes_reason, change_count, main_change, reason_for
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "backend"))
@@ -81,7 +81,14 @@ def coedit_examples(limit):
             # Quoting a big rewrite as "X says the same as Y" is often false (simplification pairs
             # sometimes drop whole clauses), so large changes get the accurate general sentence.
             _, old, new = change
-            reason = (reason_for(category, src, tgt) if len(old) + len(new) <= 8 else None) or fallback
+            # An explanation that quotes one change while the edit makes others teaches the model to
+            # explain the wrong part (round 3 fixed "who's" -> "whose" but explained a comma).
+            # Single change: a natural sentence about it. Several small changes: list them all.
+            if change_count(src, tgt) == 1:
+                reason = reason_for(category, src, tgt) if len(old) + len(new) <= 8 else None
+            else:
+                reason = all_changes_reason(category, src, tgt)
+            reason = reason or fallback
             sentences.append(src)
             suggestions.append({"original": src, "revised": tgt, "reason": reason, "category": category})
         examples.append(example(" ".join(sentences), suggestions))

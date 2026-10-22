@@ -23,10 +23,15 @@ RULES = [
      "It's “{right}”; “{wrong}” comes from how it sounds when spoken."),
     ("whose-who's", r"\b([Ww])hose\b", r"\1ho's",
      "“{right}” shows ownership; “{wrong}” means “who is”."),
-    # "My brother and I went" -> "Me and my brother went"; keeps the capital only at a sentence start.
-    ("me-and", r"\b([Mm])y (\w+) and I (went|were|had|got|spent|took|made|stayed|drove|ran)\b",
-     lambda m: f"{'Me' if m.group(1) == 'M' else 'me'} and my {m.group(2)} {m.group(3)}",
+    # "My brother and I went" -> "Me and my brother went", also with "the"/"our" and any verb
+    # ("the coach and I started"). Keeps the capital only at a sentence start.
+    ("me-and", r"\b([Mm]y|[Tt]he|[Oo]ur) ((?:\w+ )?\w+) and I (?!am\b|was\b)([a-z]+)\b",
+     lambda m: f"{'Me' if m.group(1)[0].isupper() else 'me'} and {m.group(1).lower()} {m.group(2)} {m.group(3)}",
      "As the subject of the sentence it's “{right}”, not “{wrong}”."),
+    ("fewer-less", r"\b([Ff])ewer (words|people|things|students|hours|days|minutes|friends|kids|mistakes|"
+                   r"classes|games|times|chances|options|questions|pages|steps|calories|cars|choices)\b",
+     lambda m: f"{'L' if m.group(1) == 'F' else 'l'}ess {m.group(2)}",
+     "It's “{right}” because you can count them; “less” is for amounts, like time or water."),
     ("subject-verb", r"\b([Ww]e|[Tt]hey|[Yy]ou) were\b", r"\1 was",
      "With “{subject}” the verb is “were”, not “was”."),
     ("lose-loose", r"\b(lose|losing)\b", lambda m: {"lose": "loose", "losing": "loosing"}[m.group(1)],

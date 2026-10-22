@@ -17,6 +17,7 @@ import httpx
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "backend"))
+sys.path.insert(0, str(HERE))
 from config import OLLAMA_URL  # noqa: E402
 from style import generic_phrase_flags, sentences  # noqa: E402
 
@@ -50,14 +51,23 @@ def normalize(p):
     return p.translate(STRAIGHT).strip()
 
 
-def prompt(rng):
+# Constructions some error rules need but casual paragraphs rarely contain. With --need, the
+# prompt asks for one and only paragraphs where that rule can fire are kept.
+NEEDS = {
+    "me-and": ("Somewhere, use a person and yourself together as the subject, written correctly "
+               "with you last, like \"my sister and I drove\" or \"the coach and I talked\"."),
+    "fewer-less": "Somewhere, use the word \"fewer\" correctly with something countable, like \"fewer people\".",
+}
+
+
+def prompt(rng, need=None):
     topic, style = rng.choice(TOPICS), rng.choice(STYLES)
     return (
         f"Write one paragraph (3 to 5 sentences) in first person about {topic}, the way a real "
         f"high school or college student would write it in a personal essay or blog post. "
         f"Style: {style}. Use correct spelling and grammar (sentence fragments are fine when "
-        f"deliberate). No clichés, no moral at the end, no title."
-    )
+        f"deliberate). No clichés, no moral at the end, no title. {NEEDS.get(need, '')}"
+    ).strip()
 
 
 def usable(p):
@@ -66,22 +76,26 @@ def usable(p):
             and not generic_phrase_flags(p) and "\n" not in p.strip())
 
 
-def main(target):
+def main(target, need=None):
+    """Generates until the file holds `target` paragraphs (or, with `need`, `target` more of that kind)."""
+    import errors
     OUT.parent.mkdir(exist_ok=True)
     have = sum(1 for _ in open(OUT, encoding="utf-8")) if OUT.exists() else 0
+    if need:
+        target += have
     rng = random.Random(have)  # different topics after a restart
     with open(OUT, "a", encoding="utf-8") as out, httpx.Client(timeout=300) as client:
         while have < target:
             r = client.post(f"{OLLAMA_URL}/api/chat", json={
                 "model": MODEL, "stream": False, "format": SCHEMA,
-                "messages": [{"role": "user", "content": prompt(rng)}],
+                "messages": [{"role": "user", "content": prompt(rng, need)}],
                 "options": {"temperature": 0.9},  # variety of content and phrasing across paragraphs
             }).json()
             try:
                 p = normalize(json.loads(r["message"]["content"])["paragraph"])
             except (KeyError, json.JSONDecodeError):
                 continue
-            if usable(p):
+            if usable(p) and (not need or need in errors.applicable(p)):
                 out.write(json.dumps({"paragraph": p}, ensure_ascii=False) + "\n")
                 out.flush()
                 have += 1
@@ -90,4 +104,6 @@ def main(target):
 
 
 if __name__ == "__main__":
-    main(int(sys.argv[1]) if len(sys.argv) > 1 else 900)
+    # make_casual.py 900            -> fill the file up to 900 paragraphs
+    # make_casual.py 60 me-and      -> add 60 paragraphs where the me-and rule can fire
+    main(int(sys.argv[1]) if len(sys.argv) > 1 else 900, sys.argv[2] if len(sys.argv) > 2 else None)

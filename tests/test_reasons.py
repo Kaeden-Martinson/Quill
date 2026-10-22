@@ -34,6 +34,23 @@ def test_concision_never_claims_fewer_words_for_a_longer_edit():
     assert reasons.reason_for("concision", "We went in order to win.", "We went to win.") is not None
 
 
+def test_change_count_sees_separate_edits():
+    assert reasons.change_count("By junior year I was the one who's job", "By junior year, I was the one whose job") == 2
+    assert reasons.change_count("He go home.", "He goes home.") == 1
+    assert reasons.change_count("Same.", "Same.") == 0
+
+
+def test_multi_change_reasons_name_every_change():
+    r = reasons.all_changes_reason("grammar", "By junior year I was the one who's job", "By junior year, I was the one whose job")
+    assert r == "Fixes the grammar: “year” → “year,”; “who's” → “whose”."
+    assert reasons.all_changes_reason("concision", "It is very really good indeed.", "It is good.") is not None
+
+
+def test_multi_change_reasons_give_up_when_it_would_be_long():
+    assert reasons.all_changes_reason("grammar", "a b c d e", "v w x y z") is None          # one huge change
+    assert reasons.all_changes_reason("grammar", "a b c d e f g h", "A b C d E f G h") is None  # four changes
+
+
 def test_unchanged_text_or_unknown_category_gives_no_reason():
     assert reasons.reason_for("grammar", "Same.", "Same.") is None
     assert reasons.reason_for("poetry", "a b", "a c") is None

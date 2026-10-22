@@ -54,6 +54,40 @@ def _quote(words, limit=6):
     return text if len(words) <= limit else " ".join(words[:limit]) + "…"
 
 
+def change_count(src, tgt):
+    """How many separate places the edit changes."""
+    a, b = WORD.findall(src), WORD.findall(tgt)
+    return sum(op[0] != "equal" for op in SequenceMatcher(None, a, b, autojunk=False).get_opcodes())
+
+
+LEADS = {"grammar": "Fixes the grammar", "clarity": "Makes it clearer", "flow": "Smooths the flow",
+         "concision": "Simplifies it"}
+
+
+def all_changes_reason(category, src, tgt, max_changes=3, max_words=4):
+    """One explanation that names every change, for edits that change several places.
+
+    e.g. Fixes the grammar: “who's” → “whose”; adds “,” after “year”.
+    Returns None if there are too many or too large changes to list accurately.
+    """
+    a, b = WORD.findall(src), WORD.findall(tgt)
+    ops = [op for op in SequenceMatcher(None, a, b, autojunk=False).get_opcodes() if op[0] != "equal"]
+    if not ops or len(ops) > max_changes or category not in LEADS:
+        return None
+    parts = []
+    for tag, i1, i2, j1, j2 in ops:
+        old, new = a[i1:i2], b[j1:j2]
+        if len(old) > max_words or len(new) > max_words:
+            return None
+        if tag == "insert":
+            parts.append(f"adds “{' '.join(new)}”")
+        elif tag == "delete":
+            parts.append(f"removes “{' '.join(old)}”")
+        else:
+            parts.append(f"“{' '.join(old)}” → “{' '.join(new)}”")
+    return f"{LEADS[category]}: {'; '.join(parts)}."
+
+
 def main_change(src, tgt):
     """The largest changed span between two sentences: (kind, old words, new words)."""
     a, b = WORD.findall(src), WORD.findall(tgt)

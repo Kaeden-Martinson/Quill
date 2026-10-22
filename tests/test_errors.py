@@ -37,7 +37,8 @@ def test_explanations_name_the_words():
 def test_every_rule_fires_somewhere_and_is_undone_exactly():
     texts = [PARA,
              "You're gonna laugh, but I could have sworn it. A lot of people say that. The guy whose dog it was shrugged. I'd rather lose my keys.",
-             "My dad's truck broke down, and then we waited too long. The town where I grew up has its own rules."]
+             "My dad's truck broke down, and then we waited too long. The town where I grew up has its own rules.",
+             "I made fewer mistakes this time."]
     fired = set()
     for text in texts:
         for rule in errors.applicable(text):
@@ -45,6 +46,29 @@ def test_every_rule_fires_somewhere_and_is_undone_exactly():
             assert wrong.replace(s["original"], s["revised"], 1) == text, rule
             fired.add(rule)
     assert fired == {r[0] for r in errors.RULES}
+
+
+def test_me_and_covers_the_forms_round_3_missed():
+    text = "By junior year my coach and I started running practice rounds. The fire department and I are friends now."
+    rng = random.Random(0)
+    seen = set()
+    for _ in range(10):
+        wrong, s = errors.plant(text, "me-and", rng)
+        seen.add(s["original"])
+        assert wrong.replace(s["original"], s["revised"], 1) == text
+    assert "By junior year me and my coach started running practice rounds." in seen
+    assert "Me and the fire department are friends now." in seen
+
+
+def test_me_and_leaves_am_and_was_alone():
+    # "Me and my brother am" isn't a real-world mistake, so don't teach it.
+    assert errors.plant("My brother and I was late.", "me-and", random.Random(0)) is None
+
+
+def test_fewer_less():
+    wrong, s = errors.plant("I made fewer mistakes this time.", "fewer-less", random.Random(0))
+    assert s["original"] == "I made less mistakes this time."
+    assert "fewer mistakes" in s["reason"]
 
 
 def test_rules_that_do_not_apply_return_none():
