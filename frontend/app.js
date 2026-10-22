@@ -515,6 +515,7 @@ function onBodyChange() {
   body.style.height = "auto";
   body.style.height = `${body.scrollHeight}px`;
   renderMarkup();
+  if (gutter.marks.length) renderGutter();
   if (!$("#panel-report").hidden) scheduleReport();
 }
 $("#body").addEventListener("input", onBodyChange);
@@ -614,7 +615,7 @@ function offsetRect(offset) {
   });
   let seen = 0;
   for (let n = walker.nextNode(); n; n = walker.nextNode()) {
-    if (seen + n.length >= offset) {
+    if (seen + n.length > offset) { // ">": an empty text node has no position of its own
       const range = document.createRange();
       range.setStart(n, offset - seen);
       range.setEnd(n, Math.min(n.length, offset - seen + 1));
@@ -691,23 +692,206 @@ function clearFeedback() {
   $("#suggestion-list").replaceChildren(marginMessage("Press “Mark it up” and Quill reads each paragraph. Its notes appear here, beside the line they're about."));
   $("#voice-notes").replaceChildren();
   $("#overview-panel").replaceChildren();
-  $("#progress").hidden = true;
+  progress.hide();
+  gutter.marks = [];
+  renderGutter();
   updateCounts();
   renderMarkup();
 }
 
-function setProgress(text, fraction = null) {
-  const p = $("#progress");
-  p.hidden = false;
-  const fill = el("span");
-  const bar = el("div", { class: fraction == null ? "bar-line indeterminate" : "bar-line" }, fill);
-  if (fraction != null) fill.style.width = `${Math.max(4, Math.round(fraction * 100))}%`;
-  p.replaceChildren(el("div", {}, text), bar);
+// ---------- progress ----------
+
+const clock = (s) => (s < 60 ? `0:${String(s).padStart(2, "0")}` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`);
+const roughly = (s) => (s < 50 ? `about ${Math.max(5, Math.round(s / 5) * 5)} s left` : `about ${Math.round(s / 60)} min left`);
+
+// How long things took last time on this laptop, so estimates fit its speed.
+function typical(kind, fallback) {
+  return Number(storage(`quill-time-${kind}`)) || fallback;
+}
+function remember(kind, seconds) {
+  const before = typical(kind, seconds);
+  storage(`quill-time-${kind}`, String(Math.round((before * 2 + seconds) / 3))); // smoothed
 }
 
-function setProgressMessage(text) {
-  $("#progress").hidden = false;
-  $("#progress").replaceChildren(el("div", {}, text));
+// A progress readout: what's happening, a clock, and a bar. With a known number of steps the
+// bar is split into one segment per step, and the current segment fills as the step's expected
+// time passes. Without steps it creeps toward full over the expected time, slowing as it goes,
+// so a long wait still visibly moves but never claims to be done early.
+class Progress {
+  constructor(root, onFraction = () => {}) {
+    this.root = root;
+    this.onFraction = onFraction;
+    this.timer = null;
+  }
+
+  start(label, { kind, expected }) {
+    Object.assign(this, { label, kind, expected: typical(kind, expected), total: 0, done: 0, queued: false,
+      t0: Date.now(), stepStart: Date.now(), stepTimes: [] });
+    this.root.hidden = false;
+    this.root.classList.remove("failed", "finished");
+    clearInterval(this.timer);
+    this.timer = setInterval(() => this.tick(), 500);
+    this.build();
+  }
+
+  queue(position) {
+    this.label = queueText(position);
+    this.queued = true;
+    this.build();
+  }
+
+  steps(total, label) {
+    Object.assign(this, { total, done: 0, queued: false, label, t0: Date.now(), stepStart: Date.now() });
+    this.build();
+  }
+
+  step(done, label) {
+    const now = Date.now();
+    this.stepTimes.push((now - this.stepStart) / 1000);
+    Object.assign(this, { done, label, stepStart: now });
+    this.build();
+  }
+
+  begin(label) { // the model has started (after any wait in line)
+    Object.assign(this, { label, queued: false, t0: Date.now() });
+    this.build();
+  }
+
+  secondsPerStep() {
+    if (this.stepTimes.length) return this.stepTimes.reduce((a, b) => a + b, 0) / this.stepTimes.length;
+    return this.expected;
+  }
+
+  fraction() {
+    const elapsed = (Date.now() - this.t0) / 1000;
+    if (this.queued) return 0;
+    if (this.total) {
+      const partial = Math.min(0.9, (Date.now() - this.stepStart) / 1000 / this.secondsPerStep());
+      return Math.min(1, (this.done + partial) / this.total);
+    }
+    return 0.95 * (1 - Math.exp(-elapsed / this.expected));
+  }
+
+  timeText() {
+    const elapsed = Math.round((Date.now() - this.t0) / 1000);
+    if (this.queued) return `waiting ${clock(elapsed)}`;
+    if (this.total && this.stepTimes.length) {
+      const left = this.secondsPerStep() * (this.total - this.done) - (Date.now() - this.stepStart) / 1000;
+      return roughly(Math.max(5, left));
+    }
+    if (!this.total && elapsed < this.expected) {
+      const usual = this.expected < 50 ? `${Math.round(this.expected / 5) * 5} s` : `${Math.round(this.expected / 60)} min`;
+      return `${clock(elapsed)} · usually about ${usual}`;
+    }
+    return clock(elapsed);
+  }
+
+  build() {
+    const segmented = this.total > 1 && this.total <= 40;
+    const track = el("div", { class: `p-track${segmented ? " segs" : ""}${this.queued ? " waiting" : ""}` });
+    if (segmented) {
+      for (let i = 0; i < this.total; i++) {
+        track.append(el("span", { class: i < this.done ? "seg done" : i === this.done ? "seg active" : "seg" }, el("i")));
+      }
+    } else {
+      track.append(el("i"));
+    }
+    this.root.replaceChildren(
+      el("div", { class: "p-head" }, el("span", { class: "p-label" }, this.label), el("span", { class: "p-time", "aria-hidden": "true" })),
+      track);
+    this.tick();
+  }
+
+  tick() {
+    const time = this.root.querySelector(".p-time");
+    if (time) time.textContent = this.timeText();
+    const f = this.fraction();
+    if (this.total > 1 && this.total <= 40) {
+      const active = this.root.querySelector(".seg.active i");
+      if (active) active.style.width = `${Math.round(Math.min(0.9, (Date.now() - this.stepStart) / 1000 / this.secondsPerStep()) * 100)}%`;
+    } else {
+      const fill = this.root.querySelector(".p-track > i");
+      if (fill) fill.style.width = `${Math.max(2, Math.round(f * 100))}%`;
+    }
+    this.onFraction(f);
+  }
+
+  stopClock() {
+    clearInterval(this.timer);
+    this.timer = null;
+  }
+
+  finish() {
+    if (this.total) this.stepTimes.push((Date.now() - this.stepStart) / 1000);
+    if (!this.root.hidden && this.kind && !this.queued) {
+      const seconds = (Date.now() - this.t0) / 1000;
+      remember(this.kind, this.total ? this.secondsPerStep() : seconds);
+    }
+    this.stopClock();
+    this.root.classList.add("finished");
+    this.root.querySelectorAll(".seg").forEach((s) => s.classList.add("done"));
+    const fill = this.root.querySelector(".p-track > i");
+    if (fill) fill.style.width = "100%";
+    this.onFraction(1);
+    setTimeout(() => { if (!this.timer) { this.root.hidden = true; this.onFraction(null); } }, 900);
+  }
+
+  fail(message) {
+    this.stopClock();
+    this.root.hidden = false;
+    this.root.classList.add("failed");
+    this.root.replaceChildren(el("div", { class: "p-head" }, el("span", { class: "p-label" }, message)));
+    this.onFraction(null);
+  }
+
+  hide() {
+    this.stopClock();
+    this.root.hidden = true;
+    this.onFraction(null);
+  }
+}
+
+// The margin's progress also drives a thin line along the phone's bottom bar, since on a phone
+// the margin is below the essay and out of sight.
+const progress = new Progress($("#progress"), (f) => {
+  const app = $("#app-view");
+  app.classList.toggle("busy", f != null);
+  if (f != null) app.style.setProperty("--p", f);
+});
+
+// Marks in the left gutter beside each paragraph: a pencil on the one being read, a tick on
+// those done. They sit level with the paragraph, measured from the markup mirror.
+const gutter = { marks: [] }; // index -> "reading" | "done"
+
+function renderGutter() {
+  const box = $("#gutter");
+  const text = $("#body").value;
+  const spans = paragraphSpans(text);
+  const origin = $(".text").getBoundingClientRect().top;
+  box.replaceChildren(...gutter.marks.map((status, i) => {
+    if (!status || !spans[i]) return null;
+    const rect = offsetRect(spans[i].start);
+    if (!rect) return null;
+    const mark = el("span", { class: `g-mark ${status}` }, icon(status === "done" ? "i-check" : "i-pen"));
+    mark.style.top = `${rect.top - origin}px`;
+    return mark;
+  }).filter(Boolean));
+}
+
+function markParagraph(index, status) {
+  gutter.marks[index] = status;
+  renderGutter();
+}
+
+function clearGutter(delay = 0) {
+  setTimeout(() => {
+    $("#gutter").classList.add("fading");
+    setTimeout(() => {
+      gutter.marks = [];
+      $("#gutter").classList.remove("fading");
+      renderGutter();
+    }, 400);
+  }, delay);
 }
 
 function queueText(position) {
@@ -778,27 +962,28 @@ function setRunning(active) {
   }
 }
 
-async function runStream(trigger, path, onEvent) {
+async function runStream(trigger, path, onEvent, { kind, expected }) {
   if (state.run) { stopRun(); return; } // second click = Stop
   const body = $("#body").value.trim();
   if (!body) return;
   await saveVersion("Before review");
   const run = (state.run = new AbortController());
   setRunning(trigger);
-  setProgress("Starting");
+  progress.start("Starting…", { kind, expected });
   let failed = false;
   try {
     await stream(path, { body, ...goals() }, (event) => {
-      if (event.type === "queue") setProgress(queueText(event.position));
-      else if (event.type === "error") { failed = true; setProgressMessage(event.message); }
+      if (event.type === "queue") progress.queue(event.position);
+      else if (event.type === "error") { failed = true; progress.fail(event.message); }
       else onEvent(event);
     }, run.signal);
-    if (!failed) $("#progress").hidden = true;
+    if (!failed) progress.finish();
   } catch (err) {
-    setProgressMessage(err.name === "AbortError" ? "Stopped." : err.message);
+    progress.fail(err.name === "AbortError" ? "Stopped." : err.message);
   } finally {
     if (state.run === run) state.run = null;
     setRunning(null);
+    clearGutter(failed ? 0 : 2000);
   }
 }
 
@@ -820,19 +1005,27 @@ function startReview(trigger) {
       $("#voice-notes").replaceChildren(...event.voice_notes.map((n) => el("p", { class: "drift" }, n)));
       addSuggestions(event.suggestions);
     } else if (event.type === "start") {
-      setProgress(`Reading paragraph 1 of ${event.total}…`, 0);
+      progress.steps(event.total, `Paragraph 1 of ${event.total}`);
+      gutter.marks = [];
+      markParagraph(0, "reading");
     } else if (event.type === "paragraph") {
       modelCount += event.suggestions.length;
       addSuggestions(event.suggestions.map((s) => ({ ...s, paragraph: event.index })));
       const done = event.index + 1;
-      if (done < event.total) setProgress(`Reading paragraph ${done + 1} of ${event.total}…`, done / event.total);
+      gutter.marks[event.index] = "done";
+      if (done < event.total) {
+        progress.step(done, `Paragraph ${done + 1} of ${event.total}`);
+        markParagraph(done, "reading");
+      } else {
+        renderGutter();
+      }
     } else if (event.type === "done" && state.suggestions.length === 0) {
       $("#suggestion-list").replaceChildren(marginMessage("Nothing to mark. This reads well as it is."));
     } else if (event.type === "done" && modelCount === 0) {
       $("#suggestion-list").prepend(marginMessage("No corrections beyond the phrases flagged here."));
       placeNotes();
     }
-  });
+  }, { kind: "paragraph", expected: 6 });
 }
 
 $("#review").addEventListener("click", () => startReview("#review"));
@@ -842,13 +1035,13 @@ $("#overview").addEventListener("click", () => {
   if (!state.run) $("#overview-panel").replaceChildren();
   let notice = null;
   runStream("#overview", "/api/overview", (event) => {
-    if (event.type === "start") setProgress("Reading the whole essay…");
+    if (event.type === "start") progress.begin("Reading the whole essay");
     else if (event.type === "notice") notice = event.message;
     else if (event.type === "overview") {
       renderOverview(event.overview);
       if (notice) $("#overview-panel").prepend(el("p", { class: "notice" }, notice));
     }
-  });
+  }, { kind: "letter", expected: 45 });
 });
 
 // The big-picture feedback, laid out as a short letter in the margin.
@@ -1056,6 +1249,7 @@ function renderReport() {
 // ---------- drafting from a prompt ----------
 
 let composeRun = null;
+const composeProgress = new Progress($("#compose-progress"));
 
 function voiceName() {
   const p = state.profile;
@@ -1068,7 +1262,7 @@ function voiceName() {
 function openCompose() {
   closeDrawer();
   $("#compose-voice").textContent = voiceName();
-  $("#compose-status").textContent = "";
+  if (!composeRun) composeProgress.hide();
   $("#compose-dialog").showModal();
   $("#compose-form").instructions.focus();
 }
@@ -1086,27 +1280,30 @@ $("#compose-form").addEventListener("submit", async (e) => {
   if (composeRun) { composeRun.abort(); return; } // second click = Stop
   const form = e.target;
   const body = Object.fromEntries(["instructions", "goal", "audience", "tone", "length"].map((k) => [k, form[k].value]));
-  const status = $("#compose-status");
   const go = $("#compose-go span");
   const run = (composeRun = new AbortController());
   go.textContent = "Stop";
-  status.textContent = "Starting…";
-  let draftId = null;
+  // Longer drafts take longer; each length keeps its own estimate.
+  const expected = { short: 40, medium: 75, long: 130 }[body.length] || 75;
+  composeProgress.start("Starting…", { kind: `draft-${body.length}`, expected });
+  let draftId = null, failed = false;
   try {
     await saveVersion("Switched essays");
     await stream("/api/compose", body, (event) => {
-      if (event.type === "queue") status.textContent = queueText(event.position);
-      else if (event.type === "start") status.textContent = "Writing the draft. This can take a minute.";
-      else if (event.type === "error") status.textContent = event.message;
+      if (event.type === "queue") composeProgress.queue(event.position);
+      else if (event.type === "start") composeProgress.begin("Writing the draft");
+      else if (event.type === "error") { failed = true; composeProgress.fail(event.message); }
       else if (event.type === "draft") draftId = event.id;
     }, run.signal);
+    if (!failed && draftId) composeProgress.finish();
   } catch (err) {
-    status.textContent = err.name === "AbortError" ? "Stopped." : err.message;
+    composeProgress.fail(err.name === "AbortError" ? "Stopped." : err.message);
   } finally {
     composeRun = null;
     go.textContent = "Write the draft";
   }
   if (draftId) {
+    await new Promise((r) => setTimeout(r, 500)); // let the full bar show for a moment
     $("#compose-dialog").close();
     form.reset();
     await openDraft(draftId);

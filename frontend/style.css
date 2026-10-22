@@ -231,12 +231,40 @@ textarea { width: 100%; }
 .count:empty { display: none; }
 .panel { display: grid; gap: 14px; align-content: start; }
 
-.progress { font: italic var(--t-md)/1.4 var(--serif); color: var(--soft); margin-bottom: 12px; display: grid; gap: 6px; }
-.progress .bar-line { height: 2px; background: var(--rule); overflow: hidden; }
-.progress .bar-line span { display: block; height: 100%; background: var(--pen); transition: width .3s; }
-.progress .bar-line.indeterminate span { width: 30%; animation: slide 1.4s ease-in-out infinite; }
-@keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
-@media (prefers-reduced-motion: reduce) { .progress .bar-line.indeterminate span { animation: none; width: 100%; opacity: .4; } }
+/* Progress: what's happening and a clock on one line, the bar under it. In the margin it stays
+   in view (sticky) while the notes stream in below. */
+.progress { display: grid; gap: 8px; margin-bottom: 14px; }
+.margin .progress { position: sticky; top: calc(var(--bar-h) + 10px); z-index: 2; background: var(--paper); padding: 6px 0 10px; box-shadow: 0 8px 8px -8px var(--paper); }
+.p-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.p-label { font: italic var(--t-md)/1.35 var(--serif); color: var(--ink-2); }
+.p-time { font: 500 var(--t-xs) var(--sans); color: var(--soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.p-track { position: relative; height: 4px; border-radius: 2px; background: var(--rule); overflow: hidden; }
+.p-track > i { position: absolute; inset: 0 auto 0 0; width: 2%; background: var(--pen); border-radius: 2px; transition: width .5s linear; }
+.p-track.segs { display: flex; gap: 3px; background: none; height: 6px; }
+.p-track .seg { position: relative; flex: 1; background: var(--rule); border-radius: 1.5px; overflow: hidden; }
+.p-track .seg i { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--pen-wash-strong); transition: width .5s linear; }
+.p-track .seg.done { background: var(--pen); transition: background-color .25s; }
+.p-track .seg.done i { display: none; }
+.p-track .seg.active { background: var(--pen-wash); }
+.p-track.waiting > i { width: 100% !important; background: repeating-linear-gradient(-45deg, var(--rule-strong) 0 6px, transparent 6px 12px); animation: wait 1.2s linear infinite; background-size: 17px 17px; }
+@keyframes wait { to { background-position: 17px 0; } }
+.progress.finished .p-label { color: var(--ok); }
+.progress.failed .p-label { color: var(--pen); }
+@media (prefers-reduced-motion: reduce) { .p-track > i, .p-track .seg i { transition: none; } .p-track.waiting > i { animation: none; } }
+
+/* Gutter marks beside the paragraph being read (pencil) and the ones done (tick). */
+.gutter { position: absolute; left: -46px; top: 0; width: 24px; height: 100%; pointer-events: none; transition: opacity .4s; }
+.gutter.fading { opacity: 0; }
+.g-mark { position: absolute; left: 0; display: grid; place-items: center; width: 24px; height: 34px; color: var(--soft); }
+.g-mark .icon { width: 15px; height: 15px; }
+.g-mark.reading { color: var(--pen); animation: write 1.1s ease-in-out infinite alternate; }
+.g-mark.done { color: var(--ok); }
+@keyframes write { from { transform: translate(-1px, 1px) rotate(-6deg); } to { transform: translate(2px, -1px) rotate(4deg); } }
+@media (prefers-reduced-motion: reduce) { .g-mark.reading { animation: none; } }
+
+/* Phones: a thin line along the top of the bottom bar, since the margin is out of sight. */
+.phone-bar::before { content: ""; position: absolute; left: 0; top: -1px; height: 2px; width: calc(var(--p, 0) * 100%); background: var(--pen); opacity: 0; transition: width .5s linear, opacity .3s; }
+.app.busy .phone-bar::before { opacity: 1; }
 
 /* Notes: red pencil in the margin, beside the line they're about. */
 .notes { position: relative; }
@@ -429,6 +457,7 @@ select option { background: var(--paper); color: var(--ink); }
 }
 
 @media (max-width: 680px) {
+  .gutter { display: none; }
   :root { --t-2xl: 25px; --bar-h: 50px; }
   input:not([type="file"]), textarea { font-size: 16px; } /* stops iOS zooming into fields */
   .bar { gap: 12px; padding: 0 14px; }

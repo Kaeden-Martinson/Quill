@@ -24,6 +24,7 @@
       <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
       <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
       <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V4M7 9l5-5 5 5M5 15v4h14v-4"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
       <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"/></symbol>
     </defs>
   </svg>
@@ -117,6 +118,7 @@
             </datalist>
             <p id="ai-banner" class="ai-banner" hidden></p>
             <div class="text">
+              <div id="gutter" class="gutter" aria-hidden="true"></div>
               <div id="backdrop" class="backdrop" aria-hidden="true"></div>
               <textarea id="body" placeholder="Write or paste your draft here. Leave a blank line between paragraphs." aria-label="Essay text"></textarea>
             </div>
@@ -284,7 +286,7 @@
         </div>
         <p class="aside">Writes in <span id="compose-voice">your voice</span>. <button type="button" class="link" id="compose-change-voice">Change the voice</button></p>
         <p class="ai-note">This draft is marked as written by Quill's AI. Its paragraphs stay tinted on the page, and your writing history says how much is still AI text, until you rewrite them in your own words.</p>
-        <p id="compose-status" class="status-text" role="status"></p>
+        <div id="compose-progress" class="progress" role="status" aria-live="polite" hidden></div>
       </div>
       <div class="row dialog-foot">
         <button type="button" class="btn quiet" data-close>Cancel</button>
