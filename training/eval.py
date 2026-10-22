@@ -32,6 +32,7 @@ import httpx
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "backend"))
 from config import OLLAMA_URL  # noqa: E402
+from config import EDIT_OPTIONS  # noqa: E402  the app's own edit settings
 from editor import SUGGESTION_SCHEMA, SYSTEM, parse_reply  # noqa: E402
 from style import GENERIC_PHRASES, generic_phrase_flags  # noqa: E402
 
@@ -53,7 +54,7 @@ def ask(model, case):
             "messages": [{"role": "system", "content": SYSTEM}, {"role": "user", "content": prompt}],
             "format": SUGGESTION_SCHEMA,
             "stream": False,
-            "options": {"temperature": 0},
+            "options": EDIT_OPTIONS,
         },
         timeout=600,
     )

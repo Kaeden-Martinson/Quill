@@ -82,7 +82,7 @@ def test_goals_are_saved_per_essay_and_sent_to_the_editor(client, user, fake_mod
 def fake_drafter(monkeypatch, paragraphs):
     prompts = []
 
-    async def chat(client, system, prompt, schema, model=None):
+    async def chat(client, system, prompt, schema, model=None, options=None):
         prompts.append((system, prompt, model))
         return {"title": "Why I bike", "paragraphs": paragraphs}
 

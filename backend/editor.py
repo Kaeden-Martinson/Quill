@@ -12,7 +12,8 @@ from collections import deque
 import httpx
 
 import rules
-from config import MAX_CONCURRENT_REVIEWS, MODEL, OLLAMA_URL, OVERVIEW_MODEL
+from config import (DRAFT_OPTIONS, EDIT_OPTIONS, LETTER_OPTIONS, MAX_CONCURRENT_REVIEWS, MODEL, OLLAMA_URL,
+                    OVERVIEW_MODEL)
 
 CATEGORIES = ["clarity", "flow", "argument", "evidence", "concision", "grammar", "word choice"]
 
@@ -180,7 +181,7 @@ def parse_reply(content):
     return obj if isinstance(obj, dict) else None
 
 
-async def chat(client, system, prompt, schema, model=MODEL):
+async def chat(client, system, prompt, schema, model=MODEL, options=EDIT_OPTIONS):
     num_ctx = context_size(system, prompt) or CONTEXT_STEPS[-1]
     resp = await client.post(
         f"{OLLAMA_URL}/api/chat",
@@ -189,7 +190,7 @@ async def chat(client, system, prompt, schema, model=MODEL):
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
             "format": schema,
             "stream": False,
-            "options": {"temperature": 0.3, "num_ctx": num_ctx},
+            "options": {**options, "num_ctx": num_ctx},
         },
         timeout=300,
     )
@@ -254,7 +255,7 @@ async def overview_stream(text, voice, goal=""):
             )}
         prompt = header + '"""\n' + "\n\n".join(kept) + '\n"""'
         async with httpx.AsyncClient() as client:
-            result = await chat(client, OVERVIEW_SYSTEM, prompt, OVERVIEW_SCHEMA, model=OVERVIEW_MODEL)
+            result = await chat(client, OVERVIEW_SYSTEM, prompt, OVERVIEW_SCHEMA, model=OVERVIEW_MODEL, options=LETTER_OPTIONS)
         yield {"type": "overview", "overview": result}
         yield {"type": "done"}
     finally:
@@ -302,7 +303,7 @@ async def draft_stream(prompt):
         started = True
         yield {"type": "start", "total": 1}
         async with httpx.AsyncClient() as client:
-            result = await chat(client, DRAFT_SYSTEM, prompt, DRAFT_SCHEMA, model=OVERVIEW_MODEL)
+            result = await chat(client, DRAFT_SYSTEM, prompt, DRAFT_SCHEMA, model=OVERVIEW_MODEL, options=DRAFT_OPTIONS)
         paragraphs = [" ".join(p.split()) for p in (result or {}).get("paragraphs", []) if p.strip()]
         if not paragraphs:
             yield {"type": "error", "message": "The model didn't return a draft. Try again or reword the prompt."}

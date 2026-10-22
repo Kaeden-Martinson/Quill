@@ -35,7 +35,7 @@ def test_big_picture_uses_the_overview_model(client, user, monkeypatch):
     _, h = user
     used = []
 
-    async def chat(client, system, prompt, schema, model=None):
+    async def chat(client, system, prompt, schema, model=None, options=None):
         used.append(model)
         return {"strongest_part": "s", "top_priority": "p", "comments": []}
 

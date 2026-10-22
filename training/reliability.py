@@ -31,6 +31,7 @@ sys.path.insert(0, str(HERE))
 import errors  # noqa: E402
 import rules  # noqa: E402
 from config import OLLAMA_URL  # noqa: E402
+from config import EDIT_OPTIONS  # noqa: E402  the app's own edit settings
 from editor import SUGGESTION_SCHEMA, SYSTEM, parse_reply  # noqa: E402
 from style import describe_voice, profile_stats  # noqa: E402
 
@@ -92,7 +93,7 @@ def ask(client, model, text):
     prompt = (f"Writer's voice:\n{describe_voice(profile_stats([text]))}\n\nEssay goal: not specified\n\n"
               f"Paragraph:\n\"\"\"\n{text}\n\"\"\"")
     r = client.post(f"{OLLAMA_URL}/api/chat", json={
-        "model": model, "stream": False, "format": SUGGESTION_SCHEMA, "options": {"temperature": 0},
+        "model": model, "stream": False, "format": SUGGESTION_SCHEMA, "options": EDIT_OPTIONS,
         "messages": [{"role": "system", "content": SYSTEM}, {"role": "user", "content": prompt}],
     }, timeout=600).json()
     reply = parse_reply(r.get("message", {}).get("content", "")) or {}
@@ -147,6 +148,7 @@ def score(model):
         print(f"  {key:10} {shown:18} target {bar:8}  {'MET' if ok else 'not yet'}")
     print(f"  {t['planted']} planted mistakes in {n} paragraphs ({t['clean']} clean); "
           f"{t['seconds'] / n:.1f}s per paragraph")
+    print(f"  settings: {EDIT_OPTIONS}")
     return got
 
 

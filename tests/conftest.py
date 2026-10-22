@@ -52,7 +52,7 @@ def fake_model(monkeypatch):
     """Replaces the Ollama call. Paragraphs containing "uses" get a grammar fix for their first sentence."""
     calls = []
 
-    async def chat(client, system, prompt, schema, model=None):
+    async def chat(client, system, prompt, schema, model=None, options=None):
         calls.append(prompt)
         if system == editor.OVERVIEW_SYSTEM:
             return {"strongest_part": "s", "top_priority": "p",
