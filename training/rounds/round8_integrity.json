@@ -1,0 +1,120 @@
+{
+ "problems": [],
+ "facts": {
+  "round 7 files match round7.json": {
+   "ok": true,
+   "detail": "10 files"
+  },
+  "train.py unchanged since round 7": {
+   "ok": true,
+   "detail": ""
+  },
+  "Ollama's quill-editor-v7 is the recorded round 7 build": {
+   "ok": true,
+   "detail": "sha256-1abb88dc6c65d"
+  },
+  "round 8 train.jsonl matches round8_dataset.json": {
+   "ok": true,
+   "detail": ""
+  },
+  "round 8 val.jsonl matches round8_dataset.json": {
+   "ok": true,
+   "detail": ""
+  },
+  "sealed cases unchanged since sealing": {
+   "ok": true,
+   "detail": ""
+  },
+  "sealed set never scored (no sealed_log.jsonl)": {
+   "ok": true,
+   "detail": ""
+  },
+  "exclusions + kept rows = pool": {
+   "ok": true,
+   "detail": "6886 + 18614 vs 25500"
+  },
+  "exclusion reasons match the manifest": {
+   "ok": true,
+   "detail": ""
+  },
+  "every exclusion has an _id and reason": {
+   "ok": true,
+   "detail": ""
+  },
+  "no CoEdIT row excluded twice": {
+   "ok": true,
+   "detail": ""
+  },
+  "CoEdIT paragraphs x 3 accounts for kept rows": {
+   "ok": true,
+   "detail": "6204 paragraphs x 3 = 18612 of 18614 kept rows"
+  },
+  "professional_trace": {
+   "source_paragraphs": 1068,
+   "documents": 45,
+   "by_source": {
+    "sec": 393,
+    "python": 675
+   },
+   "no_edit_examples": 1068,
+   "light_edit_examples": 337,
+   "examples_total": 1405,
+   "train_examples": 1270,
+   "val_examples": 135
+  },
+  "professional examples = no-edit + light-edit = train + val": {
+   "ok": true,
+   "detail": ""
+  },
+  "one no-edit example per source paragraph": {
+   "ok": true,
+   "detail": ""
+  },
+  "train_examples": {
+   "n": 9149,
+   "malformed": 0,
+   "quote_missing": 0,
+   "unchanged_edits": 2,
+   "exact_duplicate_examples": 1025,
+   "system_prompt_mismatch": 0,
+   "categories": {
+    "flow": 2210,
+    "grammar": 9340,
+    "concision": 824,
+    "clarity": 240,
+    "word choice": 32
+   }
+  },
+  "train: 9149 examples parse, quotes present, system prompt is the app's": {
+   "ok": true,
+   "detail": "malformed 0, quote missing 0, system mismatch 0"
+  },
+  "val_examples": {
+   "n": 533,
+   "malformed": 0,
+   "quote_missing": 0,
+   "unchanged_edits": 0,
+   "exact_duplicate_examples": 44,
+   "system_prompt_mismatch": 0,
+   "categories": {
+    "grammar": 511,
+    "flow": 116,
+    "concision": 37,
+    "clarity": 13
+   }
+  },
+  "val: 533 examples parse, quotes present, system prompt is the app's": {
+   "ok": true,
+   "detail": "malformed 0, quote missing 0, system mismatch 0"
+  },
+  "validation near-duplicates of training removed at build": {
+   "ok": true,
+   "detail": "0 found at build (5-gram, 50%)"
+  }
+ },
+ "notes": [
+  "Duplicates: round 8 train has 1,025 exact duplicate examples (1,003 casual, 22 app feedback x3 weighting). Round 7 had 955 examples identical except for the randomly drawn goal line. Both are the same mechanism: a casual paragraph's three variants collide when it gets the same planted mistake or none. Not repaired (the plan fixes the data before training); comparable in both rounds.",
+  "Professional counts are different units: 1,068 source paragraphs from 45 documents -> 1,068 no-edit + 337 light-edit = 1,405 examples -> 1,270 train + 135 val (split by document).",
+  "Sealed set: hashed and checked for overlap with training (0/150) by script when it was built; no model has been run on it and no result exists."
+ ]
+}

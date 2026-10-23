@@ -1,0 +1,137 @@
+{"judge": "claude-2", "human_rater": false, "human": [
+{"item": "k8s--concepts-containers-container-lifecycle-hooks", "changes": {"A": [], "B": [
+ {"verdict": "unnecessary", "meaning_kept": true, "voice_kept": true, "why": "article optional in compound subject"}]},
+ "missed": {"A": ["comma splice in first sentence (hook action, httpGet...)"], "B": ["comma splice in first sentence (hook action, httpGet...)"]}},
+{"item": "k8s--concepts-overview-working-with-objects-finalizers", "changes": {"A": [
+ {"verdict": "harmful", "meaning_kept": false, "voice_kept": true, "why": "missing word is a controller, not a user"},
+ {"verdict": "harmful", "meaning_kept": false, "voice_kept": true, "why": "missing word is Job; user is wrong"}], "B": [
+ {"verdict": "harmful", "meaning_kept": false, "voice_kept": true, "why": "drops comparison; sentence loses subject"}]},
+ "missed": {"A": ["gap in 'Like , owner references' (missing term)"], "B": ["gap in 'When a manages' (missing controller)", "gap in 'when a creates' (missing Job)"]}},
+{"item": "k8s--concepts-policy-pid-limiting", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "doubled article a an"}], "B": []},
+ "missed": {"A": ["'and expect to host' lacks proper subject"], "B": ["'a an important sibling' doubled article", "'and expect to host' lacks proper subject"]}},
+{"item": "k8s--concepts-services-networking-dns-pod-service", "changes": {"A": [
+ {"verdict": "unnecessary", "meaning_kept": true, "voice_kept": true, "why": "'layout that is supported' was grammatical"}], "B": []},
+ "missed": {"A": [], "B": []}},
+{"item": "k8s--concepts-workloads-controllers-deployment", "changes": {"A": [], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "missing article before old ReplicaSet"}]},
+ "missed": {"A": ["missing 'the' before old ReplicaSet", "stray period in 'Status=False. and'", "'once automatic rollback will be implemented' tense"], "B": ["stray period in 'Status=False. and'", "'once automatic rollback will be implemented' tense"]}},
+{"item": "k8s--concepts-workloads-pods-pod-lifecycle", "changes": {"A": [], "B": [
+ {"verdict": "unnecessary", "meaning_kept": true, "voice_kept": false, "why": "'deletes' is normal tech usage"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "fills missing subject in 'the attempts'"}]},
+ "missed": {"A": ["missing subject in 'the attempts graceful shutdown'", "gap in 'deleted from the .'"], "B": ["gap in 'deleted from the .'"]}},
+{"item": "micusp--CEE.G0.01.1", "changes": {"A": [
+ {"verdict": "unnecessary", "meaning_kept": true, "voice_kept": true, "why": "optional comma; moved 'later' needlessly"},
+ {"verdict": "unnecessary", "meaning_kept": true, "voice_kept": true, "why": "'uphold under' still unidiomatic"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "poring -> pouring"},
+ {"verdict": "harmful", "meaning_kept": false, "voice_kept": false, "why": "tacked-on 'however' makes no sense"}], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "poring -> pouring"}]},
+ "missed": {"A": ["comma splice '..., however when needed'", "dangling 'often wanting to choose'", "'conditions it must uphold to' not properly fixed"], "B": ["'conditions it must uphold to' unidiomatic", "comma splice '..., however when needed'", "dangling 'often wanting to choose'"]}},
+{"item": "micusp--CLS.G0.01.1", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "tense: claims -> claimed"}], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "lead -> led"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "tense: claims -> claimed"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "influencing -> influential"},
+ {"verdict": "harmful", "meaning_kept": false, "voice_kept": false, "why": "attestations -> demands changes meaning"}]},
+ "missed": {"A": ["'what lead to' should be 'led'", "'most influencing' should be 'influential'", "'It is sure' unidiomatic"], "B": ["'It is sure' unidiomatic"]}},
+{"item": "micusp--ECO.G0.01.1", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "missing article"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "missing articles"}], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "missing article"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "missing articles"},
+ {"verdict": "unnecessary", "meaning_kept": true, "voice_kept": true, "why": "merges two correct sentences"}]},
+ "missed": {"A": [], "B": []}},
+{"item": "micusp--EDU.G0.01.1", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "comma prevents misreading"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "asses -> assess"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "'we were had' -> 'we had'"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "missing apostrophe"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "intro-clause comma; second comma optional"},
+ {"verdict": "unnecessary", "meaning_kept": true, "voice_kept": true, "why": "optional comma"},
+ {"verdict": "unnecessary", "meaning_kept": true, "voice_kept": true, "why": "optional comma"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "independently; comma before but"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "missing possessive apostrophe"},
+ {"verdict": "harmful", "meaning_kept": false, "voice_kept": false, "why": "truncates sentence to 'Although Vygots'"}], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "asses -> assess"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "'we were had' -> 'we had'"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "missing apostrophe"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "intro-clause comma"}]},
+ "missed": {"A": ["'filling out' should be 'filing out'", "stray 'it' in 'because it shifting'", "semicolon should be colon before 'shifting the demand curves'"], "B": ["'filling out' should be 'filing out'", "stray 'it' in 'because it shifting'", "semicolon should be colon before 'shifting the demand curves'", "'the students understanding' missing apostrophe"]}},
+{"item": "micusp--ENG.G0.01.1", "changes": {"A": [], "B": [
+ {"verdict": "harmful", "meaning_kept": false, "voice_kept": true, "why": "now says women own husbands"}]},
+ "missed": {"A": ["'ego's' should be 'egos'", "'barrier in which men enforce' should be 'that men enforce'"], "B": ["'ego's' should be 'egos'", "'barrier in which men enforce' should be 'that men enforce'"]}},
+{"item": "micusp--HIS.G0.01.1", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "missing 'is'; it's -> its"}], "B": [
+ {"verdict": "harmful", "meaning_kept": false, "voice_kept": false, "why": "invents ', Inc.' in name"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "comma after introductory phrase"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "missing 'is'; it's -> its"}]},
+ "missed": {"A": ["'Churhc' typo", "'it as produced' should be 'has'", "'expansion of series' missing 'a'", "'stick moral teaching' should be 'strict'", "'go about it getting there'", "comma splice '(the Council), this shows'"], "B": ["'Churhc' typo", "'it as produced' should be 'has'", "'expansion of series' missing 'a'", "'stick moral teaching' should be 'strict'", "'go about it getting there'", "comma splice '(the Council), this shows'"]}},
+{"item": "micusp--IOE.G0.01.1", "changes": {"A": [], "B": [
+ {"verdict": "unnecessary", "meaning_kept": true, "voice_kept": true, "why": "'customers to' acceptable"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "'a separate counters'"},
+ {"verdict": "unnecessary", "meaning_kept": true, "voice_kept": true, "why": "'customers to' acceptable"}]},
+ "missed": {"A": ["'at a separate counters' article/number error"], "B": []}},
+{"item": "micusp--LIN.G0.01.1", "changes": {"A": [], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "pasttime -> pastime"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "interraction -> interaction"}]},
+ "missed": {"A": ["'pasttime' misspelling", "'interraction' misspelling", "'allude him' should be 'elude'", "'may differ be different' doubled verb"], "B": ["'allude him' should be 'elude'", "'may differ be different' doubled verb"]}},
+{"item": "micusp--MEC.G1.01.1", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "direciton typo"}], "B": []},
+ "missed": {"A": [], "B": ["'31-direciton' typo"]}},
+{"item": "micusp--NRE.G0.01.1", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "affect -> effect"}], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "affect -> effect"}]},
+ "missed": {"A": ["'et. al.' should be 'et al.'", "space before period after '(critical depth)'"], "B": ["'et. al.' should be 'et al.'", "space before period after '(critical depth)'"]}},
+{"item": "micusp--PHI.G0.01.1", "changes": {"A": [], "B": [
+ {"verdict": "harmful", "meaning_kept": false, "voice_kept": false, "why": "misspells author's name"}]},
+ "missed": {"A": ["'Pascal's is reasonable target' missing 'a'"], "B": ["'Pascal's is reasonable target' missing 'a'"]}},
+{"item": "micusp--PHY.G0.01.1", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "eqal typo"}], "B": [
+ {"verdict": "unnecessary", "meaning_kept": true, "voice_kept": true, "why": "'electron energy' was fine"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "eqal typo"}]},
+ "missed": {"A": ["tense shift 'we measure the photocurrent'"], "B": ["tense shift 'we measure the photocurrent'"]}},
+{"item": "micusp--POL.G0.01.1", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "had began -> had begun"}], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "an dramatic -> a dramatic"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "had began -> had begun"}]},
+ "missed": {"A": ["'an dramatic' article error", "'the state at which' should be 'stage'"], "B": ["'the state at which' should be 'stage'"]}},
+{"item": "micusp--PSY.G0.01.1", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "its -> it's"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "comma after introductory phrase"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "McCarthysim typo"}], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "its -> it's"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "comma after introductory phrase"},
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "McCarthysim typo"}]},
+ "missed": {"A": ["missing comma after 'Welcome to the Occupation'"], "B": ["missing comma after 'Welcome to the Occupation'"]}},
+{"item": "micusp--SOC.G0.01.1", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "stray 'a'"}], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "stray 'a'"}]},
+ "missed": {"A": ["subject-verb agreement 'The failure ... are all examples'", "faulty parallelism 'and in many cases worked'"], "B": ["subject-verb agreement 'The failure ... are all examples'", "faulty parallelism 'and in many cases worked'"]}},
+{"item": "sec--boeing-fy2020", "changes": {"A": [], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "space before period"}]},
+ "missed": {"A": ["space before final period '2020 .'"], "B": []}},
+{"item": "sec--caterpillar-fy2019", "changes": {"A": [], "B": [
+ {"verdict": "harmful", "meaning_kept": false, "voice_kept": false, "why": "rounds reported figures, loses precision"},
+ {"verdict": "harmful", "meaning_kept": false, "voice_kept": false, "why": "adds unsupported 'in the Americas'"}]},
+ "missed": {"A": [], "B": []}},
+{"item": "sec--walmart-fy2019", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "though -> through"}], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "though -> through"},
+ {"verdict": "harmful", "meaning_kept": false, "voice_kept": false, "why": "invents an exception to policy"}]},
+ "missed": {"A": [], "B": []}},
+{"item": "wac--a-theory-of-literate-action--1-01-_the_symbolic_animal_and_the_cultural_transformation_of", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "tense agreement with 'has been used'"}], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "tense agreement with 'has been used'"}]},
+ "missed": {"A": ["stray comma between subject and verb 'written language, would depend'"], "B": ["stray comma between subject and verb 'written language, would depend'"]}},
+{"item": "wac--beyond-argument-essaying-as-a--1-01-_introduction", "changes": {"A": [], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "'most ... curriculum' needs plural"}]},
+ "missed": {"A": ["'most college writing curriculum' should be plural"], "B": []}},
+{"item": "wac--international-advances-in-writ--01-_introduction", "changes": {"A": [
+ {"verdict": "unnecessary", "meaning_kept": true, "voice_kept": true, "why": "optional commas"},
+ {"verdict": "harmful", "meaning_kept": false, "voice_kept": true, "why": "'focused work' meant shaped work"}], "B": []},
+ "missed": {"A": ["stray comma 'merit, nonetheless thematically cluster'", "'schoolbased' should be 'school-based'"], "B": ["stray comma 'merit, nonetheless thematically cluster'", "'schoolbased' should be 'school-based'"]}},
+{"item": "wac--international-advances-in-writ--02-_pedagogical_aproaches", "changes": {"A": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "presentes typo; doubled 'the'"}], "B": [
+ {"verdict": "fix", "meaning_kept": true, "voice_kept": true, "why": "presentes typo; doubled 'the'"}]},
+ "missed": {"A": ["agreement 'a sampling of work that point'"], "B": ["agreement 'a sampling of work that point'"]}}
+]}

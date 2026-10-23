@@ -35,8 +35,11 @@ from config import EDIT_OPTIONS  # noqa: E402  the app's own edit settings
 from editor import SUGGESTION_SCHEMA, SYSTEM, parse_reply  # noqa: E402
 from style import describe_voice, profile_stats  # noqa: E402
 
-# QUILL_TESTSET=confirm scores the second, untouched set instead.
-_SET = HERE / ("data-confirm" if os.environ.get("QUILL_TESTSET") == "confirm" else "data-heldout")
+# QUILL_TESTSET=confirm scores the second set instead; QUILL_TESTSET=sealed the final, sealed one
+# (sealed_test.py), which also needs QUILL_UNSEAL=1 to score and logs every time it's opened.
+_TESTSET = os.environ.get("QUILL_TESTSET")
+_SET = (HERE.parent / "data" / "sealed_test" if _TESTSET == "sealed"
+        else HERE / ("data-confirm" if _TESTSET == "confirm" else "data-heldout"))
 PARAGRAPHS = _SET / "paragraphs.jsonl"
 CASES = _SET / "cases.jsonl"
 TARGETS = {"fixed": 0.90, "perfect": 0.80, "untouched": 0.95, "extra": 0.15}
@@ -113,7 +116,24 @@ def ask(client, model, text):
     return kept if NO_RULES else rules.apply(text, kept)
 
 
+def unseal(model):
+    """The sealed set is scored once, deliberately. Refuse without QUILL_UNSEAL=1, check it's the set
+    that was sealed, and record the opening."""
+    if os.environ.get("QUILL_UNSEAL") != "1":
+        sys.exit("The sealed test set is for the final check only. Set QUILL_UNSEAL=1 to score it.")
+    import hashlib
+    record = json.loads((HERE / "rounds" / "sealed_test.json").read_text(encoding="utf-8"))
+    digest = hashlib.sha256(CASES.read_bytes()).hexdigest()
+    if digest != record["cases_sha256"]:
+        sys.exit("The sealed cases changed since they were sealed; not scoring.")
+    with open(HERE / "rounds" / "sealed_log.jsonl", "a", encoding="utf-8") as f:
+        f.write(json.dumps({"opened": time.strftime("%Y-%m-%d %H:%M:%S"), "model": model,
+                            "prompt": os.environ.get("QUILL_PROMPT_CONFIG") or "original"}) + "\n")
+
+
 def score(model):
+    if _TESTSET == "sealed":
+        unseal(model)
     cases = [json.loads(line) for line in open(CASES, encoding="utf-8")]
     t = dict(planted=0, fixed=0, perfect=0, clean=0, untouched=0, extra=0, seconds=0.0)
     out_dir = HERE / "eval_results"

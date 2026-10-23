@@ -1,0 +1,56 @@
+{
+ "coedit_pool_rows": 25500,
+ "coedit_excluded": {
+  "content_change": 6362,
+  "conflicting_targets": 310,
+  "corrupted_target": 79,
+  "duplicate_pair": 103,
+  "instruction_leftover": 32
+ },
+ "coedit_excluded_by_task": {
+  "simplification/content_change": 6181,
+  "clarity/conflicting_targets": 227,
+  "gec/conflicting_targets": 52,
+  "clarity/content_change": 181,
+  "simplification/conflicting_targets": 31,
+  "gec/corrupted_target": 79,
+  "simplification/duplicate_pair": 76,
+  "simplification/instruction_leftover": 14,
+  "gec/instruction_leftover": 14,
+  "clarity/instruction_leftover": 2,
+  "gec/duplicate_pair": 27,
+  "coherence/instruction_leftover": 2
+ },
+ "coedit_kept_rows": 18614,
+ "train": {
+  "coedit": 5890,
+  "casual": 1956,
+  "pro-python": 842,
+  "feedback": 33,
+  "pro-sec": 428
+ },
+ "val": {
+  "casual": 84,
+  "pro-python": 92,
+  "coedit": 314,
+  "pro-sec": 43
+ },
+ "train_examples": 9149,
+ "val_examples": 533,
+ "train_edits": 12646,
+ "val_edits": 677,
+ "val_dropped_as_near_duplicates": 0,
+ "professional": {
+  "no_edit": 1068,
+  "light_edit": 337
+ },
+ "goal_labels": {
+  "not specified": 7879,
+  "technical documentation": 842,
+  "annual report (MD&A)": 428
+ },
+ "sha256": {
+  "train.jsonl": "6454686706d685cd201b50f6f65a60100ccb9fd43015b93dc08afb9dadfd9a53",
+  "val.jsonl": "85202dff346874f92b069bba2872c86de39d9ba4ccdfcf04dd2b4bcc91502210"
+ }
+}

@@ -49,6 +49,8 @@ from prompt_candidates import DRAFT_CONFIGS, REVISE_CONFIGS, describe  # noqa: E
 
 EVAL = HERE / "writing_eval"
 RUNS = EVAL / "runs"
+# QUILL_RUN_TAG (e.g. "@v8") keeps runs of different editor models apart: revise-original@v8.jsonl.
+TAG = os.environ.get("QUILL_RUN_TAG", "")
 
 
 def ask(model, system, prompt, schema, options, seed, think=None):
@@ -69,7 +71,7 @@ def ask(model, system, prompt, schema, options, seed, think=None):
 
 def save_config(name, kind):
     """The exact prompts, settings and model for a run, saved beside its outputs."""
-    path = EVAL / "configs" / f"{kind}-{name}.json"
+    path = EVAL / "configs" / f"{kind}-{name}{TAG}.json"  # a tagged run keeps its own record
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(describe(name, kind), indent=2, ensure_ascii=False), encoding="utf-8")
 
@@ -128,7 +130,7 @@ def revise(name):
     RUNS.mkdir(parents=True, exist_ok=True)
     save_config(name, "revise")
     cases = [json.loads(line) for line in open(HERE / "eval_set.jsonl", encoding="utf-8")]
-    out = open(RUNS / f"revise-{name}.jsonl", "w", encoding="utf-8")
+    out = open(RUNS / f"revise-{name}{TAG}.jsonl", "w", encoding="utf-8")
     for i, c in enumerate(cases):
         applied, kept, seconds, error = edit_paragraph(cfg, c["text"], c.get("goal", ""))
         out.write(json.dumps({"id": c["id"], "before": c["text"], "after": applied, "suggestions": kept,
@@ -151,7 +153,7 @@ def pipeline(edit_name, draft_name):
     save_config(edit_name, "revise")
     rows = [r for r in load(RUNS / f"draft-{draft_name}.jsonl") if r["text"]]
     goals = {a["id"]: a["goal"] for a in assignments()}
-    out = open(RUNS / f"pipeline-{draft_name}+{edit_name}.jsonl", "w", encoding="utf-8")
+    out = open(RUNS / f"pipeline-{draft_name}+{edit_name}{TAG}.jsonl", "w", encoding="utf-8")
     for i, r in enumerate(rows):
         after, n_edits, errors, kept = edit_whole(cfg, r["text"], goals[r["id"]])
         out.write(json.dumps({"id": r["id"], "voice": r["voice"], "before": r["text"], "after": after, "edits": n_edits,
@@ -164,7 +166,7 @@ def human_run(edit_name, folder):
     """The editor on human-written essays you supply (.txt files). Results stay in runs/, which is
     not committed, since the essays may be private."""
     cfg = REVISE_CONFIGS[edit_name]
-    out = open(RUNS / f"human+{edit_name}.jsonl", "w", encoding="utf-8")
+    out = open(RUNS / f"human+{edit_name}{TAG}.jsonl", "w", encoding="utf-8")
     for p in sorted(Path(folder).glob("*.txt")):
         text = p.read_text(encoding="utf-8")
         after, n_edits, errors, kept = edit_whole(cfg, text, "")

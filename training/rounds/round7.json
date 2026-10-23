@@ -1,0 +1,372 @@
+{
+ "round": 7,
+ "ollama_model": "quill-editor-v7",
+ "ollama_blob": "sha256-1abb88dc6c65d0be1541c09941e7c6aa8ebc06da1f3b6c3f1eea86691ee6062a",
+ "train_config": {
+  "BASE": "unsloth/Qwen3-4B-Instruct-2507",
+  "MAX_LEN": "2048",
+  "r": "16",
+  "lora_alpha": "16",
+  "lora_dropout": "0",
+  "per_device_train_batch_size": "2",
+  "gradient_accumulation_steps": "8",
+  "num_train_epochs": "1",
+  "learning_rate": "2e-4",
+  "lr_scheduler_type": "\"cosine\"",
+  "warmup_ratio": "0.03",
+  "eval_steps": "120",
+  "save_steps": "50",
+  "optim": "\"adamw_8bit\"",
+  "train_py_sha256": "72de6038f0d23933bf3404a40e669cc178dd3b7a7b0328bccab90dae0a235e99"
+ },
+ "files": {
+  "training/data-run7/train.jsonl": {
+   "sha256": "c23642562ec218599a33e2c279d673d5d7f968d23dac0f4b3a2f9579bd463f7b",
+   "bytes": 20173379
+  },
+  "training/data-run7/val.jsonl": {
+   "sha256": "4d1635c485adb784538cf98def75944716ab98b561a9214e719b35cce52b0b54",
+   "bytes": 1043654
+  },
+  "training/out-run7/gguf_gguf/Qwen3-4B-Instruct-2507.Q4_K_M.gguf": {
+   "sha256": "1abb88dc6c65d0be1541c09941e7c6aa8ebc06da1f3b6c3f1eea86691ee6062a",
+   "bytes": 2497280320
+  },
+  "training/out-run7/lora/adapter_config.json": {
+   "sha256": "79a539acde01ffca9580d9ec8ce9c16bb34bf78afc44376ef50f1150cde3b6af",
+   "bytes": 1391
+  },
+  "training/out-run7/lora/adapter_model.safetensors": {
+   "sha256": "a6809413589dd140663df5825d0860977651c5d658145e370c5f769e74867377",
+   "bytes": 132187888
+  },
+  "training/out-run7/lora/chat_template.jinja": {
+   "sha256": "65adea29f923a4eda2dad1f080cd6ac9458dea65bd581f9fc086e3e7d556d4db",
+   "bytes": 4125
+  },
+  "training/out-run7/lora/README.md": {
+   "sha256": "a7b71700db61813f6acffa9d01d15e0e4f9dea747e75272fd39224c136a6002a",
+   "bytes": 5270
+  },
+  "training/out-run7/lora/tokenizer.json": {
+   "sha256": "476870a1f2fb6f6a2759a6ede2383bf9d5d738f17844563b65c91965b722ae09",
+   "bytes": 11422924
+  },
+  "training/out-run7/lora/tokenizer_config.json": {
+   "sha256": "95d6f8f7c0306f1957776439b0435e678a8242e2b6483e2d7dea8b45a0db7650",
+   "bytes": 5357
+  },
+  "training/out-run7/Modelfile": {
+   "sha256": "56751e124ddac85b5d8851d518b24ba6c6f1c15400d5cd8ec7fd816ab5eda068",
+   "bytes": 1698
+  }
+ },
+ "loss_curve": {
+  "train_loss": [
+   [
+    10,
+    1.7272581100463866
+   ],
+   [
+    20,
+    0.6110702514648437
+   ],
+   [
+    30,
+    0.3694454669952393
+   ],
+   [
+    40,
+    0.2937723398208618
+   ],
+   [
+    50,
+    0.23850302696228026
+   ],
+   [
+    60,
+    0.20158419609069825
+   ],
+   [
+    70,
+    0.2045504331588745
+   ],
+   [
+    80,
+    0.2192617893218994
+   ],
+   [
+    90,
+    0.18068231344223024
+   ],
+   [
+    100,
+    0.1877092480659485
+   ],
+   [
+    110,
+    0.18708713054656984
+   ],
+   [
+    120,
+    0.17823214530944825
+   ],
+   [
+    130,
+    0.1794957399368286
+   ],
+   [
+    140,
+    0.162952721118927
+   ],
+   [
+    150,
+    0.17635860443115234
+   ],
+   [
+    160,
+    0.1741689085960388
+   ],
+   [
+    170,
+    0.1629187822341919
+   ],
+   [
+    180,
+    0.17505112886428834
+   ],
+   [
+    190,
+    0.15461721420288085
+   ],
+   [
+    200,
+    0.15719574689865112
+   ],
+   [
+    210,
+    0.15186311006546022
+   ],
+   [
+    220,
+    0.1458618998527527
+   ],
+   [
+    230,
+    0.14539088010787965
+   ],
+   [
+    240,
+    0.1681681752204895
+   ],
+   [
+    250,
+    0.15582789182662965
+   ],
+   [
+    260,
+    0.15680789947509766
+   ],
+   [
+    270,
+    0.15401374101638793
+   ],
+   [
+    280,
+    0.13875802755355834
+   ],
+   [
+    290,
+    0.14894263744354247
+   ],
+   [
+    300,
+    0.16581166982650758
+   ],
+   [
+    310,
+    0.14149762392044068
+   ],
+   [
+    320,
+    0.14464449882507324
+   ],
+   [
+    330,
+    0.14166111946105958
+   ],
+   [
+    340,
+    0.16583167314529418
+   ],
+   [
+    350,
+    0.15129019021987916
+   ],
+   [
+    360,
+    0.14656785726547242
+   ],
+   [
+    370,
+    0.13011019229888915
+   ],
+   [
+    380,
+    0.1433551549911499
+   ],
+   [
+    390,
+    0.12555794715881347
+   ],
+   [
+    400,
+    0.162196147441864
+   ],
+   [
+    410,
+    0.12570379972457885
+   ],
+   [
+    420,
+    0.14685641527175902
+   ],
+   [
+    430,
+    0.13915756940841675
+   ],
+   [
+    440,
+    0.12737231254577636
+   ],
+   [
+    450,
+    0.1282023549079895
+   ],
+   [
+    460,
+    0.1418931245803833
+   ],
+   [
+    470,
+    0.12040401697158813
+   ],
+   [
+    480,
+    0.10877910852432252
+   ],
+   [
+    490,
+    0.1388156533241272
+   ],
+   [
+    500,
+    0.14788026809692384
+   ],
+   [
+    510,
+    0.14029300212860107
+   ],
+   [
+    520,
+    0.13072466850280762
+   ],
+   [
+    530,
+    0.16230194568634032
+   ],
+   [
+    540,
+    0.14656264781951905
+   ],
+   [
+    550,
+    0.14445807933807372
+   ],
+   [
+    560,
+    0.1335001826286316
+   ],
+   [
+    570,
+    0.14728162288665772
+   ],
+   [
+    580,
+    0.13316056728363038
+   ],
+   [
+    590,
+    0.129131019115448
+   ],
+   [
+    600,
+    0.14871294498443605
+   ],
+   [
+    610,
+    0.14204730987548828
+   ],
+   [
+    620,
+    0.14241138696670533
+   ]
+  ],
+  "eval_loss": [
+   [
+    120,
+    0.18297183513641357
+   ],
+   [
+    240,
+    0.15645380318164825
+   ],
+   [
+    360,
+    0.14514805376529694
+   ],
+   [
+    480,
+    0.14088359475135803
+   ],
+   [
+    600,
+    0.13915005326271057
+   ],
+   [
+    628,
+    0.13917896151542664
+   ]
+  ]
+ },
+ "baseline_results_copied": [
+  "data-confirm-quill-editor-v7.jsonl",
+  "draft-original.jsonl",
+  "eval-original.log",
+  "human+original.jsonl",
+  "pipeline-improved+original.jsonl",
+  "pipeline-original+original.jsonl",
+  "pipeline-original+v2-clarity.jsonl",
+  "quill-editor-v7-original.jsonl",
+  "quill-editor-v7-v2-clarity.jsonl",
+  "quill-editor-v7-v2-proofread.jsonl",
+  "quill-editor-v7.jsonl",
+  "reliability-original.log",
+  "rescore-quill-editor-v7.jsonl",
+  "revise-original.jsonl"
+ ],
+ "baseline_scores": {
+  "reliability_confirm": {
+   "fixed": 0.93,
+   "perfect": 0.95,
+   "untouched": 0.98,
+   "extra_per_paragraph": 0.02
+  },
+  "eval_40": {
+   "writing": "24/29",
+   "voice": "14/14",
+   "json_ok": "40/40"
+  },
+  "source": "training/writing_eval/REPORT.md (2026-10-22 runs)"
+ }
+}

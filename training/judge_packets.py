@@ -132,6 +132,196 @@ def make_human(edit_names=("original", "v2-clarity")):
     print(f"{len(items)} human passages with changes")
 
 
+def make_models(tags=("@v7", "@v8"), prefix="r8"):
+    """Blinded packets comparing editor models on the same prompt: paragraph revisions (40) and every
+    change each model made to the human passages. Files: packets/<prefix>-revisions.json and
+    packets/<prefix>-human.json; the key goes under "<prefix>" in judge_key.json."""
+    rng = random.Random(20261026)
+    key_path = EVAL / "judge_key.json"
+    key = json.loads(key_path.read_text(encoding="utf-8"))
+    key[prefix] = {"revisions": {}, "human": {}}
+    labels_for = lambda: dict(zip("AB", rng.sample(list(tags), len(tags))))  # noqa: E731
+    revs = {t: {r["id"]: r for r in load(RUNS / f"revise-original{t}.jsonl")} for t in tags}
+    ritems = []
+    for pid, base in revs[tags[0]].items():
+        labels = labels_for()
+        ritems.append({"item": pid, "original": base["before"],
+                       "versions": {lab: revs[t][pid]["after"] for lab, t in labels.items()}})
+        key[prefix]["revisions"][pid] = labels
+    (PACKETS / f"{prefix}-revisions.json").write_text(json.dumps(
+        {"rubric": REVISE_RUBRIC.replace("rank the versions", "rank the two versions"), "items": ritems},
+        indent=1, ensure_ascii=False), encoding="utf-8")
+    human = {t: {r["id"]: r for r in load(RUNS / f"human+original{t}.jsonl")} for t in tags}
+    hitems = []
+    for pid, base in human[tags[0]].items():
+        if not any(human[t][pid]["suggestions"] for t in tags):
+            continue
+        labels = labels_for()
+        hitems.append({"item": pid, "passage": base["before"],
+                       "changes": {lab: [{"original": s["original"], "revised": s["revised"], "reason": s.get("reason", "")}
+                                         for s in human[t][pid]["suggestions"]] for lab, t in labels.items()}})
+        key[prefix]["human"][pid] = labels
+    (PACKETS / f"{prefix}-human.json").write_text(json.dumps({"rubric": HUMAN_RUBRIC, "items": hitems}, indent=1,
+                                                             ensure_ascii=False), encoding="utf-8")
+    key_path.write_text(json.dumps(key, indent=1), encoding="utf-8")
+    print(f"{len(ritems)} revision items, {len(hitems)} human passages with changes")
+
+
+def export_for_people(prefix="r8"):
+    """Readable sheets for human raters: a Markdown file to read and a CSV to fill in, per packet.
+    Written to packets/people/ (local only, since they quote the human corpus). Labels are the same
+    blind A/B as the model judges see; nothing names a model."""
+    import csv
+    out = PACKETS / "people"
+    out.mkdir(parents=True, exist_ok=True)
+    rev = json.loads((PACKETS / f"{prefix}-revisions.json").read_text(encoding="utf-8"))
+    lines = [f"# Paragraph revisions ({len(rev['items'])} items)", "", rev["rubric"], ""]
+    with open(out / f"{prefix}-revisions.csv", "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["item", "version", "meaning_kept (yes/no)", "errors_fixed (1-5)", "unnecessary_changes (count)",
+                    "voice_kept (1-5)", "better version for this item (A, B or tie)", "notes"])
+        for it in rev["items"]:
+            lines += [f"## {it['item']}", "", "**Original**", "", it["original"], ""]
+            for lab, text in it["versions"].items():
+                lines += [f"**Version {lab}**{' (same as original)' if text == it['original'] else ''}", "", text, ""]
+                w.writerow([it["item"], lab, "", "", "", "", "", ""])
+    (out / f"{prefix}-revisions.md").write_text("\n".join(lines), encoding="utf-8")
+    hum = json.loads((PACKETS / f"{prefix}-human.json").read_text(encoding="utf-8"))
+    lines = [f"# Edits to human-written passages ({len(hum['items'])} passages)", "", hum["rubric"], ""]
+    with open(out / f"{prefix}-human.csv", "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["item", "editor", "change #", "verdict (fix/clarifies/unnecessary/harmful)", "meaning_kept (yes/no)",
+                    "voice_kept (yes/no)", "real errors this editor missed in the passage (describe; one row per editor is enough)"])
+        for it in hum["items"]:
+            lines += [f"## {it['item']}", "", it["passage"], ""]
+            for lab, changes in it["changes"].items():
+                lines += [f"**Editor {lab}**: {len(changes)} change(s)" if changes else f"**Editor {lab}**: no changes", ""]
+                for n, c in enumerate(changes):
+                    lines += [f"{n}. ~~{c['original']}~~", f"   → {c['revised']}", f"   _reason given: {c['reason']}_", ""]
+                    w.writerow([it["item"], lab, n, "", "", "", ""])
+                if not changes:
+                    w.writerow([it["item"], lab, "-", "", "", "", ""])
+    (out / f"{prefix}-human.md").write_text("\n".join(lines), encoding="utf-8")
+    print(f"wrote {out}\\{prefix}-revisions.md/.csv and {prefix}-human.md/.csv")
+
+
+def import_from_people(csv_path, rater, prefix="r8"):
+    """A filled-in CSV from export_for_people -> judgments/<prefix>-<kind>-<rater>.json, marked as a
+    person's ratings. Blank cells stay missing (reported by coverage_and_agreement), never guessed."""
+    import csv
+    rows = list(csv.reader(open(csv_path, encoding="utf-8-sig")))
+    head, rows = rows[0], rows[1:]
+    yes = lambda v: {"yes": True, "no": False}.get(v.strip().lower())  # noqa: E731
+    num = lambda v: int(v) if v.strip().isdigit() else None  # noqa: E731
+    if head[0] == "item" and head[1] == "version":
+        items = defaultdict(lambda: {"ratings": {}, "better": None})
+        for item, lab, meaning, fixed, unnec, voice, better, *_ in rows:
+            if not any(x.strip() for x in (meaning, fixed, unnec, voice)):
+                continue
+            items[item]["ratings"][lab] = {"meaning_kept": yes(meaning), "errors_fixed": num(fixed),
+                                           "unnecessary_changes": num(unnec), "voice_kept": num(voice)}
+            items[item]["better"] = items[item]["better"] or better.strip().upper() or None
+        out = {"judge": rater, "human_rater": True, "revisions": [
+            {"item": i, "ratings": {l: {k: v for k, v in r.items() if v is not None} for l, r in d["ratings"].items()},
+             "rank": [d["better"], "B" if d["better"] == "A" else "A"] if d["better"] in ("A", "B") else []}
+            for i, d in items.items()]}
+        kind = "revisions"
+    else:
+        items = defaultdict(lambda: {"changes": defaultdict(list), "missed": defaultdict(list)})
+        for item, lab, n, verdict, meaning, voice, missed, *_ in rows:
+            if n != "-" and verdict.strip():
+                items[item]["changes"][lab].append({"verdict": verdict.strip().lower(), "meaning_kept": yes(meaning),
+                                                    "voice_kept": yes(voice)})
+            if missed.strip():
+                items[item]["missed"][lab].append(missed.strip())
+        out = {"judge": rater, "human_rater": True, "human": [
+            {"item": i, "changes": dict(d["changes"]), "missed": dict(d["missed"])} for i, d in items.items()]}
+        kind = "human"
+    path = JUDGMENTS / f"{prefix}-{kind}-{rater}.json"
+    path.write_text(json.dumps(out, indent=1), encoding="utf-8")
+    print(f"wrote {path}")
+
+
+def kappa(a, b):
+    """Cohen's kappa for two raters' labels on the same items (None if it can't be computed)."""
+    pairs = [(x, y) for x, y in zip(a, b) if x is not None and y is not None]
+    if len(pairs) < 2:
+        return None
+    labels = {x for p in pairs for x in p}
+    po = sum(x == y for x, y in pairs) / len(pairs)
+    pe = sum((sum(x == l for x, _ in pairs) / len(pairs)) * (sum(y == l for _, y in pairs) / len(pairs)) for l in labels)
+    return None if pe == 1 else round((po - pe) / (1 - pe), 3)
+
+
+def coverage_and_agreement(prefix, key):
+    """Per rater file: items judged vs expected (missing ones are listed, never dropped silently); and,
+    when two or more raters judged the same packet, their agreement on which version was better
+    (revisions) and on each change's verdict (human passages)."""
+    for kind in ("revisions", "human"):
+        expected = set(key[kind])
+        files = sorted(JUDGMENTS.glob(f"{prefix}-{kind}*.json"))
+        choices = {}
+        for path in files:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            items = {j["item"]: j for j in data.get(kind, [])}
+            missing = sorted(expected - set(items))
+            who = data.get("judge", path.stem)
+            print(f"  {kind}: {who} ({'person' if data.get('human_rater') else 'model judge'}) judged "
+                  f"{len(set(items) & expected)}/{len(expected)}" + (f"; missing {missing[:5]}..." if missing else ""))
+            if kind == "revisions":
+                # The preferred model per item; a tie (same rating, version texts identical) stays a tie.
+                choices[who] = {i: key[kind][i][j["rank"][0]] if j.get("rank") else None for i, j in items.items()}
+            else:
+                choices[who] = {f"{i}#{lab}#{n}": c["verdict"] for i, j in items.items()
+                                for lab, changes in j["changes"].items() for n, c in enumerate(changes)}
+        raters = list(choices)
+        for x in range(len(raters)):
+            for y in range(x + 1, len(raters)):
+                common = sorted(set(choices[raters[x]]) & set(choices[raters[y]]))
+                k = kappa([choices[raters[x]][i] for i in common], [choices[raters[y]][i] for i in common])
+                agree = sum(choices[raters[x]][i] == choices[raters[y]][i] for i in common)
+                print(f"  {kind}: {raters[x]} vs {raters[y]}: agree on {agree}/{len(common)}, Cohen's kappa {k}")
+
+
+def score_models(prefix="r8"):
+    key = json.loads((EVAL / "judge_key.json").read_text(encoding="utf-8")).get(prefix)
+    if not key:
+        return
+    print(f"\n{prefix} COVERAGE AND AGREEMENT")
+    coverage_and_agreement(prefix, key)
+    rev = defaultdict(lambda: defaultdict(list))
+    for path in sorted(JUDGMENTS.glob(f"{prefix}-revisions*.json")):
+        for j in json.loads(path.read_text(encoding="utf-8")).get("revisions", []):
+            labels = key["revisions"][j["item"]]
+            for lab, ratings in j["ratings"].items():
+                for k, v in ratings.items():
+                    rev[labels[lab]][k].append(float(v) if not isinstance(v, bool) else float(v))
+            for pos, lab in enumerate(j.get("rank", [])):
+                rev[labels[lab]]["rank"].append(pos + 1)
+    if rev:
+        print(f"\n{prefix} PARAGRAPH REVISIONS (blind)")
+        for name, d in sorted(rev.items()):
+            print("  " + name.ljust(8) + "  ".join(f"{k} {sum(v) / len(v):.2f}" for k, v in sorted(d.items())) + f"  (n={len(d['rank'])})")
+    tally = defaultdict(Counter)
+    for path in sorted(JUDGMENTS.glob(f"{prefix}-human*.json")):
+        for j in json.loads(path.read_text(encoding="utf-8")).get("human", []):
+            labels = key["human"][j["item"]]
+            for lab, changes in j["changes"].items():
+                t = tally[labels[lab]]
+                for c in changes:
+                    t[c["verdict"]] += 1
+                    t["meaning_lost"] += not c.get("meaning_kept", True)
+                    t["voice_lost"] += not c.get("voice_kept", True)
+                    t["changes"] += 1
+                t["missed_errors"] += len(j.get("missed", {}).get(lab, []) or [])
+    if tally:
+        cols = ["changes", "fix", "clarifies", "unnecessary", "harmful", "meaning_lost", "voice_lost", "missed_errors"]
+        print(f"\n{prefix} HUMAN-TEXT EDITS (blind verdicts per change)")
+        print("  " + "model".ljust(8) + "".join(c.ljust(14) for c in cols))
+        for name, t in sorted(tally.items()):
+            print("  " + name.ljust(8) + "".join(str(t[c]).ljust(14) for c in cols))
+
+
 def score_human():
     key = json.loads((EVAL / "judge_key.json").read_text(encoding="utf-8")).get("human", {})
     tally = defaultdict(Counter)
@@ -200,7 +390,12 @@ def score():
 if __name__ == "__main__":
     if sys.argv[1] == "make":
         part = sys.argv[2] if len(sys.argv) > 2 else "all"
-        make_human() if part == "human" else make(part)
+        {"human": make_human, "models": make_models}.get(part, lambda: make(part))()
+    elif sys.argv[1] == "export-people":
+        export_for_people()
+    elif sys.argv[1] == "import-people":   # import-people FILLED.csv RATER_NAME
+        import_from_people(sys.argv[2], sys.argv[3])
     else:
         score()
         score_human()
+        score_models()
