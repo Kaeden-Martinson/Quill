@@ -21,6 +21,7 @@ Metrics:
 Raw outputs go to training/eval_results/<model>.jsonl for reading by hand.
 """
 import json
+import os
 import re
 import sys
 import time
@@ -36,28 +37,31 @@ from config import EDIT_OPTIONS  # noqa: E402  the app's own edit settings
 from editor import SUGGESTION_SCHEMA, SYSTEM, parse_reply  # noqa: E402
 from style import GENERIC_PHRASES, generic_phrase_flags  # noqa: E402
 
+sys.path.insert(0, str(HERE))
+from prompt_candidates import editor_request  # noqa: E402  QUILL_PROMPT_CONFIG picks a candidate prompt
+
 # Digits with inner separators only ("2,000", "3.8"), so "7:30," and "7:30" read as the same numbers.
 NUMBER_RE = re.compile(r"\d+(?:[.,]\d+)*")
 
 
 def ask(model, case):
-    prompt = (
-        f"Writer's voice:\n- {case['voice']}\n\n"
-        f"Essay goal: {case['goal']}\n\n"
-        f"Paragraph:\n\"\"\"\n{case['text']}\n\"\"\""
-    )
+    system, prompt = editor_request(case["text"], f"- {case['voice']}", case["goal"])
     start = time.perf_counter()
-    resp = httpx.post(
-        f"{OLLAMA_URL}/api/chat",
-        json={
-            "model": model,
-            "messages": [{"role": "system", "content": SYSTEM}, {"role": "user", "content": prompt}],
-            "format": SUGGESTION_SCHEMA,
-            "stream": False,
-            "options": EDIT_OPTIONS,
-        },
-        timeout=600,
-    )
+    for attempt in range(4):  # retry server errors (Ollama restarting a runner), then stop the run
+        resp = httpx.post(
+            f"{OLLAMA_URL}/api/chat",
+            json={
+                "model": model,
+                "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
+                "format": SUGGESTION_SCHEMA,
+                "stream": False,
+                "options": EDIT_OPTIONS,
+            },
+            timeout=600,
+        )
+        if resp.status_code < 500:
+            break
+        time.sleep(5 * (attempt + 1))
     elapsed = time.perf_counter() - start
     resp.raise_for_status()
     # Same lenient parsing the app uses, so the eval scores what users would actually see.
@@ -70,7 +74,7 @@ def ask(model, case):
 def shown(text, suggestions):
     """Exactly the filter the app applies (editor.review_paragraph) before showing suggestions."""
     return [s for s in suggestions
-            if s.get("original") and s["original"] in text and s.get("revised") != s["original"]]
+            if isinstance(s, dict) and isinstance(s.get("original"), str) and s["original"] in text and s.get("revised") != s["original"]]
 
 
 def fixes(suggestions, problem):
@@ -97,7 +101,10 @@ def score(model, cases):
              clean_cases=0, clean_edits=0, invented=0, stock_added=0, change=0.0, seconds=0.0,
              kept=0, keep_total=0, formalized=0)
     reasons = set()
-    with open(out_dir / f"{model.replace(':', '_').replace('/', '_')}.jsonl", "w", encoding="utf-8") as log:
+    name = model.replace(":", "_").replace("/", "_")
+    if os.environ.get("QUILL_PROMPT_CONFIG"):  # a candidate prompt gets its own results file
+        name += f"-{os.environ['QUILL_PROMPT_CONFIG']}"
+    with open(out_dir / f"{name}.jsonl", "w", encoding="utf-8") as log:
         for i, case in enumerate(cases, 1):
             print(f"  [{model}] {i}/{len(cases)} {case['id']}", end="\r", flush=True)
             raw, ok, secs = ask(model, case)

@@ -23,7 +23,7 @@ MAX_CONCURRENT_REVIEWS = int(os.environ.get("QUILL_MAX_CONCURRENT", "2"))
 # own defaults). Set QUILL_<JOB>_<SETTING> in quill.env, e.g. QUILL_DRAFT_TEMPERATURE=0.8.
 # Anything left unset falls back to the model's Modelfile defaults.
 SAMPLING_SETTINGS = {"temperature": float, "top_p": float, "top_k": int, "min_p": float,
-                     "repeat_penalty": float, "seed": int}
+                     "repeat_penalty": float, "seed": int, "num_predict": int}
 
 
 def sampling(job, **defaults):
@@ -42,9 +42,13 @@ def sampling(job, **defaults):
 # Line edits: temperature 0, so the same paragraph always gets the same fixes. On the
 # confirmation set it beat 0.3 (93% vs 90% of mistakes fixed, half the unneeded changes).
 # training/reliability.py and eval.py score the editor with these same settings.
-EDIT_OPTIONS = sampling("EDIT", temperature=0)
+# num_predict caps every job's output at about twice the longest seen, so a stalled or runaway
+# reply ends instead of holding a review for minutes. gemma's hidden "thinking" counts toward it:
+# a long draft used about 2,000 tokens, a letter about 900, an edit reply well under 600.
+EDIT_OPTIONS = sampling("EDIT", temperature=0, num_predict=800)
 # The letter about the whole essay: a little looser so the comments don't read canned.
-LETTER_OPTIONS = sampling("LETTER", temperature=0.4, top_p=0.9)
-# Drafting: warmer, for natural variety in wording and sentence shape; the repeat penalty
-# keeps longer drafts from circling back to the same phrases.
-DRAFT_OPTIONS = sampling("DRAFT", temperature=0.75, top_p=0.9, repeat_penalty=1.1)
+LETTER_OPTIONS = sampling("LETTER", temperature=0.4, top_p=0.9, num_predict=2048)
+# Drafting (training/writing_eval/REPORT.md): no repeat penalty, which pushed word variety to two or
+# three times human levels by swapping in synonyms; min_p trims unlikely words relative to the top
+# one, so a little more temperature adds variety without wandering.
+DRAFT_OPTIONS = sampling("DRAFT", temperature=0.8, top_p=1.0, min_p=0.05, repeat_penalty=1.0, num_predict=4096)

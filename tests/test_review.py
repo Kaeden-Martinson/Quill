@@ -140,3 +140,16 @@ def test_queue_serves_in_order_and_skips_people_who_leave():
         await q.leave(a, started=True)            # a finishes
         assert await q.try_start(c) == 0          # c's turn
     asyncio.run(scenario())
+
+
+def test_a_malformed_suggestion_is_skipped_not_fatal(client, user, monkeypatch):
+    _, h = user
+
+    async def chat(client, system, prompt, schema, model=None, options=None):
+        return {"suggestions": ["not an edit", {"original": "Students uses laptops.", "revised": "Students use laptops.",
+                                                 "reason": "agreement", "category": "grammar"}]}
+
+    monkeypatch.setattr(editor, "chat", chat)
+    events = stream_events(client.post("/api/review", headers=h, json={"body": "Students uses laptops."}))
+    paragraph = next(e for e in events if e["type"] == "paragraph")
+    assert [s["revised"] for s in paragraph["suggestions"]] == ["Students use laptops."]

@@ -212,7 +212,7 @@ async def review_paragraph(client, paragraph, voice, goal):
     # Drop anything the model didn't actually quote or didn't change.
     kept = [
         s for s in items
-        if s.get("original") and s["original"] in paragraph and s.get("revised") != s["original"]
+        if isinstance(s, dict) and isinstance(s.get("original"), str) and s["original"] in paragraph and s.get("revised") != s["original"]
     ]
     # Then add the near-certain mechanical fixes the model missed ("Its weird how...").
     return rules.apply(paragraph, kept)
@@ -271,26 +271,74 @@ DRAFT_SCHEMA = {
     "required": ["title", "paragraphs"],
 }
 
-DRAFT_SYSTEM = """You write a first draft of an essay from the writer's instructions, in the voice described.
-Follow the voice closely: sentence length, contractions, first person, formality.
-Stay on the writer's topic and points. Never invent statistics, quotes, studies, or personal
-events that the writer didn't mention; where the essay needs a specific detail only the writer
-knows, write a short bracketed placeholder like [your example here] instead.
-Write plain paragraphs, no headings or lists. "title" is a short working title."""
+# The drafting prompt tested as "improved" in training/writing_eval/REPORT.md. Its predecessor asked
+# for a fixed paragraph count and, with no voice chosen, to keep the tone of text that didn't exist;
+# drafts came out as one template (61% ended on "Ultimately" or "In conclusion", no human sample did).
+# The old prompt stays in training/prompt_candidates.py so that comparison can be re-run.
+DRAFT_SYSTEM = """You write a first draft that the writer will revise and finish themselves. It should do the
+specific job their assignment asks for, built from the points they gave you.
 
-DRAFT_LENGTHS = {"short": "about 250 words (3 paragraphs)", "medium": "about 500 words (5 paragraphs)",
-                 "long": "about 900 words (7 paragraphs)"}
+Before writing, decide privately: what kind of piece this is (argument, narrative, analysis,
+explanation, letter, review, how-to...), who reads it, and the one thing it has to get across.
+Let that decide the structure. An argument might lead with its claim and spend most of its length
+on the hardest objection; a narrative might stay inside one scene; an explanation might follow
+the order things happen. Use as many paragraphs as the material needs, not a set number, and let
+them differ in length.
+
+Substance:
+- Build from the writer's own points. Give each one its reasoning: why it holds, what follows
+  from it, where it stops holding. Developing two points well beats listing four.
+- Prefer the concrete: a particular moment, object, step or consequence over a general claim.
+  A general claim should be followed by something specific that earns it.
+- For arguments, take the strongest objection seriously and answer it or concede part of it.
+- Background facts must be widely established and stated no more precisely than you can stand
+  behind. No statistics, dates, studies, quotations, sources or names the writer didn't give.
+- Never invent the writer's experiences, feelings, people or events. Where the piece needs one,
+  write a bracketed note saying what belongs there, e.g. [the moment you realized it was working].
+
+Openings and endings:
+- Start with the substance: the claim, the scene, the question the piece answers. Don't restate
+  the assignment, define terms nobody asked about, or open on a sweeping statement about society.
+- End on something that moves past the body: a consequence, a sharper version of the claim, a
+  final concrete image, what the writer will do next. Don't summarize the paragraphs or announce
+  the ending ("In conclusion", "Ultimately", "Overall", "In the end").
+
+Language:
+- Plain, exact words. If an ordinary word says it, use it. Repeating the right word is better
+  than swapping in synonyms to avoid repetition.
+- Let the logic connect the ideas; use a transition word only where the relationship (contrast,
+  cause, sequence) would otherwise be unclear.
+- Avoid filler patterns: "not just X, it's Y", lists of three by habit, stacked adjectives,
+  opening rhetorical questions, and words like delve, crucial, vital, pivotal, journey, navigate,
+  landscape, testament, foster, profound.
+- Let sentence length follow the thought, not a pattern.
+
+Voice:
+- If a voice or a writing sample is given, match it: sentence length, contractions, first
+  person, formality, humor.
+- If no voice is given, you know nothing about this writer's personal style, so don't invent
+  one. Write in clear, natural language suited to the assignment and its reader. Don't add a
+  personality, quirks, slang, jokes, or details about the writer's life.
+
+Return plain paragraphs, no headings or lists. "title" is a short, specific working title."""
+
+DRAFT_LENGTHS = {"short": "about 250 words", "medium": "about 500 words", "long": "about 900 words"}
+NO_VOICE = "No writing samples yet; keep the writer's existing tone."  # style.describe_voice({})
 
 
 def draft_prompt(instructions, voice, sample=None, goal="", audience="", tone="", length="medium"):
+    """Length in words only (a paragraph count made every draft the same shape), and when no voice
+    was chosen it says so, instead of asking to keep the tone of text that doesn't exist yet."""
+    if voice.strip() == NO_VOICE:
+        voice = "Not given."
     parts = [f"Writer's voice:\n{voice}"]
     if sample:
         parts.append(f"A sample of how this writer sounds (match the style, not the content):\n\"\"\"\n{sample}\n\"\"\"")
-    for label, value in (("Essay goal", goal), ("Audience", audience), ("Tone", tone)):
+    for label, value in (("What it's for", goal), ("Who reads it", audience), ("Tone", tone)):
         if value:
             parts.append(f"{label}: {value}")
     parts.append(f"Length: {DRAFT_LENGTHS.get(length, DRAFT_LENGTHS['medium'])}")
-    parts.append(f"Instructions:\n\"\"\"\n{instructions}\n\"\"\"")
+    parts.append(f"The writer's instructions and points:\n\"\"\"\n{instructions}\n\"\"\"")
     return "\n\n".join(parts)
 
 
@@ -304,7 +352,9 @@ async def draft_stream(prompt):
         yield {"type": "start", "total": 1}
         async with httpx.AsyncClient() as client:
             result = await chat(client, DRAFT_SYSTEM, prompt, DRAFT_SCHEMA, model=OVERVIEW_MODEL, options=DRAFT_OPTIONS)
-        paragraphs = [" ".join(p.split()) for p in (result or {}).get("paragraphs", []) if p.strip()]
+        # One array item can hold several paragraphs; keep their breaks instead of merging them.
+        paragraphs = [" ".join(q.split()) for p in (result or {}).get("paragraphs", []) if isinstance(p, str)
+                      for q in re.split(r"\n\s*\n", p) if q.strip()]
         if not paragraphs:
             yield {"type": "error", "message": "The model didn't return a draft. Try again or reword the prompt."}
             return

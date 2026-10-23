@@ -41,6 +41,9 @@ PARAGRAPHS = _SET / "paragraphs.jsonl"
 CASES = _SET / "cases.jsonl"
 TARGETS = {"fixed": 0.90, "perfect": 0.80, "untouched": 0.95, "extra": 0.15}
 NO_RULES = "--no-rules" in sys.argv  # score the model alone
+# QUILL_PROMPT_CONFIG=v2-clarity scores a candidate editor prompt from prompt_candidates.py
+# instead of the live one (same model; only the instructions change).
+from prompt_candidates import editor_request  # noqa: E402
 WORDS = re.compile(r"\S+")
 
 
@@ -90,16 +93,22 @@ def build(seed=2026):
 
 def ask(client, model, text):
     # Same prompt the app sends when a writer has no saved samples: voice measured from the text.
-    prompt = (f"Writer's voice:\n{describe_voice(profile_stats([text]))}\n\nEssay goal: not specified\n\n"
-              f"Paragraph:\n\"\"\"\n{text}\n\"\"\"")
-    r = client.post(f"{OLLAMA_URL}/api/chat", json={
-        "model": model, "stream": False, "format": SUGGESTION_SCHEMA, "options": EDIT_OPTIONS,
-        "messages": [{"role": "system", "content": SYSTEM}, {"role": "user", "content": prompt}],
-    }, timeout=600).json()
+    system, prompt = editor_request(text, describe_voice(profile_stats([text])), "")
+    body = {"model": model, "stream": False, "format": SUGGESTION_SCHEMA, "options": EDIT_OPTIONS,
+            "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}]}
+    # A server error must never count as "the model made no edits": that once turned an Ollama
+    # outage into a fake 48% score. Retry a few times, then stop the run.
+    for attempt in range(4):
+        resp = client.post(f"{OLLAMA_URL}/api/chat", json=body, timeout=600)
+        if resp.status_code < 500:
+            break
+        time.sleep(5 * (attempt + 1))
+    resp.raise_for_status()
+    r = resp.json()
     reply = parse_reply(r.get("message", {}).get("content", "")) or {}
     # Exactly the app's filter: quotes that exist in the paragraph and actually change something.
     kept = [s for s in reply.get("suggestions", [])
-            if s.get("original") and s["original"] in text and s.get("revised") not in (None, s["original"])]
+            if isinstance(s, dict) and isinstance(s.get("original"), str) and s["original"] in text and s.get("revised") not in (None, s["original"])]
     # And the app's grammar rules on top, so this measures what users actually get.
     return kept if NO_RULES else rules.apply(text, kept)
 
@@ -148,7 +157,7 @@ def score(model):
         print(f"  {key:10} {shown:18} target {bar:8}  {'MET' if ok else 'not yet'}")
     print(f"  {t['planted']} planted mistakes in {n} paragraphs ({t['clean']} clean); "
           f"{t['seconds'] / n:.1f}s per paragraph")
-    print(f"  settings: {EDIT_OPTIONS}")
+    print(f"  settings: {EDIT_OPTIONS}  prompt: {os.environ.get('QUILL_PROMPT_CONFIG') or 'original'}")
     return got
 
 

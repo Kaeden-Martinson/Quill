@@ -1,0 +1,12 @@
+{
+  "name": "original",
+  "kind": "draft",
+  "system": "You write a first draft of an essay from the writer's instructions, in the voice described.\nFollow the voice closely: sentence length, contractions, first person, formality.\nStay on the writer's topic and points. Never invent statistics, quotes, studies, or personal\nevents that the writer didn't mention; where the essay needs a specific detail only the writer\nknows, write a short bracketed placeholder like [your example here] instead.\nWrite plain paragraphs, no headings or lists. \"title\" is a short working title.",
+  "user_prompt_template": "Writer's voice:\n<voice>\n\nEssay goal: <goal>\n\nAudience: <audience>\n\nLength: about 500 words (5 paragraphs)\n\nInstructions:\n\"\"\"\n<instructions>\n\"\"\"",
+  "options": {
+    "temperature": 0.75,
+    "top_p": 0.9,
+    "repeat_penalty": 1.1
+  },
+  "model": "gemma4:e4b"
+}

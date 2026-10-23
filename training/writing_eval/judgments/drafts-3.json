@@ -1,0 +1,42 @@
+{"judge": "subagent-3", "drafts": [
+{"item": "argue-start-times|none", "ratings": {
+ "A": {"adherence": 4, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["'forcing them to wake up before dawn' is an unsupplied generalization", "'documented in health science classes' oddly frames class as the source of evidence"]},
+ "B": {"adherence": 3, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 3, "shaped": 3, "suspect": ["generalizes the writer's own first-period grades into 'first-period grades frequently suffer' without support", "'bell designed for younger students' is unsupported"]},
+ "C": {"adherence": 3, "honesty": 3, "development": 3, "coherence": 2, "voice_fit": 3, "shaped": 2, "suspect": ["'waking up at 6:30 AM' is an invented specific", "'retention drops dramatically before the first bell even rings' is illogical", "bus-schedule paragraph muddles the writer's point and nearly argues the obstacle is insurmountable"]}},
+ "rank": ["A", "B", "C"], "note": "A uses all three of the writer's points cleanly and frames buses as an administrative problem, B depersonalizes the grade evidence, and C garbles the bus argument and adds an invented time."},
+{"item": "narrative-drivers-test|none", "ratings": {
+ "A": {"adherence": 3, "honesty": 1, "development": 4, "coherence": 4, "voice_fit": 3, "shaped": 4, "suspect": ["entire grandpa conversation, including the stonemason story and direct quote, is invented", "'final buzzer', 'staring out the window', parallel parking practice are invented scenes", "'I still have to pass that test' is an invented outcome"]},
+ "B": {"adherence": 3, "honesty": 1, "development": 3, "coherence": 2, "voice_fit": 3, "shaped": 3, "suspect": ["examiner's pen, wide left turn, near miss on parallel park are invented", "grandpa's soil/river metaphor and what he said are invented", "Grandpa sitting in the passenger seat after the test is invented", "written as a single unbroken block"]},
+ "C": {"adherence": 1, "honesty": 3, "development": 1, "coherence": 2, "voice_fit": 3, "shaped": 1, "suspect": ["'practiced extensively' and confidence on first test are invented", "draft stops after one paragraph; grandpa and second failure never appear"]}},
+ "rank": ["A", "B", "C"], "note": "A and B both invent grandpa's words and test scenes instead of using placeholders, but A is better developed and organized, while C is a truncated one-paragraph fragment."},
+{"item": "lit-gatsby-light|none", "ratings": {
+ "A": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 3, "voice_fit": 4, "shaped": 3, "suspect": ["'When Nick observes it again at the novel's conclusion' - at the end Nick recalls the light rather than literally seeing it", "'cynical narrator' mischaracterizes Nick's elegiac close", "chapter 1 tie to Daisy is not yet known to Nick at that point", "one unbroken paragraph; no quotations from the text"]},
+ "B": {"adherence": 3, "honesty": 2, "development": 3, "coherence": 3, "voice_fit": 4, "shaped": 3, "suspect": ["'When he looks at it in the final moments' - Gatsby is dead in chapter 9; factual error", "'crossing the water between his humble origins and her world' conflates geography with class", "no textual quotations"]},
+ "C": {"adherence": 4, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 3, "shaped": 3, "suspect": ["'opulent present' vs 'idyllic past' framing is loose", "no textual evidence or quotation; ending is generic"]}},
+ "rank": ["C", "A", "B"], "note": "All lack quotations, but C avoids the factual misreadings of chapter 9 that A (Nick sees the light) and B (Gatsby looks at it) make."},
+{"item": "history-dust-bowl|none", "ratings": {
+ "A": {"adherence": 4, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["'climate change alone' is an anachronistic framing", "'vulnerability deliberately engineered' overstates farmers' intent"]},
+ "B": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 3, "voice_fit": 4, "shaped": 3, "suspect": ["'The drought provided the necessary force (wind)' conflates drought and wind", "'historians often point to the severe drought as the primary catalyst' is an unsupported claim about historiography", "'rotational grazing' as a remedy for cropland is a mismatch"]},
+ "C": {"adherence": 5, "honesty": 4, "development": 4, "coherence": 5, "voice_fit": 4, "shaped": 4, "suspect": ["'shallow-rooted crops' is a reasonable but simplified claim"]}},
+ "rank": ["C", "A", "B"], "note": "C states its thesis early and weighs trigger against foundational condition most clearly, A is similar but looser, and B contains a confused drought/wind claim."},
+{"item": "oped-library-sundays|none", "ratings": {
+ "A": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": ["asserts Sunday hours have already been 'reduced', which the writer did not say"]},
+ "B": {"adherence": 4, "honesty": 4, "development": 4, "coherence": 4, "voice_fit": 3, "shaped": 4, "suspect": ["'Sunday afternoons' is an added specific", "cost comparison is asserted without numbers"]},
+ "C": {"adherence": 3, "honesty": 3, "development": 3, "coherence": 3, "voice_fit": 3, "shaped": 3, "suspect": ["assumes closure is being decided", "'the only predictable time slot' is overstated", "'quiet space for older residents' adds unsupplied points", "shifts to 'We urge' as if an organization"]}},
+ "rank": ["B", "A", "C"], "note": "B is tight and anticipates the cost objection, A is warm but wordy and assumes hours were already cut, and C is repetitive and drifts beyond the writer's two points."},
+{"item": "compare-online-class|none", "ratings": {
+ "A": {"adherence": 1, "honesty": 4, "development": 1, "coherence": 3, "voice_fit": 3, "shaped": 1, "suspect": ["draft is only a two-sentence intro"]},
+ "B": {"adherence": 4, "honesty": 3, "development": 4, "coherence": 4, "voice_fit": 3, "shaped": 4, "suspect": ["'lecture hall', professor's glance, raising hand for clarification are invented classroom details", "asynchronous reply delays are an assumed detail of the writer's online class"]},
+ "C": {"adherence": 4, "honesty": 2, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["'before starting work' and 'like a job' invent the writer's employment", "'early morning commitment' is invented", "'discussions via text box' is assumed"]}},
+ "rank": ["B", "C", "A"], "note": "B develops the comparison through a concrete feedback mechanism, C is friendlier for classmates but invents a job, and A is a truncated intro."},
+{"item": "explain-vaccines|none", "ratings": {
+ "A": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": ["'studying the enemy's tactics' is a slightly misleading metaphor"]},
+ "B": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 5, "voice_fit": 5, "shaped": 4, "suspect": []},
+ "C": {"adherence": 1, "honesty": 1, "development": 1, "coherence": 1, "voice_fit": 1, "shaped": 1, "suspect": ["no draft returned"]}},
+ "rank": ["B", "A", "C"], "note": "Both A and B explain antigen exposure and memory cells accurately; B is clearer for 8th graders and names antibodies, while C returned nothing."},
+{"item": "scholarship-nursing|none", "ratings": {
+ "A": {"adherence": 4, "honesty": 2, "development": 4, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": ["'My mother's shift often begins before sunrise' and 'early morning calls' are invented", "specific memory of guiding a resident with mobility problems is invented", "no placeholders for real details"]},
+ "B": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": ["observations of nurses translating jargon for families and holding hands are invented", "'local nursing home' is assumed", "no placeholders"]},
+ "C": {"adherence": 4, "honesty": 2, "development": 2, "coherence": 4, "voice_fit": 3, "shaped": 2, "suspect": ["'reading to residents' and 'assisting staff' are invented volunteer activities", "mother noticing changes in breathing presented as observed", "'your program' assumes the scholarship is tied to a program", "generic template opening and ending"]}},
+ "rank": ["B", "A", "C"], "note": "B uses the writer's two experiences with the fewest fabricated specifics, A is more vivid but invents a resident scene and the mother's routine, and C is generic with invented activities."}
+]}

@@ -1,0 +1,42 @@
+{"judge": "subagent-4", "drafts": [
+{"item": "blog-no-social-media|none", "ratings": {
+"A": {"adherence": 4, "honesty": 3, "development": 4, "coherence": 5, "voice_fit": 4, "shaped": 4, "suspect": ["invented experiences: noticing light on kitchen counter, conversations with neighbors, started reading again (writer supplied none)"]},
+"B": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["invented: deleted every app about a month ago", "invented: started calling/meeting friends for deeper conversations", "invented: now more intentional, hasn't deleted permanently"]},
+"C": {"adherence": 4, "honesty": 2, "development": 4, "coherence": 4, "voice_fit": 3, "shaped": 4, "suspect": ["invented: phantom vibrations, reading physical books while waiting for coffee or on the bus", "invented: started calling friends and meeting up", "no placeholders for any personal detail"]}},
+"rank": ["A", "B", "C"], "note": "All invent the writer's month, but A flags the key detail with a placeholder and is tighter, while C asserts the most unsupplied scenes with no placeholders."},
+{"item": "persuade-parents-job|none", "ratings": {
+"A": {"adherence": 5, "honesty": 4, "development": 4, "coherence": 4, "voice_fit": 3, "shaped": 4, "suspect": ["'I have already reviewed my current workload' asserts something the writer didn't say", "specific 5-8 hours/week proposed without placeholder"]},
+"B": {"adherence": 4, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 3, "shaped": 3, "suspect": ["'not on weekends... only after dinner on weekdays' schedule invented", "B-average threshold invented (offered as 'say')"]},
+"C": {"adherence": 5, "honesty": 4, "development": 4, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": ["Sunday-night check-in offered as proposal, not supplied by writer", "'You worry constantly' presumes parents' behavior"]}},
+"rank": ["C", "A", "B"], "note": "C speaks most naturally to parents and gives concrete grade safeguards with placeholders; A's trial period is strong but stiffer; B's tone is slightly combative and thinner."},
+{"item": "ethics-historical-figures|none", "ratings": {
+"A": {"adherence": 4, "honesty": 5, "development": 3, "coherence": 3, "voice_fit": 4, "shaped": 3, "suspect": []},
+"B": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": []},
+"C": {"adherence": 1, "honesty": 5, "development": 1, "coherence": 3, "voice_fit": 4, "shaped": 1, "suspect": []}},
+"rank": ["B", "A", "C"], "note": "B states a clear position and answers relativism directly; A's position wavers and its conclusion conflicts with its thesis; C is only an introduction with no objection handled."},
+{"item": "howto-running|none", "ratings": {
+"A": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 5, "voice_fit": 5, "shaped": 5, "suspect": []},
+"B": {"adherence": 4, "honesty": 5, "development": 4, "coherence": 3, "voice_fit": 4, "shaped": 2, "suspect": []},
+"C": {"adherence": 1, "honesty": 1, "development": 1, "coherence": 1, "voice_fit": 1, "shaped": 1, "suspect": ["no draft returned"]}},
+"rank": ["A", "B", "C"], "note": "A and B give similar run-walk advice, but A is broken into clear steps while B is a single unbroken block; C returned nothing."},
+{"item": "review-stardew|none", "ratings": {
+"A": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["'share a meal at the local diner' - the town has a saloon, not a diner", "'successful rescue of a trapped fish' is not a game mechanic", "specific change (early-game grind) chosen for the writer"]},
+"B": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 4, "voice_fit": 5, "shaped": 4, "suspect": ["'become a master farmer like I have' invents the writer's achievement", "'buying up every building in town' is not a real late-game goal", "specific change chosen for the writer (partly placeholdered)"]},
+"C": {"adherence": 4, "honesty": 3, "development": 4, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": ["crops 'wilting in drought' is not a game mechanic", "specific change (overlapping seasonal events) chosen for the writer", "Leah/Harvey named as the writer's relationships without input"]}},
+"rank": ["C", "B", "A"], "note": "C uses the most accurate, specific game detail; B has the best student voice but invents the writer's mastery; A has factual slips and vaguer praise."},
+{"item": "cause-teens-work|none", "ratings": {
+"A": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": ["'number of high school students holding part-time jobs has risen steadily' - teen employment has broadly declined over recent decades"]},
+"B": {"adherence": 5, "honesty": 3, "development": 4, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["'once a rarity, today a widespread reality' - historically teen work was more common, not rarer"]},
+"C": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["'increasingly common... near-universal experience' overstates and misstates the trend", "'primarily because financial demands exceed what families can provide' asserted as main cause without support"]}},
+"rank": ["B", "A", "C"], "note": "B develops causes and effects most fully (including college savings and workplace stress); all three misstate the trend, and C asserts its main cause most baldly."},
+{"item": "argue-phone-ban|none", "ratings": {
+"A": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": []},
+"B": {"adherence": 4, "honesty": 5, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": []},
+"C": {"adherence": 5, "honesty": 5, "development": 5, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": ["'quickly verifying a fact... is higher-order thinking' is an overstatement"]}},
+"rank": ["C", "A", "B"], "note": "C gives the debate team the most arguments (safety, covert use, digital citizenship) plus a concrete policy and fairly states the ban side; B is the most repetitive."},
+{"item": "camp-counselor|none", "ratings": {
+"A": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 5, "voice_fit": 4, "shaped": 4, "suspect": []},
+"B": {"adherence": 4, "honesty": 3, "development": 4, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["invented babysitting details: naps, schedules, storm cancelling a hike", "'learned the difference between a minor tantrum and something serious' asserted as the writer's experience"]},
+"C": {"adherence": 4, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 3, "shaped": 3, "suspect": ["'assisting staff with an unexpected rush at the lake' invents a camp experience", "bracketed example states a specific activity (soccer, forts) as if fact"]}},
+"rank": ["A", "C", "B"], "note": "A builds on the writer's two facts without inventing scenes; C relies on placeholders but adds a fabricated lake episode and generic enthusiasm; B invents the most babysitting specifics."}
+]}

@@ -39,6 +39,15 @@ def test_each_job_sends_its_own_settings(client, user, monkeypatch):
     assert sent[editor.OVERVIEW_SYSTEM] == config.LETTER_OPTIONS
     assert sent[editor.DRAFT_SYSTEM] == config.DRAFT_OPTIONS
     assert config.DRAFT_OPTIONS["temperature"] > config.EDIT_OPTIONS["temperature"]
+    # Every job has an output cap, so a stalled or runaway reply can't hold a review for minutes.
+    assert all(o["num_predict"] > 0 for o in (config.EDIT_OPTIONS, config.LETTER_OPTIONS, config.DRAFT_OPTIONS))
+
+
+def test_drafting_has_no_repeat_penalty_and_no_paragraph_count():
+    # training/writing_eval/REPORT.md: the penalty inflated word variety; a paragraph count made every draft one shape.
+    assert config.DRAFT_OPTIONS["repeat_penalty"] == 1.0
+    assert not any("paragraph" in v for v in editor.DRAFT_LENGTHS.values())
+    assert "Not given." in editor.draft_prompt("Why I bike", editor.NO_VOICE)
 
 
 def test_the_real_chat_sends_the_settings_to_ollama(monkeypatch):

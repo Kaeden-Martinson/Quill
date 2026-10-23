@@ -11,7 +11,7 @@ import math
 import httpx
 
 import editor
-from config import OLLAMA_URL
+from config import DRAFT_OPTIONS, EDIT_OPTIONS, OLLAMA_URL
 
 # Settings the lab can change, with the range each slider allows. 0 turns top_k and min_p off;
 # 1 turns top_p off. They're always sent explicitly, so the model's own defaults never sneak in.
@@ -137,10 +137,10 @@ async def run(mode, text, voice, sample, settings):
     """One lab run. mode "edit" reviews a paragraph with the line editor; "draft" writes a short
     draft from instructions with the drafting model. Waits its turn in the shared queue."""
     if mode == "edit":
-        model, system, schema, limit = editor.MODEL, editor.SYSTEM, editor.SUGGESTION_SCHEMA, 700
+        model, system, schema, limit = editor.MODEL, editor.SYSTEM, editor.SUGGESTION_SCHEMA, EDIT_OPTIONS["num_predict"]
         prompt = f"Writer's voice:\n{voice}\n\nEssay goal: not specified\n\nParagraph:\n\"\"\"\n{text}\n\"\"\""
     else:
-        model, system, schema, limit = editor.OVERVIEW_MODEL, editor.DRAFT_SYSTEM, editor.DRAFT_SCHEMA, 900
+        model, system, schema, limit = editor.OVERVIEW_MODEL, editor.DRAFT_SYSTEM, editor.DRAFT_SCHEMA, DRAFT_OPTIONS["num_predict"]
         prompt = editor.draft_prompt(text, voice, sample, length="short")
     options = {**settings, "num_predict": limit, "num_ctx": editor.context_size(system, prompt) or 8192}
     ticket, started = editor.queue.join(), False

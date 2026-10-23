@@ -1,0 +1,526 @@
+{
+ "drafts": {
+  "argue-start-times|plain": {
+   "A": "original",
+   "B": "prompt-only",
+   "C": "improved"
+  },
+  "narrative-drivers-test|warm": {
+   "A": "original",
+   "B": "prompt-only",
+   "C": "improved"
+  },
+  "lit-gatsby-light|academic": {
+   "A": "prompt-only",
+   "B": "improved",
+   "C": "original"
+  },
+  "history-dust-bowl|academic": {
+   "A": "prompt-only",
+   "B": "improved",
+   "C": "original"
+  },
+  "oped-library-sundays|punchy": {
+   "A": "prompt-only",
+   "B": "improved",
+   "C": "original"
+  },
+  "compare-online-class|plain": {
+   "A": "prompt-only",
+   "B": "original",
+   "C": "improved"
+  },
+  "explain-vaccines|plain": {
+   "A": "prompt-only",
+   "B": "improved",
+   "C": "original"
+  },
+  "scholarship-nursing|warm": {
+   "A": "improved",
+   "B": "prompt-only",
+   "C": "original"
+  },
+  "blog-no-social-media|punchy": {
+   "A": "prompt-only",
+   "B": "original",
+   "C": "improved"
+  },
+  "persuade-parents-job|story": {
+   "A": "prompt-only",
+   "B": "original",
+   "C": "improved"
+  },
+  "ethics-historical-figures|academic": {
+   "A": "prompt-only",
+   "B": "improved",
+   "C": "original"
+  },
+  "howto-running|punchy": {
+   "A": "improved",
+   "B": "prompt-only",
+   "C": "original"
+  },
+  "review-stardew|story": {
+   "A": "prompt-only",
+   "B": "improved",
+   "C": "original"
+  },
+  "cause-teens-work|plain": {
+   "A": "improved",
+   "B": "original",
+   "C": "prompt-only"
+  },
+  "argue-phone-ban|academic": {
+   "A": "original",
+   "B": "prompt-only",
+   "C": "improved"
+  },
+  "camp-counselor|warm": {
+   "A": "improved",
+   "B": "original",
+   "C": "prompt-only"
+  },
+  "argue-start-times|none": {
+   "A": "prompt-only",
+   "B": "improved",
+   "C": "original"
+  },
+  "narrative-drivers-test|none": {
+   "A": "improved",
+   "B": "prompt-only",
+   "C": "original"
+  },
+  "lit-gatsby-light|none": {
+   "A": "prompt-only",
+   "B": "improved",
+   "C": "original"
+  },
+  "history-dust-bowl|none": {
+   "A": "prompt-only",
+   "B": "original",
+   "C": "improved"
+  },
+  "oped-library-sundays|none": {
+   "A": "original",
+   "B": "prompt-only",
+   "C": "improved"
+  },
+  "compare-online-class|none": {
+   "A": "prompt-only",
+   "B": "improved",
+   "C": "original"
+  },
+  "explain-vaccines|none": {
+   "A": "original",
+   "B": "improved",
+   "C": "prompt-only"
+  },
+  "scholarship-nursing|none": {
+   "A": "improved",
+   "B": "prompt-only",
+   "C": "original"
+  },
+  "blog-no-social-media|none": {
+   "A": "improved",
+   "B": "original",
+   "C": "prompt-only"
+  },
+  "persuade-parents-job|none": {
+   "A": "improved",
+   "B": "prompt-only",
+   "C": "original"
+  },
+  "ethics-historical-figures|none": {
+   "A": "prompt-only",
+   "B": "original",
+   "C": "improved"
+  },
+  "howto-running|none": {
+   "A": "prompt-only",
+   "B": "improved",
+   "C": "original"
+  },
+  "review-stardew|none": {
+   "A": "improved",
+   "B": "original",
+   "C": "prompt-only"
+  },
+  "cause-teens-work|none": {
+   "A": "improved",
+   "B": "original",
+   "C": "prompt-only"
+  },
+  "argue-phone-ban|none": {
+   "A": "prompt-only",
+   "B": "improved",
+   "C": "original"
+  },
+  "camp-counselor|none": {
+   "A": "improved",
+   "B": "prompt-only",
+   "C": "original"
+  }
+ },
+ "revisions": {
+  "app-01": {
+   "A": "original",
+   "B": "v2-clarity",
+   "C": "v2-proofread"
+  },
+  "app-02": {
+   "A": "v2-clarity",
+   "B": "v2-proofread",
+   "C": "original"
+  },
+  "app-03": {
+   "A": "v2-clarity",
+   "B": "v2-proofread",
+   "C": "original"
+  },
+  "app-04": {
+   "A": "v2-clarity",
+   "B": "v2-proofread",
+   "C": "original"
+  },
+  "app-05": {
+   "A": "v2-clarity",
+   "B": "v2-proofread",
+   "C": "original"
+  },
+  "app-06": {
+   "A": "v2-clarity",
+   "B": "v2-proofread",
+   "C": "original"
+  },
+  "hist-01": {
+   "A": "original",
+   "B": "v2-clarity",
+   "C": "v2-proofread"
+  },
+  "hist-02": {
+   "A": "original",
+   "B": "v2-proofread",
+   "C": "v2-clarity"
+  },
+  "hist-03": {
+   "A": "original",
+   "B": "v2-proofread",
+   "C": "v2-clarity"
+  },
+  "hist-04": {
+   "A": "v2-clarity",
+   "B": "v2-proofread",
+   "C": "original"
+  },
+  "sci-01": {
+   "A": "v2-proofread",
+   "B": "v2-clarity",
+   "C": "original"
+  },
+  "sci-02": {
+   "A": "original",
+   "B": "v2-clarity",
+   "C": "v2-proofread"
+  },
+  "sci-03": {
+   "A": "v2-clarity",
+   "B": "v2-proofread",
+   "C": "original"
+  },
+  "eng-01": {
+   "A": "v2-proofread",
+   "B": "original",
+   "C": "v2-clarity"
+  },
+  "eng-02": {
+   "A": "v2-clarity",
+   "B": "original",
+   "C": "v2-proofread"
+  },
+  "eng-03": {
+   "A": "original",
+   "B": "v2-proofread",
+   "C": "v2-clarity"
+  },
+  "per-01": {
+   "A": "original",
+   "B": "v2-clarity",
+   "C": "v2-proofread"
+  },
+  "per-02": {
+   "A": "original",
+   "B": "v2-proofread",
+   "C": "v2-clarity"
+  },
+  "per-03": {
+   "A": "v2-proofread",
+   "B": "v2-clarity",
+   "C": "original"
+  },
+  "blog-01": {
+   "A": "original",
+   "B": "v2-proofread",
+   "C": "v2-clarity"
+  },
+  "blog-02": {
+   "A": "v2-clarity",
+   "B": "original",
+   "C": "v2-proofread"
+  },
+  "blog-03": {
+   "A": "v2-proofread",
+   "B": "original",
+   "C": "v2-clarity"
+  },
+  "work-01": {
+   "A": "original",
+   "B": "v2-clarity",
+   "C": "v2-proofread"
+  },
+  "work-02": {
+   "A": "original",
+   "B": "v2-clarity",
+   "C": "v2-proofread"
+  },
+  "opin-01": {
+   "A": "v2-clarity",
+   "B": "v2-proofread",
+   "C": "original"
+  },
+  "opin-02": {
+   "A": "v2-proofread",
+   "B": "original",
+   "C": "v2-clarity"
+  },
+  "app-07": {
+   "A": "v2-clarity",
+   "B": "original",
+   "C": "v2-proofread"
+  },
+  "app-08": {
+   "A": "v2-proofread",
+   "B": "v2-clarity",
+   "C": "original"
+  },
+  "sci-04": {
+   "A": "v2-clarity",
+   "B": "v2-proofread",
+   "C": "original"
+  },
+  "hist-05": {
+   "A": "v2-proofread",
+   "B": "original",
+   "C": "v2-clarity"
+  },
+  "eng-04": {
+   "A": "v2-proofread",
+   "B": "original",
+   "C": "v2-clarity"
+  },
+  "per-04": {
+   "A": "v2-proofread",
+   "B": "original",
+   "C": "v2-clarity"
+  },
+  "voice-01": {
+   "A": "v2-proofread",
+   "B": "v2-clarity",
+   "C": "original"
+  },
+  "voice-02": {
+   "A": "v2-proofread",
+   "B": "original",
+   "C": "v2-clarity"
+  },
+  "voice-03": {
+   "A": "v2-proofread",
+   "B": "original",
+   "C": "v2-clarity"
+  },
+  "voice-04": {
+   "A": "original",
+   "B": "v2-clarity",
+   "C": "v2-proofread"
+  },
+  "voice-05": {
+   "A": "original",
+   "B": "v2-proofread",
+   "C": "v2-clarity"
+  },
+  "voice-06": {
+   "A": "v2-clarity",
+   "B": "v2-proofread",
+   "C": "original"
+  },
+  "voice-07": {
+   "A": "original",
+   "B": "v2-clarity",
+   "C": "v2-proofread"
+  },
+  "voice-08": {
+   "A": "original",
+   "B": "v2-clarity",
+   "C": "v2-proofread"
+  }
+ },
+ "human": {
+  "k8s--concepts-architecture-garbage-collection": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "k8s--concepts-containers-container-lifecycle-hooks": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "k8s--concepts-overview-working-with-objects-finalizers": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "k8s--concepts-policy-pid-limiting": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "k8s--concepts-services-networking-dns-pod-service": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "k8s--concepts-workloads-controllers-deployment": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "k8s--concepts-workloads-controllers-replicationcontroller": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "k8s--concepts-workloads-pods-pod-lifecycle": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "micusp--CEE.G0.01.1": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "micusp--CLS.G0.01.1": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "micusp--ECO.G0.01.1": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "micusp--EDU.G0.01.1": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "micusp--ENG.G0.01.1": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "micusp--HIS.G0.01.1": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "micusp--IOE.G0.01.1": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "micusp--LIN.G0.01.1": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "micusp--MEC.G1.01.1": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "micusp--NRE.G0.01.1": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "micusp--PHI.G0.01.1": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "micusp--PHY.G0.01.1": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "micusp--POL.G0.01.1": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "micusp--PSY.G0.01.1": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "micusp--SOC.G0.01.1": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "sec--boeing-fy2020": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "sec--caterpillar-fy2019": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "sec--walmart-fy2019": {
+   "A": "original",
+   "B": "v2-clarity"
+  },
+  "wac--beyond-argument-essaying-as-a--1-01-_introduction": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "wac--international-advances-in-writ--01-_introduction": {
+   "A": "v2-clarity",
+   "B": "original"
+  },
+  "wac--international-advances-in-writ--02-_pedagogical_aproaches": {
+   "A": "original",
+   "B": "v2-clarity"
+  }
+ },
+ "personal": {
+  "blog-no-social-media|none": {
+   "A": "improved",
+   "B": "scaffold"
+  },
+  "blog-no-social-media|punchy": {
+   "A": "improved",
+   "B": "scaffold"
+  },
+  "camp-counselor|none": {
+   "A": "scaffold",
+   "B": "improved"
+  },
+  "camp-counselor|warm": {
+   "A": "scaffold",
+   "B": "improved"
+  },
+  "narrative-drivers-test|none": {
+   "A": "improved",
+   "B": "scaffold"
+  },
+  "narrative-drivers-test|warm": {
+   "A": "scaffold",
+   "B": "improved"
+  },
+  "persuade-parents-job|none": {
+   "A": "improved",
+   "B": "scaffold"
+  },
+  "persuade-parents-job|story": {
+   "A": "improved",
+   "B": "scaffold"
+  },
+  "scholarship-nursing|none": {
+   "A": "scaffold",
+   "B": "improved"
+  },
+  "scholarship-nursing|warm": {
+   "A": "scaffold",
+   "B": "improved"
+  }
+ }
+}

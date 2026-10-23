@@ -133,3 +133,11 @@ def test_ai_share_counts_words_still_in_order():
     assert authorship.ai_paragraph_flags("The bus is slow and it is always late.", ai) == [True]
     assert authorship.ai_paragraph_flags("Honestly the bus drives me up a wall every single day.", ai) == [False]
     assert authorship.ai_paragraph_flags("Anything.", None) == [False]
+
+
+def test_paragraph_breaks_inside_one_item_are_kept(client, user, monkeypatch):
+    _, h = user
+    two = "Bikes are fast." + chr(10) * 2 + "They're cheap too."
+    fake_drafter(monkeypatch, [two, "Third."])
+    events = stream_events(client.post("/api/compose", headers=h, json={"instructions": "Why I bike to school"}))
+    assert events[1]["body"].split(chr(10) * 2) == ["Bikes are fast.", "They're cheap too.", "Third."]

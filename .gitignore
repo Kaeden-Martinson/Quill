@@ -8,3 +8,7 @@ training/out*/
 training/eval_results/
 __pycache__/
 unsloth_compiled_cache/
+training/writing_eval/runs/
+training/writing_eval/logs/
+# packets quote the human corpus (some CC BY-NC-ND), so they stay local like the corpus itself
+training/writing_eval/packets/

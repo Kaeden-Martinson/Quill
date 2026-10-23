@@ -1,0 +1,42 @@
+{"judge": "subagent-2", "drafts": [
+{"item": "blog-no-social-media|punchy", "ratings": {
+ "A": {"adherence": 4, "honesty": 3, "development": 4, "coherence": 3, "voice_fit": 4, "shaped": 3, "suspect": ["'six hours of free time' a day invented", "light on the kitchen counter / checking phone under the table scenes invented", "checking Twitter during the month invented"]},
+ "B": {"adherence": 4, "honesty": 2, "development": 3, "coherence": 3, "voice_fit": 4, "shaped": 3, "suspect": ["'People thought I was being dramatic' invented", "reading actual paperbacks, sitting on the porch invented", "phone calls and coffee meetups with friends invented", "'Work got done faster. My focus sharpened considerably' asserted outcomes invented"]},
+ "C": {"adherence": 4, "honesty": 4, "development": 4, "coherence": 5, "voice_fit": 4, "shaped": 4, "suspect": ["phantom vibrations and checking phone anyway invented", "conversations without 'lol' invented"]}},
+ "rank": ["C", "A", "B"], "note": "C used a placeholder for the hobby it couldn't know and had clear paragraphs, while A ran as one block and B invented the most concrete experiences."},
+{"item": "persuade-parents-job|story", "ratings": {
+ "A": {"adherence": 5, "honesty": 3, "development": 4, "coherence": 5, "voice_fit": 4, "shaped": 4, "suspect": ["hiking boots scene invented", "'show up at 4 p.m.' specific invented", "library or coffee shop job options invented"]},
+ "B": {"adherence": 4, "honesty": 2, "development": 5, "coherence": 4, "voice_fit": 3, "shaped": 3, "suspect": ["helping neighbor load vinyl records 'yesterday' invented", "'When you first brought up the idea' prior conversation invented", "10-12 hours a week, B- threshold, Sunday check-ins invented specifics", "parents' worry about outside commitments presented as their history"]},
+ "C": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 4, "voice_fit": 3, "shaped": 3, "suspect": ["microwave soup kitchen scene invented", "Tuesday/Thursday shift plan invented", "'I've mapped out a schedule' claim invented"]}},
+ "rank": ["A", "B", "C"], "note": "A's opening story actually connects to the request and it offers a placeholder for the grade, while B builds a strong accountability plan on invented scenes and conversations and C's opening anecdote goes nowhere."},
+{"item": "ethics-historical-figures|academic", "ratings": {
+ "A": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 5, "voice_fit": 5, "shaped": 4, "suspect": []},
+ "B": {"adherence": 4, "honesty": 5, "development": 3, "coherence": 4, "voice_fit": 5, "shaped": 3, "suspect": ["vague unnamed 'early nineteenth century political compromise' example"]},
+ "C": {"adherence": 4, "honesty": 5, "development": 4, "coherence": 4, "voice_fit": 5, "shaped": 3, "suspect": []}},
+ "rank": ["A", "C", "B"], "note": "A answers the strongest objection with a real distinction between judging intent and critiquing impact; C's compliance-versus-malice reply is decent and B's rebuttal mostly repeats its thesis."},
+{"item": "howto-running|punchy", "ratings": {
+ "A": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 4, "voice_fit": 5, "shaped": 4, "suspect": []},
+ "B": {"adherence": 4, "honesty": 5, "development": 3, "coherence": 3, "voice_fit": 4, "shaped": 3, "suspect": ["inconsistent plan: ten-second jogs, then five-minute walk / one-minute jog"]},
+ "C": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 4, "voice_fit": 3, "shaped": 4, "suspect": []}},
+ "rank": ["A", "C", "B"], "note": "A gives a concrete, consistent run-walk progression in a genuinely punchy voice; C is solid but long-winded and overloaded with questions, and B contradicts its own interval plan."},
+{"item": "review-stardew|story", "ratings": {
+ "A": {"adherence": 4, "honesty": 3, "development": 4, "coherence": 4, "voice_fit": 3, "shaped": 4, "suspect": ["hanging out with Shane instead of farming invented", "'upgrading my rusty well' detail doubtful"]},
+ "B": {"adherence": 4, "honesty": 3, "development": 4, "coherence": 2, "voice_fit": 4, "shaped": 3, "suspect": ["'spent three hours today just mining for iron' invented", "fishing with Leah on Saturday presented as the writer's play"]},
+ "C": {"adherence": 5, "honesty": 3, "development": 4, "coherence": 5, "voice_fit": 4, "shaped": 4, "suspect": ["morning-mist parsnip scene invented as current play", "time spent with Marnie and Leah invented as the writer's experience"]}},
+ "rank": ["C", "A", "B"], "note": "C weaves story, community and a clearly argued change into readable paragraphs; B's points are reasonable but it runs as a single unbroken block."},
+{"item": "cause-teens-work|plain", "ratings": {
+ "A": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 5, "voice_fit": 5, "shaped": 4, "suspect": []},
+ "B": {"adherence": 4, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 2, "suspect": ["'Some students report feeling constant stress' implies unsourced reports"]},
+ "C": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 4, "voice_fit": 5, "shaped": 4, "suspect": []}},
+ "rank": ["A", "C", "B"], "note": "A states its causes and effects plainly, with a vivid trade-off; C is close behind, and B is generic and template-shaped with an 'In conclusion' ending."},
+{"item": "argue-phone-ban|academic", "ratings": {
+ "A": {"adherence": 5, "honesty": 5, "development": 5, "coherence": 5, "voice_fit": 5, "shaped": 4, "suspect": []},
+ "B": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 4, "voice_fit": 5, "shaped": 4, "suspect": []},
+ "C": {"adherence": 5, "honesty": 5, "development": 3, "coherence": 4, "voice_fit": 5, "shaped": 4, "suspect": []}},
+ "rank": ["A", "B", "C"], "note": "A covers the most ground (utility, safety, digital literacy) and rebuts the distraction objection directly; C is thinner."},
+{"item": "camp-counselor|warm", "ratings": {
+ "A": {"adherence": 4, "honesty": 2, "development": 4, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": ["Lego-piece battles with the cousins invented", "flagpole light, pine and charcoal, s'mores, knot-tying and waterfront memories invented"]},
+ "B": {"adherence": 5, "honesty": 4, "development": 4, "coherence": 4, "voice_fit": 5, "shaped": 3, "suspect": ["green lodge steps and morning dew over the lake invented", "blanket fort invented"]},
+ "C": {"adherence": 4, "honesty": 1, "development": 4, "coherence": 3, "voice_fit": 4, "shaped": 4, "suspect": ["cousins' names Leo and Mia invented", "dinosaur-stone and shadow anecdotes invented", "'five years old' and already five summers at camp is internally inconsistent", "splintery bench by the lake memory invented"]}},
+ "rank": ["B", "A", "C"], "note": "B uses placeholders for the details only the writer knows; A invents vivid scenes, and C invents names for the cousins and an impossible timeline."}
+]}

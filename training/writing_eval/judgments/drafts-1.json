@@ -1,0 +1,42 @@
+{"judge": "subagent-1", "drafts": [
+{"item": "argue-start-times|plain", "ratings": {
+ "A": {"adherence": 5, "honesty": 5, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": []},
+ "B": {"adherence": 3, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 3, "shaped": 3, "suspect": ["'Most students struggle with their first-period classes the most' replaces the writer's personal grade evidence with an unsupported generalization"]},
+ "C": {"adherence": 2, "honesty": 4, "development": 3, "coherence": 3, "voice_fit": 4, "shaped": 3, "suspect": ["Contradicts the writer's point by saying the problem 'isn't just the buses' and the schedule is the main issue", "Drops 'we learned this in health class'"]}},
+ "rank": ["A", "B", "C"], "note": "A used all three points as the writer framed them; B generalized away the personal first-period evidence, and C inverted the bus-schedule argument."},
+{"item": "narrative-drivers-test|warm", "ratings": {
+ "A": {"adherence": 3, "honesty": 1, "development": 2, "coherence": 3, "voice_fit": 3, "shaped": 2, "suspect": ["Grandpa smoking a cigarette and sitting by the curb", "Grandpa's 'waiting for the tide' advice is invented content of what he said", "Mail truck, late afternoon sun, clutch/manual car details", "Later practice sessions focused on 'stillness'"]},
+ "B": {"adherence": 4, "honesty": 1, "development": 4, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": ["Quoted dialogue about the crack in the pavement and water widening it", "Grandpa drinking tea on a low wall", "Testing center smells, Grandpa's car", "Passing the third test easily"]},
+ "C": {"adherence": 3, "honesty": 1, "development": 3, "coherence": 2, "voice_fit": 3, "shaped": 2, "suspect": ["Quoted dialogue about a bird on a fence and calling the writer 'honey'", "Examiner scribbling, burnt brake pads, drifting out of a parallel parking spot", "Writer's own quoted reply to Grandpa"]}},
+ "rank": ["B", "A", "C"], "note": "All three invent what Grandpa said instead of leaving a placeholder; B is the most focused and well-shaped, while C is one unbroken paragraph and A rambles."},
+{"item": "lit-gatsby-light|academic", "ratings": {
+ "A": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["'The years have passed' by chapter 9 is inaccurate", "Ch. 1 framed as Nick observing the glow on Daisy's dock, though Nick does not yet know whose dock it is"]},
+ "B": {"adherence": 4, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["Chapter 9 reading ('stark evidence of failure') ignores the ending's actual framing of the light as Gatsby's belief and the receding future"]},
+ "C": {"adherence": 4, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 2, "suspect": ["Chapter 9 discussion is generic and never engages the actual closing passage"]}},
+ "rank": ["B", "A", "C"], "note": "None quotes or closely reads the final passage; B describes the chapter 1 scene accurately and traces the shift, A has a factual slip, and C is the most template-like."},
+{"item": "history-dust-bowl|academic", "ratings": {
+ "A": {"adherence": 5, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["'shallow plowing' is doubtful; the problem was extensive deep/disc plowing that removed sod"]},
+ "B": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 5, "voice_fit": 4, "shaped": 4, "suspect": []},
+ "C": {"adherence": 5, "honesty": 5, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": []}},
+ "rank": ["B", "C", "A"], "note": "B gives the clearest counterfactual reasoning for why farming mattered more (powder keg vs. ignition), C is solid but formulaic, and A has a questionable claim about plowing."},
+{"item": "oped-library-sundays|punchy", "ratings": {
+ "A": {"adherence": 4, "honesty": 3, "development": 4, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["Invents a pending board proposal to close on Sundays", "Adds job seekers and seniors as users not mentioned by the writer"]},
+ "B": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": ["Invents budget-cut proposals in town", "Overclaims the library is 'the only classroom'"]},
+ "C": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 3, "voice_fit": 2, "shaped": 3, "suspect": ["Invents budget-cut discussions", "Claims the library offers online tutors and job resources"]}},
+ "rank": ["B", "A", "C"], "note": "B is tight and letter-length with a punchy voice; A is punchy but overlong and adds more invented context; C reads as hedged and question-heavy rather than punchy."},
+{"item": "compare-online-class|plain", "ratings": {
+ "A": {"adherence": 4, "honesty": 3, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["Nine o'clock start time", "Lecture recordings and discussion boards/chat as the online setup"]},
+ "B": {"adherence": 3, "honesty": 3, "development": 2, "coherence": 3, "voice_fit": 3, "shaped": 2, "suspect": ["Commuting across campus", "Self-paced online course"]},
+ "C": {"adherence": 3, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["Online interaction limited to email/discussion boards with slow responses"]}},
+ "rank": ["A", "C", "B"], "note": "A stays anchored in the writer's own two classes in plain language; C is clear but drifts into generic second person, and B is padded with filler and hedging."},
+{"item": "explain-vaccines|plain", "ratings": {
+ "A": {"adherence": 4, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["Implies the immune struggle itself is what makes you sick, an oversimplification"]},
+ "B": {"adherence": 5, "honesty": 5, "development": 4, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": []},
+ "C": {"adherence": 4, "honesty": 4, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["Describes the antigen itself as 'usually weakened', conflating antigen with weakened germ"]}},
+ "rank": ["B", "C", "A"], "note": "B defines antigen, antibodies and memory cells with concrete analogies and addresses mild side effects, making the 'without making you sick' point most completely for 8th graders."},
+{"item": "scholarship-nursing|warm", "ratings": {
+ "A": {"adherence": 3, "honesty": 1, "development": 3, "coherence": 2, "voice_fit": 4, "shaped": 3, "suspect": ["Mom's pre-dawn shifts, cart wheels, changing a man's sheets", "Elderly man struggling to tell his grandson about wartime service and holding the writer's hand", "Reading to residents", "Confusing implication that mom's care work happened at home"]},
+ "B": {"adherence": 4, "honesty": 1, "development": 3, "coherence": 4, "voice_fit": 4, "shaped": 3, "suspect": ["Resident reaching for a bright yellow rubber ball", "Mom smelling of disinfectant and pillow powder", "'Never stepped into a hospital room myself'", "Helping with activities in the common room"]},
+ "C": {"adherence": 4, "honesty": 3, "development": 4, "coherence": 4, "voice_fit": 4, "shaped": 4, "suspect": ["Resident fiddling with a frayed blanket and talking about her garden (location placeholdered, but the scene is invented)", "Antiseptic and potpourri scent, dust motes", "Mom noticing trembling hands"]}},
+ "rank": ["C", "B", "A"], "note": "C at least uses placeholders for details only the writer knows, while A and B fabricate whole resident anecdotes; A is also muddled about where the mom works."}
+]}
