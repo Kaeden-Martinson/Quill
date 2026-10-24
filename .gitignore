@@ -15,3 +15,4 @@ training/writing_eval/packets/
 # run logs written to the repo root by long jobs
 /generation-*.log
 /training-*.log
+/detectors-*.log
