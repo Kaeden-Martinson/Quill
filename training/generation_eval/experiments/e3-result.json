@@ -1,0 +1,155 @@
+{
+ "experiment": "e3",
+ "ratings": "j-e3",
+ "variant_run": "e3-dev",
+ "baseline_run": "baseline-dev+persuade-dev",
+ "judges": 2,
+ "samples": 99,
+ "paired_differences": {
+  "adherence": {
+   "diff": -0.273,
+   "ci95": [
+    -0.465,
+    -0.052
+   ],
+   "pairs": 99
+  },
+  "thesis_argument": {
+   "diff": -0.136,
+   "ci95": [
+    -0.244,
+    -0.02
+   ],
+   "pairs": 99
+  },
+  "evidence": {
+   "diff": -0.237,
+   "ci95": [
+    -0.388,
+    -0.099
+   ],
+   "pairs": 99
+  },
+  "specificity": {
+   "diff": -0.222,
+   "ci95": [
+    -0.357,
+    -0.1
+   ],
+   "pairs": 99
+  },
+  "organization": {
+   "diff": -0.111,
+   "ci95": [
+    -0.325,
+    0.108
+   ],
+   "pairs": 99
+  },
+  "coherence": {
+   "diff": -0.076,
+   "ci95": [
+    -0.205,
+    0.052
+   ],
+   "pairs": 99
+  },
+  "repetition": {
+   "diff": -0.096,
+   "ci95": [
+    -0.224,
+    0.033
+   ],
+   "pairs": 99
+  },
+  "readability": {
+   "diff": -0.056,
+   "ci95": [
+    -0.115,
+    0.015
+   ],
+   "pairs": 99
+  },
+  "factual_reliability": {
+   "diff": 0.102,
+   "ci95": [
+    -0.062,
+    0.284
+   ],
+   "pairs": 93
+  },
+  "genre_fit": {
+   "diff": -0.303,
+   "ci95": [
+    -0.484,
+    -0.112
+   ],
+   "pairs": 99
+  },
+  "voice_style": {
+   "diff": -0.056,
+   "ci95": [
+    -0.13,
+    0.007
+   ],
+   "pairs": 99
+  },
+  "usefulness": {
+   "diff": -0.283,
+   "ci95": [
+    -0.419,
+    -0.117
+   ],
+   "pairs": 99
+  },
+  "invented_personal_details": {
+   "diff": -0.051,
+   "ci95": [
+    -0.194,
+    0.067
+   ],
+   "pairs": 99
+  },
+  "unsupported_claims": {
+   "diff": -0.071,
+   "ci95": [
+    -0.149,
+    -0.009
+   ],
+   "pairs": 99
+  },
+  "citation_problems": {
+   "diff": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "pairs": 99
+  },
+  "_variant_factual_mean": 4.698
+ },
+ "lengths": {
+  "variant": {
+   "median_share": {
+    "medium": 0.78,
+    "short": 0.936,
+    "long": 0.707
+   },
+   "under_70pct": 12
+  },
+  "baseline": {
+   "median_share": {
+    "medium": 0.824,
+    "short": 0.968,
+    "long": 0.766
+   },
+   "under_70pct": 6
+  }
+ },
+ "invented_details_flagged_by_all_judges": {
+  "variant": 12,
+  "baseline": 13,
+  "of": 99
+ },
+ "decision": "inconclusive"
+}
