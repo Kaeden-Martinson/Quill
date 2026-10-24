@@ -138,7 +138,21 @@ within 0.1 of A on every criterion.
 - Length: median share of target 87% (short), 86% (medium), 78% (long); 9 of 75 under 70%.
 
 ### Editor on student writing (pipeline C)
-DEV_C_AND_EVAL_C
+The live editor (`quill-editor-v7`, temperature 0) on student essays, every suggestion applied, no goal
+set, Ollama 0.40.4, no errors:
+
+| | Dev (110 essays) | Eval (300 essays) |
+|---|---|---|
+| Edits applied (median per essay) | 1,247 (10) | 3,367 (10) |
+| Share of tokens changed: median / 90th pct / max | 7.7% / 15.1% / 34.7% | 6.9% / 18.8% / 40.2% |
+| English learners (ELLIPSE), median changed | 12.2% | 12.2% |
+| PERSUADE non-learners, median changed | 6.3% | 4.7% |
+| Grammar share of edits | 93% | 94% |
+
+The editor changes far more of student writing than of published prose, and about twice as much of
+English learners' writing. This is the before/after material the detector track needs to answer
+whether editing changes how detectors label human writing; no detector has been run. Applying every
+suggestion is an upper bound on real use.
 
 ## 9. Reproducibility and privacy
 Every draft keeps its prompt, raw reply, seed, model digests, engine version, timing and errors;
