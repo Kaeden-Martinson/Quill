@@ -1,0 +1,968 @@
+{"round8_train_line": 18, "pro_id": "py-howto-sockets-16", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 26, "pro_id": "py-howto-urllib2-00", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 35, "pro_id": "py-howto-regex-49", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 62, "pro_id": "py-howto-clinic-09", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 64, "pro_id": "py-tutorial-controlflow-27", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 91, "pro_id": "sec-1341439-23", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 103, "pro_id": "py-howto-regex-22", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 106, "pro_id": "sec-1341439-17", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 118, "pro_id": "sec-310158-01", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 138, "pro_id": "py-howto-unicode-14", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 149, "pro_id": "py-howto-logging-cookbook-26", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 151, "pro_id": "sec-40704-18", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 156, "pro_id": "py-howto-regex-41", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 182, "pro_id": "py-tutorial-venv-02", "doc": "python-venv", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 220, "pro_id": "sec-63908-19", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 228, "pro_id": "sec-310158-11", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 240, "pro_id": "py-howto-sorting-01", "doc": "python-sorting", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 248, "pro_id": "py-howto-regex-36", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 282, "pro_id": "sec-60667-02", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 284, "pro_id": "py-howto-curses-32", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 320, "pro_id": "sec-56873-02", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 330, "pro_id": "py-howto-logging-cookbook-08", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 352, "pro_id": "py-tutorial-stdlib2-07", "doc": "python-stdlib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 359, "pro_id": "py-tutorial-venv-00", "doc": "python-venv", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 367, "pro_id": "py-howto-clinic-17", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 368, "pro_id": "py-tutorial-introduction-03", "doc": "python-introduction", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 377, "pro_id": "py-howto-regex-52", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 380, "pro_id": "sec-66740-01", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 390, "pro_id": "py-howto-logging-cookbook-16", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 391, "pro_id": "sec-60667-26", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 396, "pro_id": "py-tutorial-classes-27", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 406, "pro_id": "sec-66740-14", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 412, "pro_id": "sec-66740-04", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 420, "pro_id": "py-howto-descriptor-06", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 429, "pro_id": "py-tutorial-classes-42", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 430, "pro_id": "py-howto-logging-cookbook-45", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 442, "pro_id": "sec-1090727-24", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 465, "pro_id": "sec-858877-21", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 467, "pro_id": "py-howto-curses-29", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 468, "pro_id": "py-tutorial-classes-38", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 470, "pro_id": "sec-773840-27", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 474, "pro_id": "sec-60667-21", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 475, "pro_id": "sec-1090727-12", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 479, "pro_id": "sec-60667-05", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 492, "pro_id": "sec-310158-22", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 499, "pro_id": "py-howto-logging-cookbook-12", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 503, "pro_id": "py-howto-clinic-36", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 526, "pro_id": "sec-63908-08", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 531, "pro_id": "py-howto-descriptor-08", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 534, "pro_id": "py-howto-functional-23", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 543, "pro_id": "sec-773840-21", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 550, "pro_id": "py-howto-curses-22", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 595, "pro_id": "sec-56873-14", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 611, "pro_id": "sec-80424-20", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 633, "pro_id": "py-howto-functional-32", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 637, "pro_id": "py-howto-logging-cookbook-43", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 640, "pro_id": "py-howto-sockets-05", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 643, "pro_id": "py-tutorial-datastructures-03", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 644, "pro_id": "py-howto-sockets-23", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 654, "pro_id": "sec-56873-04", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 658, "pro_id": "py-tutorial-classes-04", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 670, "pro_id": "py-tutorial-stdlib-02", "doc": "python-stdlib", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 695, "pro_id": "sec-66740-29", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 701, "pro_id": "sec-773840-18", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 714, "pro_id": "py-tutorial-index-00", "doc": "python-index", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 716, "pro_id": "sec-773840-10", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 720, "pro_id": "py-tutorial-modules-25", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 724, "pro_id": "py-tutorial-venv-05", "doc": "python-venv", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 737, "pro_id": "py-howto-regex-60", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 740, "pro_id": "py-tutorial-controlflow-26", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 741, "pro_id": "py-tutorial-stdlib2-06", "doc": "python-stdlib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 752, "pro_id": "py-howto-unicode-05", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 760, "pro_id": "py-tutorial-datastructures-07", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 764, "pro_id": "py-howto-descriptor-13", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 772, "pro_id": "py-howto-unicode-26", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 773, "pro_id": "py-howto-regex-07", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 776, "pro_id": "py-howto-regex-09", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 795, "pro_id": "sec-858877-27", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 803, "pro_id": "py-howto-curses-01", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 809, "pro_id": "py-tutorial-index-03", "doc": "python-index", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 810, "pro_id": "sec-40704-07", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 839, "pro_id": "py-tutorial-classes-43", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 843, "pro_id": "sec-1341439-24", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 844, "pro_id": "py-howto-regex-46", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 845, "pro_id": "sec-1048286-12", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 852, "pro_id": "py-howto-functional-41", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 864, "pro_id": "py-howto-urllib2-04", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 873, "pro_id": "sec-1090727-10", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 877, "pro_id": "sec-1090727-18", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 883, "pro_id": "py-tutorial-appetite-07", "doc": "python-appetite", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 896, "pro_id": "py-howto-regex-64", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 902, "pro_id": "py-howto-descriptor-10", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 906, "pro_id": "sec-1048286-03", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 934, "pro_id": "sec-1341439-02", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 942, "pro_id": "sec-66740-00", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 944, "pro_id": "sec-63908-09", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 953, "pro_id": "py-howto-functional-08", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 954, "pro_id": "py-howto-clinic-42", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 957, "pro_id": "sec-1090727-11", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 973, "pro_id": "py-howto-sockets-31", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 983, "pro_id": "sec-310158-13", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 985, "pro_id": "py-tutorial-datastructures-14", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1023, "pro_id": "sec-66740-11", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1028, "pro_id": "sec-1341439-20", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1032, "pro_id": "py-tutorial-classes-28", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1042, "pro_id": "py-howto-argparse-02", "doc": "python-argparse", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1060, "pro_id": "py-tutorial-stdlib2-04", "doc": "python-stdlib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1066, "pro_id": "py-howto-unicode-25", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1085, "pro_id": "py-tutorial-classes-40", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1099, "pro_id": "sec-56873-15", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1119, "pro_id": "py-tutorial-modules-03", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1123, "pro_id": "sec-80424-16", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1124, "pro_id": "py-howto-logging-cookbook-46", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1125, "pro_id": "py-howto-regex-19", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1149, "pro_id": "py-tutorial-classes-16", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1160, "pro_id": "py-howto-clinic-39", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1161, "pro_id": "sec-63908-23", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1170, "pro_id": "py-tutorial-stdlib-01", "doc": "python-stdlib", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1179, "pro_id": "sec-858877-05", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1194, "pro_id": "py-tutorial-datastructures-05", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1199, "pro_id": "py-howto-clinic-08", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1213, "pro_id": "py-howto-descriptor-14", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1232, "pro_id": "py-howto-logging-cookbook-48", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1234, "pro_id": "sec-1341439-11", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1268, "pro_id": "sec-56873-18", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1271, "pro_id": "py-howto-sockets-25", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1272, "pro_id": "sec-66740-12", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1286, "pro_id": "py-tutorial-datastructures-11", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1288, "pro_id": "py-tutorial-classes-10", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1299, "pro_id": "sec-80424-03", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1319, "pro_id": "py-howto-regex-31", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1321, "pro_id": "sec-56873-16", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1333, "pro_id": "sec-858877-16", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1370, "pro_id": "py-tutorial-classes-19", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1374, "pro_id": "sec-63908-07", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1384, "pro_id": "py-tutorial-errors-10", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1392, "pro_id": "py-tutorial-index-02", "doc": "python-index", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1396, "pro_id": "py-howto-logging-cookbook-14", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1401, "pro_id": "py-howto-clinic-34", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1404, "pro_id": "py-howto-descriptor-17", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1426, "pro_id": "sec-310158-28", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1442, "pro_id": "py-tutorial-appetite-02", "doc": "python-appetite", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1453, "pro_id": "py-howto-unicode-23", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1455, "pro_id": "py-howto-clinic-38", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1470, "pro_id": "py-howto-descriptor-09", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1481, "pro_id": "py-tutorial-errors-11", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1482, "pro_id": "py-tutorial-appetite-03", "doc": "python-appetite", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1486, "pro_id": "py-tutorial-appetite-04", "doc": "python-appetite", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1496, "pro_id": "sec-858877-25", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1508, "pro_id": "py-howto-functional-25", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1509, "pro_id": "sec-1048286-09", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1514, "pro_id": "sec-80424-06", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1525, "pro_id": "py-tutorial-datastructures-18", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1531, "pro_id": "py-howto-urllib2-15", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1558, "pro_id": "sec-80424-24", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1575, "pro_id": "sec-773840-19", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1584, "pro_id": "py-howto-unicode-21", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1589, "pro_id": "sec-1341439-22", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1593, "pro_id": "py-howto-functional-09", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1594, "pro_id": "sec-773840-12", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1600, "pro_id": "py-howto-clinic-21", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1614, "pro_id": "py-howto-logging-cookbook-18", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1615, "pro_id": "sec-310158-21", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1633, "pro_id": "sec-773840-09", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1639, "pro_id": "sec-63908-15", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1647, "pro_id": "py-tutorial-modules-15", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1650, "pro_id": "sec-773840-29", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1657, "pro_id": "py-howto-curses-28", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1662, "pro_id": "py-tutorial-introduction-02", "doc": "python-introduction", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1667, "pro_id": "sec-56873-29", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1682, "pro_id": "py-tutorial-datastructures-01", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1683, "pro_id": "py-howto-regex-57", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1685, "pro_id": "py-tutorial-modules-08", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1724, "pro_id": "py-howto-clinic-41", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1728, "pro_id": "py-howto-descriptor-03", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1729, "pro_id": "sec-63908-12", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1737, "pro_id": "sec-80424-22", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1740, "pro_id": "sec-1341439-28", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1742, "pro_id": "sec-66740-28", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1752, "pro_id": "sec-60667-17", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1757, "pro_id": "py-howto-descriptor-07", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1763, "pro_id": "py-tutorial-classes-31", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1770, "pro_id": "sec-77476-02", "doc": "sec-PepsiCo-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1773, "pro_id": "py-tutorial-inputoutput-05", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1775, "pro_id": "sec-63908-22", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1784, "pro_id": "sec-40704-12", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1789, "pro_id": "py-howto-regex-00", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1816, "pro_id": "py-howto-unicode-35", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1819, "pro_id": "py-howto-regex-28", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1829, "pro_id": "sec-40704-04", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1854, "pro_id": "sec-66740-05", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1856, "pro_id": "sec-40704-28", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1870, "pro_id": "py-howto-functional-06", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1900, "pro_id": "sec-80424-05", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1902, "pro_id": "sec-1090727-29", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1903, "pro_id": "sec-310158-20", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1925, "pro_id": "py-tutorial-classes-06", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1927, "pro_id": "sec-66740-25", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 1930, "pro_id": "py-howto-clinic-03", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1938, "pro_id": "py-tutorial-modules-17", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1946, "pro_id": "py-howto-descriptor-12", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1950, "pro_id": "py-tutorial-classes-02", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1955, "pro_id": "py-howto-ipaddress-08", "doc": "python-ipaddress", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1972, "pro_id": "py-tutorial-modules-12", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 1998, "pro_id": "sec-40704-16", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2004, "pro_id": "sec-858877-13", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2006, "pro_id": "sec-858877-11", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2022, "pro_id": "py-tutorial-classes-45", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2039, "pro_id": "py-howto-logging-cookbook-24", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2075, "pro_id": "sec-40704-01", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2087, "pro_id": "sec-60667-01", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2090, "pro_id": "sec-40704-27", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2094, "pro_id": "sec-310158-24", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2111, "pro_id": "sec-63908-21", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2133, "pro_id": "py-howto-functional-36", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2140, "pro_id": "py-howto-functional-42", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2141, "pro_id": "py-tutorial-modules-19", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2160, "pro_id": "py-howto-unicode-30", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2162, "pro_id": "sec-1048286-01", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2166, "pro_id": "py-howto-unicode-24", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2177, "pro_id": "sec-858877-09", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2188, "pro_id": "py-tutorial-interpreter-04", "doc": "python-interpreter", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2209, "pro_id": "py-tutorial-stdlib2-09", "doc": "python-stdlib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2211, "pro_id": "py-howto-curses-12", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2217, "pro_id": "py-tutorial-controlflow-04", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2272, "pro_id": "py-tutorial-modules-10", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2302, "pro_id": "sec-773840-17", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2309, "pro_id": "py-howto-clinic-01", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2322, "pro_id": "sec-1341439-16", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2328, "pro_id": "sec-1090727-03", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2355, "pro_id": "py-howto-curses-06", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2357, "pro_id": "sec-1341439-29", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2369, "pro_id": "py-tutorial-floatingpoint-05", "doc": "python-floatingpoint", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2376, "pro_id": "py-howto-urllib2-06", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2377, "pro_id": "py-tutorial-inputoutput-03", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2379, "pro_id": "sec-56873-01", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2388, "pro_id": "sec-56873-27", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2402, "pro_id": "sec-66740-02", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2433, "pro_id": "sec-858877-10", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2437, "pro_id": "sec-1048286-27", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2444, "pro_id": "py-tutorial-modules-24", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2447, "pro_id": "py-howto-regex-48", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2450, "pro_id": "py-howto-urllib2-07", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2458, "pro_id": "py-howto-sockets-08", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2464, "pro_id": "sec-858877-22", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2465, "pro_id": "sec-63908-29", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2467, "pro_id": "sec-773840-26", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2504, "pro_id": "sec-310158-05", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2511, "pro_id": "py-howto-clinic-37", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2516, "pro_id": "sec-773840-22", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2518, "pro_id": "py-tutorial-classes-15", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2542, "pro_id": "py-howto-unicode-27", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2551, "pro_id": "py-howto-logging-cookbook-10", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2560, "pro_id": "sec-63908-04", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2565, "pro_id": "sec-63908-06", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2570, "pro_id": "sec-773840-28", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2573, "pro_id": "py-tutorial-stdlib2-10", "doc": "python-stdlib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2574, "pro_id": "sec-56873-25", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2587, "pro_id": "sec-80424-29", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2600, "pro_id": "py-howto-regex-34", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2601, "pro_id": "py-howto-regex-42", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2607, "pro_id": "py-howto-logging-cookbook-60", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2612, "pro_id": "py-howto-regex-20", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2631, "pro_id": "py-tutorial-stdlib2-05", "doc": "python-stdlib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2635, "pro_id": "sec-1048286-20", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2637, "pro_id": "py-howto-unicode-09", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2639, "pro_id": "sec-60667-20", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2644, "pro_id": "sec-60667-14", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2646, "pro_id": "py-howto-sockets-03", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2654, "pro_id": "py-howto-logging-cookbook-29", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2655, "pro_id": "sec-858877-07", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2660, "pro_id": "py-howto-sockets-00", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2661, "pro_id": "sec-56873-17", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2667, "pro_id": "py-howto-logging-cookbook-63", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2669, "pro_id": "py-howto-clinic-46", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2674, "pro_id": "py-tutorial-classes-33", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2677, "pro_id": "py-howto-regex-63", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2685, "pro_id": "py-howto-functional-20", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2693, "pro_id": "sec-66740-03", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2708, "pro_id": "py-howto-functional-29", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2715, "pro_id": "py-tutorial-controlflow-25", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2716, "pro_id": "py-tutorial-controlflow-24", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2724, "pro_id": "py-howto-functional-16", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2737, "pro_id": "py-tutorial-modules-02", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2755, "pro_id": "py-howto-unicode-12", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2763, "pro_id": "sec-1341439-06", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2771, "pro_id": "sec-1341439-21", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2779, "pro_id": "py-howto-clinic-07", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2783, "pro_id": "sec-773840-20", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2784, "pro_id": "sec-63908-20", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2790, "pro_id": "py-howto-logging-cookbook-52", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2798, "pro_id": "py-tutorial-modules-04", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2799, "pro_id": "py-tutorial-inputoutput-12", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2801, "pro_id": "py-tutorial-controlflow-15", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2804, "pro_id": "sec-60667-06", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2819, "pro_id": "sec-1090727-01", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2823, "pro_id": "py-howto-logging-cookbook-57", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2825, "pro_id": "sec-56873-13", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2833, "pro_id": "py-howto-sockets-09", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2841, "pro_id": "sec-56873-03", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2842, "pro_id": "py-tutorial-controlflow-08", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2844, "pro_id": "sec-1048286-23", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2860, "pro_id": "py-tutorial-modules-21", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2873, "pro_id": "sec-773840-13", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2886, "pro_id": "sec-63908-25", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2891, "pro_id": "py-tutorial-datastructures-09", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2898, "pro_id": "py-howto-clinic-26", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2904, "pro_id": "sec-858877-19", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2912, "pro_id": "py-howto-logging-cookbook-21", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2925, "pro_id": "py-howto-regex-02", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2930, "pro_id": "py-howto-ipaddress-05", "doc": "python-ipaddress", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2944, "pro_id": "py-howto-regex-12", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2948, "pro_id": "py-tutorial-stdlib-00", "doc": "python-stdlib", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2951, "pro_id": "sec-1090727-06", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2957, "pro_id": "py-howto-regex-18", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2960, "pro_id": "py-howto-clinic-04", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2963, "pro_id": "sec-56873-19", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2970, "pro_id": "py-howto-functional-37", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2972, "pro_id": "py-tutorial-classes-05", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 2976, "pro_id": "sec-1048286-13", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 2994, "pro_id": "py-tutorial-modules-20", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3020, "pro_id": "sec-40704-22", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3028, "pro_id": "py-tutorial-appetite-06", "doc": "python-appetite", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3042, "pro_id": "py-howto-argparse-01", "doc": "python-argparse", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3047, "pro_id": "sec-40704-14", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3062, "pro_id": "py-howto-curses-31", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3066, "pro_id": "py-howto-functional-19", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3067, "pro_id": "sec-1090727-17", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3083, "pro_id": "sec-80424-15", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3097, "pro_id": "sec-1048286-05", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3102, "pro_id": "py-tutorial-stdlib2-02", "doc": "python-stdlib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3106, "pro_id": "sec-40704-17", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3110, "pro_id": "py-howto-logging-cookbook-54", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3112, "pro_id": "py-howto-curses-05", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3115, "pro_id": "py-howto-regex-17", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3120, "pro_id": "py-tutorial-datastructures-06", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3125, "pro_id": "py-howto-clinic-35", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3128, "pro_id": "py-howto-logging-cookbook-31", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3137, "pro_id": "py-tutorial-classes-37", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3143, "pro_id": "sec-60667-28", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3179, "pro_id": "sec-1341439-05", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3208, "pro_id": "py-howto-functional-14", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3233, "pro_id": "py-howto-sockets-02", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3241, "pro_id": "py-howto-functional-21", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3242, "pro_id": "py-tutorial-floatingpoint-03", "doc": "python-floatingpoint", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3244, "pro_id": "sec-56873-12", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3248, "pro_id": "py-tutorial-classes-12", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3265, "pro_id": "py-howto-unicode-10", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3268, "pro_id": "py-tutorial-stdlib2-01", "doc": "python-stdlib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3276, "pro_id": "sec-1048286-02", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3296, "pro_id": "sec-56873-05", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3339, "pro_id": "py-howto-logging-cookbook-55", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3355, "pro_id": "py-howto-clinic-27", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3356, "pro_id": "py-howto-regex-50", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3359, "pro_id": "sec-56873-24", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3362, "pro_id": "py-tutorial-datastructures-19", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3372, "pro_id": "py-howto-curses-00", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3381, "pro_id": "sec-1048286-14", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3386, "pro_id": "sec-1048286-06", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3388, "pro_id": "sec-773840-02", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3392, "pro_id": "py-howto-functional-01", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3397, "pro_id": "py-tutorial-datastructures-15", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3398, "pro_id": "py-howto-clinic-11", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3408, "pro_id": "py-tutorial-controlflow-19", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3425, "pro_id": "py-tutorial-floatingpoint-01", "doc": "python-floatingpoint", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3426, "pro_id": "py-howto-clinic-32", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3437, "pro_id": "py-howto-urllib2-10", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3468, "pro_id": "sec-80424-17", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3470, "pro_id": "py-howto-curses-24", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3471, "pro_id": "py-howto-clinic-25", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3473, "pro_id": "py-tutorial-classes-11", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3477, "pro_id": "py-howto-unicode-08", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3491, "pro_id": "py-howto-logging-cookbook-40", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3497, "pro_id": "py-howto-logging-cookbook-15", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3501, "pro_id": "sec-1048286-07", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3511, "pro_id": "py-howto-sockets-29", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3514, "pro_id": "py-tutorial-controlflow-17", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3518, "pro_id": "py-howto-curses-34", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3520, "pro_id": "sec-40704-24", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3526, "pro_id": "py-tutorial-classes-30", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3532, "pro_id": "py-howto-curses-30", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3538, "pro_id": "py-tutorial-errors-03", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3555, "pro_id": "sec-310158-14", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3560, "pro_id": "py-howto-clinic-44", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3565, "pro_id": "py-howto-sockets-04", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3566, "pro_id": "py-howto-clinic-15", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3567, "pro_id": "sec-60667-25", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3585, "pro_id": "py-tutorial-modules-23", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3597, "pro_id": "py-tutorial-datastructures-21", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3612, "pro_id": "py-tutorial-modules-05", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3627, "pro_id": "sec-1048286-10", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3630, "pro_id": "py-howto-unicode-07", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3631, "pro_id": "py-tutorial-classes-07", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3638, "pro_id": "sec-773840-04", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3651, "pro_id": "py-howto-logging-cookbook-65", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3663, "pro_id": "sec-66740-26", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3672, "pro_id": "py-tutorial-errors-02", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3674, "pro_id": "py-tutorial-stdlib2-08", "doc": "python-stdlib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3679, "pro_id": "sec-80424-11", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3718, "pro_id": "py-howto-curses-19", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3733, "pro_id": "py-howto-sockets-26", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3738, "pro_id": "py-howto-clinic-29", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3742, "pro_id": "py-howto-regex-24", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3744, "pro_id": "sec-1341439-27", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3761, "pro_id": "py-howto-regex-35", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3771, "pro_id": "py-howto-regex-53", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3773, "pro_id": "sec-40704-00", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3785, "pro_id": "py-tutorial-errors-06", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3796, "pro_id": "py-tutorial-controlflow-21", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3802, "pro_id": "py-howto-functional-30", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3806, "pro_id": "py-tutorial-controlflow-03", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3828, "pro_id": "py-tutorial-controlflow-14", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3884, "pro_id": "py-howto-regex-14", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3896, "pro_id": "sec-310158-27", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3919, "pro_id": "py-howto-sockets-14", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3926, "pro_id": "sec-66740-09", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3927, "pro_id": "sec-40704-23", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3933, "pro_id": "py-tutorial-classes-36", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3942, "pro_id": "sec-310158-06", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3950, "pro_id": "sec-63908-03", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3958, "pro_id": "py-tutorial-classes-29", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3962, "pro_id": "py-howto-regex-23", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3967, "pro_id": "py-tutorial-interactive-02", "doc": "python-interactive", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3969, "pro_id": "sec-56873-28", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3972, "pro_id": "sec-310158-26", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3984, "pro_id": "py-tutorial-controlflow-11", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3985, "pro_id": "sec-1341439-08", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3986, "pro_id": "py-tutorial-introduction-01", "doc": "python-introduction", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 3989, "pro_id": "sec-310158-16", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 3991, "pro_id": "py-tutorial-classes-00", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4018, "pro_id": "py-howto-unicode-20", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4020, "pro_id": "py-howto-urllib2-05", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4023, "pro_id": "py-howto-curses-16", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4053, "pro_id": "py-howto-clinic-19", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4081, "pro_id": "py-howto-descriptor-02", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4083, "pro_id": "py-howto-curses-23", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4088, "pro_id": "py-howto-logging-cookbook-58", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4089, "pro_id": "py-howto-clinic-45", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4095, "pro_id": "sec-66740-08", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4098, "pro_id": "sec-77476-01", "doc": "sec-PepsiCo-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4102, "pro_id": "sec-80424-04", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4104, "pro_id": "py-tutorial-modules-14", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4105, "pro_id": "sec-1090727-23", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4110, "pro_id": "py-howto-logging-cookbook-39", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4115, "pro_id": "sec-1048286-28", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4121, "pro_id": "py-howto-regex-43", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4124, "pro_id": "sec-80424-08", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4127, "pro_id": "sec-56873-07", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4137, "pro_id": "sec-80424-25", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4138, "pro_id": "py-howto-regex-39", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4146, "pro_id": "sec-858877-23", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4190, "pro_id": "py-howto-descriptor-05", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4229, "pro_id": "sec-1090727-21", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4236, "pro_id": "sec-60667-22", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4253, "pro_id": "py-howto-functional-00", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4261, "pro_id": "py-tutorial-venv-04", "doc": "python-venv", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4265, "pro_id": "py-howto-functional-13", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4273, "pro_id": "py-tutorial-classes-18", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4282, "pro_id": "py-howto-logging-cookbook-04", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4294, "pro_id": "py-tutorial-controlflow-05", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4310, "pro_id": "py-howto-urllib2-03", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4314, "pro_id": "py-tutorial-datastructures-16", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4319, "pro_id": "py-tutorial-interpreter-01", "doc": "python-interpreter", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4326, "pro_id": "sec-80424-13", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4334, "pro_id": "sec-1090727-08", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4337, "pro_id": "py-howto-regex-21", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4351, "pro_id": "py-howto-functional-38", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4365, "pro_id": "sec-1090727-19", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4387, "pro_id": "sec-1048286-25", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4396, "pro_id": "py-tutorial-controlflow-22", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4401, "pro_id": "sec-1341439-04", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4402, "pro_id": "py-tutorial-controlflow-02", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4410, "pro_id": "py-howto-descriptor-11", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4412, "pro_id": "py-howto-logging-cookbook-35", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4439, "pro_id": "py-howto-clinic-47", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4459, "pro_id": "py-howto-sockets-19", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4468, "pro_id": "sec-77476-00", "doc": "sec-PepsiCo-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4476, "pro_id": "py-howto-logging-cookbook-25", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4482, "pro_id": "sec-858877-29", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4507, "pro_id": "sec-80424-12", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4508, "pro_id": "sec-1048286-22", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4513, "pro_id": "py-howto-sockets-01", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4523, "pro_id": "py-howto-regex-38", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4524, "pro_id": "sec-63908-16", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4527, "pro_id": "py-tutorial-modules-01", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4530, "pro_id": "py-tutorial-interpreter-02", "doc": "python-interpreter", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4550, "pro_id": "py-tutorial-classes-47", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4554, "pro_id": "py-howto-logging-cookbook-17", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4573, "pro_id": "py-tutorial-floatingpoint-02", "doc": "python-floatingpoint", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4590, "pro_id": "py-howto-functional-26", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4593, "pro_id": "sec-1048286-04", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4613, "pro_id": "sec-1048286-18", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4618, "pro_id": "sec-66740-21", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4621, "pro_id": "py-tutorial-datastructures-17", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4626, "pro_id": "py-tutorial-inputoutput-06", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4649, "pro_id": "py-howto-sockets-13", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4657, "pro_id": "py-tutorial-inputoutput-00", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4700, "pro_id": "py-tutorial-errors-05", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4704, "pro_id": "py-tutorial-appendix-00", "doc": "python-appendix", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4708, "pro_id": "py-howto-sockets-10", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4724, "pro_id": "py-howto-regex-27", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4725, "pro_id": "py-tutorial-controlflow-23", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4727, "pro_id": "sec-310158-02", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4728, "pro_id": "sec-63908-17", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4730, "pro_id": "sec-773840-16", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4732, "pro_id": "py-howto-regex-40", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4735, "pro_id": "py-tutorial-controlflow-07", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4751, "pro_id": "py-tutorial-controlflow-29", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4759, "pro_id": "py-howto-regex-15", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4760, "pro_id": "sec-310158-08", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4766, "pro_id": "sec-80424-00", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4778, "pro_id": "py-howto-unicode-01", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4795, "pro_id": "py-howto-clinic-13", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4816, "pro_id": "py-tutorial-classes-03", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4820, "pro_id": "py-howto-unicode-28", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4832, "pro_id": "py-howto-unicode-32", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4849, "pro_id": "py-tutorial-modules-00", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4860, "pro_id": "py-howto-curses-26", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4873, "pro_id": "py-tutorial-datastructures-08", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4879, "pro_id": "py-tutorial-appendix-02", "doc": "python-appendix", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4880, "pro_id": "sec-40704-05", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 4897, "pro_id": "py-howto-unicode-00", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4903, "pro_id": "py-tutorial-controlflow-00", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4920, "pro_id": "py-howto-clinic-23", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4936, "pro_id": "py-howto-logging-cookbook-19", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4962, "pro_id": "py-tutorial-classes-21", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4972, "pro_id": "py-howto-sorting-02", "doc": "python-sorting", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4988, "pro_id": "py-howto-regex-44", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 4996, "pro_id": "py-tutorial-stdlib2-11", "doc": "python-stdlib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5000, "pro_id": "py-howto-urllib2-14", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5001, "pro_id": "sec-1341439-19", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5021, "pro_id": "sec-66740-17", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5024, "pro_id": "py-howto-curses-09", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5030, "pro_id": "sec-66740-24", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5032, "pro_id": "py-tutorial-datastructures-13", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5034, "pro_id": "sec-858877-04", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5049, "pro_id": "py-howto-regex-30", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5066, "pro_id": "sec-40704-25", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5086, "pro_id": "py-howto-unicode-04", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5088, "pro_id": "py-howto-logging-cookbook-50", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5089, "pro_id": "py-tutorial-classes-24", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5109, "pro_id": "py-tutorial-errors-01", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5115, "pro_id": "py-howto-regex-08", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5117, "pro_id": "py-howto-ipaddress-04", "doc": "python-ipaddress", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5132, "pro_id": "py-howto-unicode-31", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5135, "pro_id": "sec-56873-08", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5142, "pro_id": "sec-1090727-09", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5151, "pro_id": "sec-63908-26", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5159, "pro_id": "py-tutorial-errors-13", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5165, "pro_id": "sec-66740-06", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5169, "pro_id": "py-howto-regex-45", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5177, "pro_id": "sec-1341439-15", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5180, "pro_id": "sec-1048286-21", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5182, "pro_id": "py-howto-sockets-18", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5194, "pro_id": "py-howto-logging-cookbook-64", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5195, "pro_id": "py-tutorial-controlflow-18", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5214, "pro_id": "sec-858877-20", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5217, "pro_id": "sec-66740-27", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5229, "pro_id": "py-tutorial-classes-08", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5232, "pro_id": "py-tutorial-modules-09", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5240, "pro_id": "sec-310158-07", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5247, "pro_id": "py-howto-functional-35", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5264, "pro_id": "sec-1090727-14", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5269, "pro_id": "py-tutorial-datastructures-20", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5271, "pro_id": "sec-80424-19", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5294, "pro_id": "py-howto-urllib2-08", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5310, "pro_id": "py-howto-curses-17", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5321, "pro_id": "sec-60667-04", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5334, "pro_id": "py-tutorial-interpreter-00", "doc": "python-interpreter", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5344, "pro_id": "sec-858877-12", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5349, "pro_id": "py-howto-curses-25", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5361, "pro_id": "py-tutorial-controlflow-10", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5372, "pro_id": "py-howto-unicode-19", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5377, "pro_id": "py-howto-clinic-06", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5381, "pro_id": "py-howto-logging-cookbook-53", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5389, "pro_id": "sec-60667-13", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5404, "pro_id": "py-tutorial-errors-07", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5411, "pro_id": "py-tutorial-classes-17", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5417, "pro_id": "py-howto-curses-07", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5426, "pro_id": "sec-858877-24", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5448, "pro_id": "py-tutorial-datastructures-04", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5453, "pro_id": "sec-773840-25", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5463, "pro_id": "py-howto-regex-26", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5465, "pro_id": "py-howto-curses-08", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5482, "pro_id": "sec-66740-20", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5504, "pro_id": "sec-40704-10", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5516, "pro_id": "py-tutorial-classes-32", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5517, "pro_id": "py-tutorial-appetite-01", "doc": "python-appetite", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5520, "pro_id": "py-tutorial-classes-14", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5532, "pro_id": "py-howto-logging-cookbook-51", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5535, "pro_id": "sec-63908-27", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5557, "pro_id": "sec-80424-28", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5574, "pro_id": "py-howto-functional-40", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5578, "pro_id": "py-tutorial-inputoutput-13", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5592, "pro_id": "py-howto-regex-05", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5598, "pro_id": "sec-858877-06", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5644, "pro_id": "py-howto-curses-36", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5652, "pro_id": "sec-1048286-08", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5655, "pro_id": "py-howto-sockets-22", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5658, "pro_id": "py-tutorial-interpreter-03", "doc": "python-interpreter", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5662, "pro_id": "sec-63908-11", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5665, "pro_id": "sec-1341439-09", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5679, "pro_id": "sec-1341439-14", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5682, "pro_id": "sec-66740-19", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5693, "pro_id": "py-howto-logging-cookbook-02", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5696, "pro_id": "py-howto-curses-18", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5715, "pro_id": "sec-63908-00", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5717, "pro_id": "sec-80424-09", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5722, "pro_id": "sec-858877-17", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5734, "pro_id": "sec-773840-05", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5752, "pro_id": "sec-56873-23", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5758, "pro_id": "py-howto-logging-cookbook-42", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5764, "pro_id": "py-tutorial-controlflow-12", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5765, "pro_id": "py-tutorial-floatingpoint-04", "doc": "python-floatingpoint", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5773, "pro_id": "py-howto-clinic-00", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5786, "pro_id": "sec-1048286-17", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5806, "pro_id": "py-tutorial-classes-13", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5807, "pro_id": "sec-1090727-04", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5808, "pro_id": "sec-60667-09", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5809, "pro_id": "py-howto-regex-37", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5821, "pro_id": "py-howto-logging-cookbook-38", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5823, "pro_id": "py-howto-functional-05", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5829, "pro_id": "sec-773840-03", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5845, "pro_id": "py-tutorial-venv-03", "doc": "python-venv", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5847, "pro_id": "py-howto-clinic-43", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5855, "pro_id": "py-howto-unicode-02", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5856, "pro_id": "py-howto-curses-14", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5876, "pro_id": "sec-858877-18", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5877, "pro_id": "sec-858877-00", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5879, "pro_id": "sec-80424-18", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5882, "pro_id": "py-howto-clinic-28", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5898, "pro_id": "py-tutorial-classes-23", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5902, "pro_id": "py-howto-logging-cookbook-41", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5906, "pro_id": "sec-60667-12", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5932, "pro_id": "py-tutorial-errors-08", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5935, "pro_id": "sec-1048286-00", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 5967, "pro_id": "py-howto-regex-13", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 5970, "pro_id": "py-howto-clinic-02", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6006, "pro_id": "sec-310158-19", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6008, "pro_id": "py-howto-logging-cookbook-33", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6012, "pro_id": "py-howto-unicode-17", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6071, "pro_id": "sec-1048286-15", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6072, "pro_id": "py-tutorial-modules-16", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6080, "pro_id": "py-howto-descriptor-01", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6085, "pro_id": "py-howto-logging-cookbook-59", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6089, "pro_id": "py-tutorial-appendix-01", "doc": "python-appendix", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6096, "pro_id": "sec-40704-08", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6099, "pro_id": "py-tutorial-appetite-00", "doc": "python-appetite", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6100, "pro_id": "py-howto-logging-cookbook-22", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6123, "pro_id": "sec-63908-13", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6126, "pro_id": "py-howto-regex-32", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6132, "pro_id": "py-howto-curses-02", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6143, "pro_id": "sec-63908-01", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6145, "pro_id": "sec-66740-18", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6154, "pro_id": "sec-60667-10", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6155, "pro_id": "py-howto-logging-cookbook-47", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6158, "pro_id": "py-howto-urllib2-12", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6166, "pro_id": "py-tutorial-controlflow-20", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6167, "pro_id": "py-howto-unicode-34", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6169, "pro_id": "sec-63908-10", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6176, "pro_id": "py-howto-sorting-00", "doc": "python-sorting", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6198, "pro_id": "py-tutorial-appendix-06", "doc": "python-appendix", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6232, "pro_id": "py-tutorial-modules-13", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6240, "pro_id": "sec-40704-06", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6243, "pro_id": "py-howto-sockets-11", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6244, "pro_id": "py-tutorial-interpreter-05", "doc": "python-interpreter", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6273, "pro_id": "sec-1090727-15", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6276, "pro_id": "py-howto-clinic-12", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6280, "pro_id": "py-howto-logging-cookbook-44", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6289, "pro_id": "py-howto-sockets-15", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6304, "pro_id": "sec-1341439-01", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6316, "pro_id": "py-howto-clinic-31", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6332, "pro_id": "py-howto-logging-cookbook-28", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6336, "pro_id": "py-howto-descriptor-16", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6351, "pro_id": "py-howto-functional-17", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6355, "pro_id": "sec-1341439-13", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6360, "pro_id": "py-howto-sockets-20", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6365, "pro_id": "py-tutorial-inputoutput-10", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6369, "pro_id": "sec-40704-15", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6374, "pro_id": "py-howto-functional-07", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6377, "pro_id": "py-tutorial-appetite-05", "doc": "python-appetite", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6388, "pro_id": "py-howto-sockets-30", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6395, "pro_id": "sec-63908-18", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6399, "pro_id": "py-howto-sockets-24", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6406, "pro_id": "sec-40704-26", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6408, "pro_id": "py-howto-ipaddress-07", "doc": "python-ipaddress", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6427, "pro_id": "py-howto-sockets-21", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6453, "pro_id": "sec-1090727-20", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6472, "pro_id": "py-howto-clinic-22", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6479, "pro_id": "py-howto-logging-cookbook-49", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6514, "pro_id": "sec-773840-00", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6520, "pro_id": "sec-1090727-22", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6546, "pro_id": "py-tutorial-classes-09", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6562, "pro_id": "sec-1048286-19", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6577, "pro_id": "py-tutorial-classes-41", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6588, "pro_id": "sec-56873-21", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6593, "pro_id": "py-howto-clinic-16", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6600, "pro_id": "py-tutorial-whatnow-00", "doc": "python-whatnow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6619, "pro_id": "py-howto-curses-15", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6631, "pro_id": "py-tutorial-venv-01", "doc": "python-venv", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6635, "pro_id": "py-tutorial-classes-35", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6640, "pro_id": "py-tutorial-controlflow-06", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6648, "pro_id": "py-tutorial-datastructures-02", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6657, "pro_id": "sec-773840-11", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6660, "pro_id": "py-tutorial-errors-12", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6666, "pro_id": "py-howto-functional-27", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6672, "pro_id": "sec-40704-03", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6695, "pro_id": "sec-1090727-02", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6702, "pro_id": "sec-310158-18", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6723, "pro_id": "sec-80424-10", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6728, "pro_id": "sec-773840-08", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6731, "pro_id": "py-howto-unicode-33", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6734, "pro_id": "py-howto-logging-cookbook-23", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6735, "pro_id": "py-howto-curses-04", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6755, "pro_id": "sec-858877-15", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6757, "pro_id": "py-howto-logging-cookbook-06", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6771, "pro_id": "py-tutorial-classes-20", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6772, "pro_id": "py-howto-clinic-18", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6776, "pro_id": "py-tutorial-controlflow-09", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6796, "pro_id": "sec-1341439-12", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6803, "pro_id": "py-tutorial-controlflow-13", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6815, "pro_id": "py-tutorial-datastructures-12", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6822, "pro_id": "py-howto-clinic-40", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6827, "pro_id": "sec-80424-27", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6835, "pro_id": "sec-63908-28", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6842, "pro_id": "py-howto-regex-56", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6861, "pro_id": "sec-1090727-13", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6863, "pro_id": "py-howto-curses-35", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6880, "pro_id": "sec-56873-00", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6883, "pro_id": "py-tutorial-inputoutput-02", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6886, "pro_id": "sec-1090727-07", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6902, "pro_id": "sec-66740-16", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6907, "pro_id": "sec-56873-09", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6908, "pro_id": "py-howto-unicode-37", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6948, "pro_id": "py-howto-curses-11", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 6957, "pro_id": "sec-310158-15", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6961, "pro_id": "sec-40704-02", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 6972, "pro_id": "py-tutorial-appendix-03", "doc": "python-appendix", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7001, "pro_id": "py-howto-index-00", "doc": "python-index", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7009, "pro_id": "py-howto-sockets-12", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7013, "pro_id": "py-howto-unicode-29", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7014, "pro_id": "sec-63908-14", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7034, "pro_id": "py-howto-logging-cookbook-00", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7040, "pro_id": "py-tutorial-classes-34", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7049, "pro_id": "py-tutorial-classes-25", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7090, "pro_id": "sec-80424-14", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7097, "pro_id": "py-howto-curses-03", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7101, "pro_id": "py-howto-functional-28", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7104, "pro_id": "py-howto-regex-66", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7110, "pro_id": "py-howto-logging-cookbook-61", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7122, "pro_id": "sec-40704-20", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7125, "pro_id": "py-howto-unicode-06", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7129, "pro_id": "sec-310158-23", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7139, "pro_id": "sec-310158-03", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7147, "pro_id": "py-howto-functional-12", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7158, "pro_id": "py-tutorial-classes-39", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7165, "pro_id": "sec-1341439-10", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7170, "pro_id": "py-tutorial-inputoutput-11", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7173, "pro_id": "sec-60667-16", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7187, "pro_id": "py-howto-sockets-07", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7201, "pro_id": "py-howto-ipaddress-03", "doc": "python-ipaddress", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7204, "pro_id": "py-tutorial-inputoutput-09", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7216, "pro_id": "py-howto-regex-65", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7222, "pro_id": "sec-60667-24", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7258, "pro_id": "py-howto-regex-11", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7263, "pro_id": "py-howto-regex-25", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7283, "pro_id": "py-tutorial-interactive-01", "doc": "python-interactive", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7294, "pro_id": "py-tutorial-modules-06", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7302, "pro_id": "py-tutorial-classes-01", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7306, "pro_id": "py-howto-regex-33", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7313, "pro_id": "sec-1090727-27", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7316, "pro_id": "py-tutorial-classes-26", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7338, "pro_id": "py-tutorial-modules-18", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7371, "pro_id": "sec-773840-23", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7379, "pro_id": "py-howto-clinic-10", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7383, "pro_id": "sec-773840-07", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7415, "pro_id": "sec-1090727-25", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7444, "pro_id": "sec-80424-01", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7448, "pro_id": "py-tutorial-modules-07", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7451, "pro_id": "sec-858877-01", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7458, "pro_id": "py-tutorial-appendix-05", "doc": "python-appendix", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7461, "pro_id": "sec-56873-20", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7466, "pro_id": "py-howto-logging-cookbook-01", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7469, "pro_id": "sec-60667-19", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7471, "pro_id": "py-howto-clinic-14", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7474, "pro_id": "sec-66740-10", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7475, "pro_id": "sec-858877-08", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7482, "pro_id": "py-howto-regex-54", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7487, "pro_id": "sec-310158-29", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7501, "pro_id": "py-tutorial-floatingpoint-00", "doc": "python-floatingpoint", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7505, "pro_id": "sec-56873-06", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7508, "pro_id": "sec-40704-29", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7512, "pro_id": "py-howto-ipaddress-01", "doc": "python-ipaddress", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7548, "pro_id": "py-howto-regex-01", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7559, "pro_id": "py-howto-regex-51", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7569, "pro_id": "py-howto-argparse-00", "doc": "python-argparse", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7579, "pro_id": "py-tutorial-introduction-06", "doc": "python-introduction", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7585, "pro_id": "py-tutorial-datastructures-10", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7622, "pro_id": "py-howto-functional-11", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7639, "pro_id": "py-howto-logging-cookbook-37", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7641, "pro_id": "sec-1090727-28", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7654, "pro_id": "sec-310158-12", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7656, "pro_id": "py-tutorial-introduction-07", "doc": "python-introduction", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7670, "pro_id": "py-tutorial-inputoutput-08", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7671, "pro_id": "py-howto-regex-10", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7678, "pro_id": "py-howto-logging-cookbook-32", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7679, "pro_id": "sec-63908-05", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7684, "pro_id": "py-tutorial-stdlib2-03", "doc": "python-stdlib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7693, "pro_id": "py-tutorial-controlflow-28", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7696, "pro_id": "sec-1048286-11", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7733, "pro_id": "sec-56873-22", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7748, "pro_id": "py-howto-logging-cookbook-56", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7769, "pro_id": "py-tutorial-errors-00", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7783, "pro_id": "sec-63908-24", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7801, "pro_id": "py-howto-curses-21", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7802, "pro_id": "py-howto-functional-39", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7804, "pro_id": "py-howto-functional-33", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7812, "pro_id": "sec-773840-01", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7813, "pro_id": "py-howto-regex-68", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7832, "pro_id": "sec-66740-22", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7854, "pro_id": "sec-858877-02", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7860, "pro_id": "py-howto-regex-61", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7884, "pro_id": "sec-1090727-26", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7886, "pro_id": "sec-40704-19", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7891, "pro_id": "py-howto-regex-47", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7898, "pro_id": "sec-56873-26", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7905, "pro_id": "py-howto-clinic-20", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7906, "pro_id": "py-tutorial-errors-04", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7907, "pro_id": "py-tutorial-introduction-05", "doc": "python-introduction", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7908, "pro_id": "sec-60667-08", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7917, "pro_id": "py-howto-logging-cookbook-11", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7923, "pro_id": "py-howto-unicode-16", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7929, "pro_id": "py-howto-curses-20", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 7971, "pro_id": "sec-310158-00", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 7995, "pro_id": "sec-80424-07", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8032, "pro_id": "py-tutorial-inputoutput-14", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8041, "pro_id": "py-tutorial-modules-11", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8054, "pro_id": "py-howto-regex-16", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8069, "pro_id": "py-howto-logging-cookbook-27", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8073, "pro_id": "py-howto-descriptor-04", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8086, "pro_id": "sec-773840-14", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8097, "pro_id": "py-howto-unicode-03", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8106, "pro_id": "py-howto-urllib2-13", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8119, "pro_id": "sec-60667-11", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8121, "pro_id": "sec-858877-28", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8136, "pro_id": "py-howto-logging-cookbook-09", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8137, "pro_id": "sec-1341439-07", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8141, "pro_id": "sec-1341439-00", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8144, "pro_id": "py-howto-functional-34", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8158, "pro_id": "sec-60667-03", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8162, "pro_id": "py-howto-curses-13", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8185, "pro_id": "py-tutorial-stdlib2-00", "doc": "python-stdlib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8189, "pro_id": "py-howto-clinic-33", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8198, "pro_id": "py-tutorial-interactive-03", "doc": "python-interactive", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8241, "pro_id": "py-tutorial-introduction-04", "doc": "python-introduction", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8244, "pro_id": "py-howto-functional-22", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8255, "pro_id": "sec-60667-23", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8262, "pro_id": "py-howto-logging-cookbook-05", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8278, "pro_id": "py-howto-functional-15", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8288, "pro_id": "py-howto-urllib2-01", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8303, "pro_id": "sec-66740-15", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8305, "pro_id": "py-howto-urllib2-02", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8315, "pro_id": "py-tutorial-controlflow-01", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8349, "pro_id": "py-howto-regex-67", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8353, "pro_id": "py-howto-regex-55", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8361, "pro_id": "py-howto-functional-31", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8362, "pro_id": "sec-63908-02", "doc": "sec-McDonald's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8363, "pro_id": "sec-60667-15", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8366, "pro_id": "py-howto-regex-03", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8382, "pro_id": "py-tutorial-controlflow-16", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8400, "pro_id": "py-howto-urllib2-09", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8405, "pro_id": "py-howto-logging-cookbook-07", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8407, "pro_id": "py-howto-logging-cookbook-34", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8428, "pro_id": "sec-858877-03", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8431, "pro_id": "py-howto-urllib2-11", "doc": "python-urllib2", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8435, "pro_id": "py-howto-regex-04", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8437, "pro_id": "sec-1090727-16", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8440, "pro_id": "py-tutorial-inputoutput-04", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8443, "pro_id": "py-howto-regex-69", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8455, "pro_id": "py-howto-unicode-22", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8461, "pro_id": "sec-60667-27", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8467, "pro_id": "sec-1090727-05", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8477, "pro_id": "py-howto-logging-cookbook-30", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8479, "pro_id": "py-howto-sockets-17", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8485, "pro_id": "sec-1048286-16", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8487, "pro_id": "py-tutorial-inputoutput-07", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8494, "pro_id": "py-howto-clinic-24", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8496, "pro_id": "sec-1048286-29", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8498, "pro_id": "sec-80424-23", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8499, "pro_id": "py-tutorial-index-01", "doc": "python-index", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8504, "pro_id": "py-howto-sockets-28", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8518, "pro_id": "py-tutorial-controlflow-30", "doc": "python-controlflow", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8547, "pro_id": "sec-66740-23", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8554, "pro_id": "sec-60667-29", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8557, "pro_id": "sec-858877-14", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8567, "pro_id": "py-howto-logging-cookbook-20", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8579, "pro_id": "sec-1341439-26", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8589, "pro_id": "py-tutorial-introduction-00", "doc": "python-introduction", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8590, "pro_id": "sec-310158-09", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8591, "pro_id": "py-howto-functional-03", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8599, "pro_id": "py-howto-unicode-15", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8608, "pro_id": "py-howto-regex-58", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8623, "pro_id": "sec-1341439-18", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8629, "pro_id": "py-howto-curses-33", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8639, "pro_id": "py-tutorial-classes-44", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8646, "pro_id": "py-howto-functional-10", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8665, "pro_id": "sec-80424-26", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8666, "pro_id": "py-howto-functional-04", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8670, "pro_id": "sec-66740-07", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8673, "pro_id": "sec-1048286-26", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8675, "pro_id": "py-howto-clinic-05", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8679, "pro_id": "py-howto-unicode-13", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8705, "pro_id": "py-howto-regex-62", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8709, "pro_id": "py-howto-regex-59", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8716, "pro_id": "py-tutorial-classes-46", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8717, "pro_id": "py-howto-curses-10", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8719, "pro_id": "sec-40704-09", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8721, "pro_id": "sec-310158-25", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8739, "pro_id": "py-howto-regex-06", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8744, "pro_id": "sec-60667-07", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8747, "pro_id": "py-tutorial-errors-09", "doc": "python-errors", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8754, "pro_id": "sec-56873-11", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8757, "pro_id": "py-howto-functional-18", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8762, "pro_id": "sec-1341439-03", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8766, "pro_id": "sec-310158-10", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8768, "pro_id": "py-howto-logging-cookbook-62", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8775, "pro_id": "py-howto-descriptor-15", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8779, "pro_id": "py-howto-regex-29", "doc": "python-regex", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8783, "pro_id": "sec-60667-00", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8785, "pro_id": "py-howto-ipaddress-00", "doc": "python-ipaddress", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8786, "pro_id": "py-howto-functional-24", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8791, "pro_id": "py-howto-sockets-27", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8798, "pro_id": "sec-773840-24", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8805, "pro_id": "sec-1341439-25", "doc": "sec-Oracle-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8810, "pro_id": "py-howto-unicode-36", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8822, "pro_id": "sec-1048286-24", "doc": "sec-Marriott-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8835, "pro_id": "sec-40704-21", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8842, "pro_id": "py-howto-unicode-11", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8852, "pro_id": "py-howto-unicode-18", "doc": "python-unicode", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8853, "pro_id": "py-tutorial-inputoutput-01", "doc": "python-inputoutput", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8876, "pro_id": "sec-60667-18", "doc": "sec-Lowe's-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8890, "pro_id": "sec-858877-26", "doc": "sec-Cisco-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8900, "pro_id": "py-tutorial-modules-22", "doc": "python-modules", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8905, "pro_id": "sec-310158-17", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8909, "pro_id": "py-howto-ipaddress-02", "doc": "python-ipaddress", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8916, "pro_id": "sec-773840-06", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8917, "pro_id": "sec-310158-04", "doc": "sec-Merck-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8921, "pro_id": "sec-80424-21", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8925, "pro_id": "py-howto-functional-02", "doc": "python-functional", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8926, "pro_id": "py-howto-ipaddress-06", "doc": "python-ipaddress", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8928, "pro_id": "py-tutorial-classes-22", "doc": "python-classes", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8944, "pro_id": "sec-40704-13", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 8955, "pro_id": "py-tutorial-datastructures-00", "doc": "python-datastructures", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8973, "pro_id": "py-howto-logging-cookbook-36", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8980, "pro_id": "py-howto-sockets-06", "doc": "python-sockets", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 8996, "pro_id": "sec-80424-02", "doc": "sec-Procter & Gamble-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 9001, "pro_id": "py-howto-logging-cookbook-13", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 9003, "pro_id": "sec-56873-10", "doc": "sec-Kroger-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 9016, "pro_id": "sec-66740-13", "doc": "sec-3M-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 9028, "pro_id": "sec-1090727-00", "doc": "sec-UPS-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 9068, "pro_id": "sec-773840-15", "doc": "sec-Honeywell-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 9103, "pro_id": "py-howto-descriptor-00", "doc": "python-descriptor", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 9108, "pro_id": "py-tutorial-interactive-00", "doc": "python-interactive", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 9114, "pro_id": "sec-40704-11", "doc": "sec-General Mills-fy2018", "source": "sec", "goal": "annual report (MD&A)"}
+{"round8_train_line": 9117, "pro_id": "py-howto-logging-cookbook-03", "doc": "python-logging-cookbook", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 9134, "pro_id": "py-tutorial-appendix-04", "doc": "python-appendix", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 9142, "pro_id": "py-howto-curses-27", "doc": "python-curses", "source": "python", "goal": "technical documentation"}
+{"round8_train_line": 9145, "pro_id": "py-howto-clinic-30", "doc": "python-clinic", "source": "python", "goal": "technical documentation"}

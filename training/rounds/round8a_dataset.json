@@ -1,0 +1,40 @@
+{
+ "derived_from": {
+  "train.jsonl": "6454686706d685cd201b50f6f65a60100ccb9fd43015b93dc08afb9dadfd9a53",
+  "val.jsonl": "85202dff346874f92b069bba2872c86de39d9ba4ccdfcf04dd2b4bcc91502210"
+ },
+ "removed": 968,
+ "removed_by_source": {
+  "python": 605,
+  "sec": 363
+ },
+ "removed_distinct_paragraphs": 968,
+ "pro_no_edit_in_round8_val_kept": 100,
+ "train_before": {
+  "coedit (or feedback) no-edit": 1014,
+  "coedit (or feedback) with edits": 4909,
+  "casual (or feedback) with edits": 1096,
+  "casual (or feedback) no-edit": 860,
+  "pro no-edit": 968,
+  "pro light-edit": 302
+ },
+ "train_after": {
+  "coedit (or feedback) no-edit": 1014,
+  "coedit (or feedback) with edits": 4909,
+  "casual (or feedback) with edits": 1096,
+  "casual (or feedback) no-edit": 860,
+  "pro light-edit": 302
+ },
+ "train_examples_before": 9149,
+ "train_examples_after": 8181,
+ "no_edit_share_before": 0.3106,
+ "no_edit_share_after": 0.2291,
+ "steps_at_batch_16": {
+  "before": 572,
+  "after": 512
+ },
+ "sha256": {
+  "train.jsonl": "436c7c69b4b7c17ab46eebd04e9b846650b346c5552fda60f1a9164b371ec79e",
+  "val.jsonl": "85202dff346874f92b069bba2872c86de39d9ba4ccdfcf04dd2b4bcc91502210"
+ }
+}

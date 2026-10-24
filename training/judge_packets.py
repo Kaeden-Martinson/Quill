@@ -132,6 +132,38 @@ def make_human(edit_names=("original", "v2-clarity")):
     print(f"{len(items)} human passages with changes")
 
 
+def make_people_packets(source="r8", prefix="r8h", tags=("@v7", "@v8")):
+    """Sheets for human raters from an existing model-judge packet, with two corrections that don't
+    change any content: A/B is counterbalanced (each model shown first in half the items, shuffled
+    with a fixed seed) instead of drawn independently, and versions identical to each other are
+    labeled so raters rate the same text the same way. Separate prefix and key entry, so the model
+    judges' packets, key and ratings stay exactly as they were."""
+    rng = random.Random(20261027)
+    key_path = EVAL / "judge_key.json"
+    key = json.loads(key_path.read_text(encoding="utf-8"))
+    old = key[source]
+    key[prefix] = {"revisions": {}, "human": {}}
+
+    def balanced(items):
+        firsts = [tags[i % 2] for i in range(len(items))]
+        rng.shuffle(firsts)
+        return {item: ({"A": f, "B": tags[1 - tags.index(f)]}) for item, f in zip(items, firsts)}
+
+    for kind in ("revisions", "human"):
+        packet = json.loads((PACKETS / f"{source}-{kind}.json").read_text(encoding="utf-8"))
+        labels = balanced([it["item"] for it in packet["items"]])
+        field = "versions" if kind == "revisions" else "changes"
+        for it in packet["items"]:
+            by_model = {old[kind][it["item"]][lab]: value for lab, value in it[field].items()}
+            it[field] = {lab: by_model[m] for lab, m in labels[it["item"]].items()}
+            if kind == "revisions" and it[field]["A"] == it[field]["B"]:
+                it["note"] = "Versions A and B are identical; rate them the same."
+            key[prefix][kind][it["item"]] = labels[it["item"]]
+        (PACKETS / f"{prefix}-{kind}.json").write_text(json.dumps(packet, indent=1, ensure_ascii=False), encoding="utf-8")
+    key_path.write_text(json.dumps(key, indent=1), encoding="utf-8")
+    export_for_people(prefix)
+
+
 def make_models(tags=("@v7", "@v8"), prefix="r8"):
     """Blinded packets comparing editor models on the same prompt: paragraph revisions (40) and every
     change each model made to the human passages. Files: packets/<prefix>-revisions.json and
@@ -140,19 +172,36 @@ def make_models(tags=("@v7", "@v8"), prefix="r8"):
     key_path = EVAL / "judge_key.json"
     key = json.loads(key_path.read_text(encoding="utf-8"))
     key[prefix] = {"revisions": {}, "human": {}}
-    labels_for = lambda: dict(zip("AB", rng.sample(list(tags), len(tags))))  # noqa: E731
+    labels_for = lambda: dict(zip("ABC", rng.sample(list(tags), len(tags))))  # noqa: E731
+    if len(tags) == 3:
+        # Three models: counterbalanced, so each model is A, B and C about equally often in each packet.
+        # The six orders are cycled over the packet's items and shuffled with the fixed seed
+        # (independent draws left one model "A" in only 6 of 40 items).
+        from itertools import permutations
+        pool = []
+
+        def balanced(n):
+            pool[:] = [list(permutations(tags))[i % 6] for i in range(n)]
+            rng.shuffle(pool)
+
+        labels_for = lambda: dict(zip("ABC", pool.pop()))  # noqa: E731
     revs = {t: {r["id"]: r for r in load(RUNS / f"revise-original{t}.jsonl")} for t in tags}
     ritems = []
+    if len(tags) == 3:
+        balanced(len(revs[tags[0]]))
     for pid, base in revs[tags[0]].items():
         labels = labels_for()
         ritems.append({"item": pid, "original": base["before"],
                        "versions": {lab: revs[t][pid]["after"] for lab, t in labels.items()}})
         key[prefix]["revisions"][pid] = labels
     (PACKETS / f"{prefix}-revisions.json").write_text(json.dumps(
-        {"rubric": REVISE_RUBRIC.replace("rank the versions", "rank the two versions"), "items": ritems},
+        {"rubric": REVISE_RUBRIC.replace("rank the versions", f"rank the {['two', 'three'][len(tags) - 2]} versions"),
+         "items": ritems},
         indent=1, ensure_ascii=False), encoding="utf-8")
     human = {t: {r["id"]: r for r in load(RUNS / f"human+original{t}.jsonl")} for t in tags}
     hitems = []
+    if len(tags) == 3:
+        balanced(sum(1 for pid in human[tags[0]] if any(human[t][pid]["suggestions"] for t in tags)))
     for pid, base in human[tags[0]].items():
         if not any(human[t][pid]["suggestions"] for t in tags):
             continue
@@ -161,7 +210,8 @@ def make_models(tags=("@v7", "@v8"), prefix="r8"):
                        "changes": {lab: [{"original": s["original"], "revised": s["revised"], "reason": s.get("reason", "")}
                                          for s in human[t][pid]["suggestions"]] for lab, t in labels.items()}})
         key[prefix]["human"][pid] = labels
-    (PACKETS / f"{prefix}-human.json").write_text(json.dumps({"rubric": HUMAN_RUBRIC, "items": hitems}, indent=1,
+    rubric = HUMAN_RUBRIC if len(tags) == 2 else HUMAN_RUBRIC.replace("two editors (A and B)", "three editors (A, B and C)")
+    (PACKETS / f"{prefix}-human.json").write_text(json.dumps({"rubric": rubric, "items": hitems}, indent=1,
                                                              ensure_ascii=False), encoding="utf-8")
     key_path.write_text(json.dumps(key, indent=1), encoding="utf-8")
     print(f"{len(ritems)} revision items, {len(hitems)} human passages with changes")
@@ -181,7 +231,8 @@ def export_for_people(prefix="r8"):
         w.writerow(["item", "version", "meaning_kept (yes/no)", "errors_fixed (1-5)", "unnecessary_changes (count)",
                     "voice_kept (1-5)", "better version for this item (A, B or tie)", "notes"])
         for it in rev["items"]:
-            lines += [f"## {it['item']}", "", "**Original**", "", it["original"], ""]
+            lines += [f"## {it['item']}", ""] + ([f"_{it['note']}_", ""] if it.get("note") else []) \
+                + ["**Original**", "", it["original"], ""]
             for lab, text in it["versions"].items():
                 lines += [f"**Version {lab}**{' (same as original)' if text == it['original'] else ''}", "", text, ""]
                 w.writerow([it["item"], lab, "", "", "", "", "", ""])
@@ -303,12 +354,14 @@ def score_models(prefix="r8"):
         for name, d in sorted(rev.items()):
             print("  " + name.ljust(8) + "  ".join(f"{k} {sum(v) / len(v):.2f}" for k, v in sorted(d.items())) + f"  (n={len(d['rank'])})")
     tally = defaultdict(Counter)
+    by_source = defaultdict(Counter)  # (source, model) -> verdicts; source is the item id's prefix (sec, k8s, ...)
     for path in sorted(JUDGMENTS.glob(f"{prefix}-human*.json")):
         for j in json.loads(path.read_text(encoding="utf-8")).get("human", []):
             labels = key["human"][j["item"]]
             for lab, changes in j["changes"].items():
                 t = tally[labels[lab]]
                 for c in changes:
+                    by_source[(j["item"].split("--")[0], labels[lab])][c["verdict"]] += 1
                     t[c["verdict"]] += 1
                     t["meaning_lost"] += not c.get("meaning_kept", True)
                     t["voice_lost"] += not c.get("voice_kept", True)
@@ -320,6 +373,10 @@ def score_models(prefix="r8"):
         print("  " + "model".ljust(8) + "".join(c.ljust(14) for c in cols))
         for name, t in sorted(tally.items()):
             print("  " + name.ljust(8) + "".join(str(t[c]).ljust(14) for c in cols))
+        print(f"\n{prefix} HUMAN-TEXT EDITS BY SOURCE (harmful / unnecessary, summed over judges)")
+        for source in sorted({s for s, _ in by_source}):
+            print("  " + source.ljust(8) + "  ".join(f"{m} {by_source[(source, m)]['harmful']}/{by_source[(source, m)]['unnecessary']}"
+                                                    for m in sorted(tally)))
 
 
 def score_human():
@@ -390,12 +447,16 @@ def score():
 if __name__ == "__main__":
     if sys.argv[1] == "make":
         part = sys.argv[2] if len(sys.argv) > 2 else "all"
-        {"human": make_human, "models": make_models}.get(part, lambda: make(part))()
+        if part == "models" and len(sys.argv) > 4:   # make models PREFIX @tag1 @tag2 [@tag3]
+            make_models(tuple(sys.argv[4:]), sys.argv[3])
+            sys.exit()
+        {"human": make_human, "models": make_models, "people": make_people_packets}.get(part, lambda: make(part))()
     elif sys.argv[1] == "export-people":
         export_for_people()
-    elif sys.argv[1] == "import-people":   # import-people FILLED.csv RATER_NAME
-        import_from_people(sys.argv[2], sys.argv[3])
+    elif sys.argv[1] == "import-people":   # import-people FILLED.csv RATER_NAME [PREFIX, default r8h]
+        import_from_people(sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else "r8h")
     else:
         score()
+        score_models("r8h")  # people's ratings, kept apart from the model judges' (r8)
         score_human()
         score_models()

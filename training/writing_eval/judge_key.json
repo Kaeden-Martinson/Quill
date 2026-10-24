@@ -800,5 +800,644 @@
     "B": "@v8"
    }
   }
+ },
+ "r8h": {
+  "revisions": {
+   "app-01": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "app-02": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "app-03": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "app-04": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "app-05": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "app-06": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "hist-01": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "hist-02": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "hist-03": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "hist-04": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "sci-01": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "sci-02": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "sci-03": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "eng-01": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "eng-02": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "eng-03": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "per-01": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "per-02": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "per-03": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "blog-01": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "blog-02": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "blog-03": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "work-01": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "work-02": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "opin-01": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "opin-02": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "app-07": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "app-08": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "sci-04": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "hist-05": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "eng-04": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "per-04": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "voice-01": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "voice-02": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "voice-03": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "voice-04": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "voice-05": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "voice-06": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "voice-07": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "voice-08": {
+    "A": "@v8",
+    "B": "@v7"
+   }
+  },
+  "human": {
+   "k8s--concepts-containers-container-lifecycle-hooks": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "k8s--concepts-overview-working-with-objects-finalizers": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "k8s--concepts-policy-pid-limiting": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "k8s--concepts-services-networking-dns-pod-service": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "k8s--concepts-workloads-controllers-deployment": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "k8s--concepts-workloads-pods-pod-lifecycle": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "micusp--CEE.G0.01.1": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "micusp--CLS.G0.01.1": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "micusp--ECO.G0.01.1": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "micusp--EDU.G0.01.1": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "micusp--ENG.G0.01.1": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "micusp--HIS.G0.01.1": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "micusp--IOE.G0.01.1": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "micusp--LIN.G0.01.1": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "micusp--MEC.G1.01.1": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "micusp--NRE.G0.01.1": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "micusp--PHI.G0.01.1": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "micusp--PHY.G0.01.1": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "micusp--POL.G0.01.1": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "micusp--PSY.G0.01.1": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "micusp--SOC.G0.01.1": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "sec--boeing-fy2020": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "sec--caterpillar-fy2019": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "sec--walmart-fy2019": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "wac--a-theory-of-literate-action--1-01-_the_symbolic_animal_and_the_cultural_transformation_of": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "wac--beyond-argument-essaying-as-a--1-01-_introduction": {
+    "A": "@v8",
+    "B": "@v7"
+   },
+   "wac--international-advances-in-writ--01-_introduction": {
+    "A": "@v7",
+    "B": "@v8"
+   },
+   "wac--international-advances-in-writ--02-_pedagogical_aproaches": {
+    "A": "@v7",
+    "B": "@v8"
+   }
+  }
+ },
+ "r8a": {
+  "revisions": {
+   "app-01": {
+    "A": "@v7",
+    "B": "@v8a",
+    "C": "@v8"
+   },
+   "app-02": {
+    "A": "@v8",
+    "B": "@v7",
+    "C": "@v8a"
+   },
+   "app-03": {
+    "A": "@v8",
+    "B": "@v7",
+    "C": "@v8a"
+   },
+   "app-04": {
+    "A": "@v7",
+    "B": "@v8a",
+    "C": "@v8"
+   },
+   "app-05": {
+    "A": "@v7",
+    "B": "@v8a",
+    "C": "@v8"
+   },
+   "app-06": {
+    "A": "@v8a",
+    "B": "@v7",
+    "C": "@v8"
+   },
+   "hist-01": {
+    "A": "@v8a",
+    "B": "@v8",
+    "C": "@v7"
+   },
+   "hist-02": {
+    "A": "@v7",
+    "B": "@v8",
+    "C": "@v8a"
+   },
+   "hist-03": {
+    "A": "@v8a",
+    "B": "@v8",
+    "C": "@v7"
+   },
+   "hist-04": {
+    "A": "@v7",
+    "B": "@v8",
+    "C": "@v8a"
+   },
+   "sci-01": {
+    "A": "@v8a",
+    "B": "@v8",
+    "C": "@v7"
+   },
+   "sci-02": {
+    "A": "@v8a",
+    "B": "@v7",
+    "C": "@v8"
+   },
+   "sci-03": {
+    "A": "@v8a",
+    "B": "@v7",
+    "C": "@v8"
+   },
+   "eng-01": {
+    "A": "@v7",
+    "B": "@v8",
+    "C": "@v8a"
+   },
+   "eng-02": {
+    "A": "@v8",
+    "B": "@v7",
+    "C": "@v8a"
+   },
+   "eng-03": {
+    "A": "@v7",
+    "B": "@v8a",
+    "C": "@v8"
+   },
+   "per-01": {
+    "A": "@v7",
+    "B": "@v8a",
+    "C": "@v8"
+   },
+   "per-02": {
+    "A": "@v8",
+    "B": "@v8a",
+    "C": "@v7"
+   },
+   "per-03": {
+    "A": "@v8",
+    "B": "@v8a",
+    "C": "@v7"
+   },
+   "blog-01": {
+    "A": "@v8a",
+    "B": "@v8",
+    "C": "@v7"
+   },
+   "blog-02": {
+    "A": "@v7",
+    "B": "@v8a",
+    "C": "@v8"
+   },
+   "blog-03": {
+    "A": "@v8",
+    "B": "@v7",
+    "C": "@v8a"
+   },
+   "work-01": {
+    "A": "@v7",
+    "B": "@v8",
+    "C": "@v8a"
+   },
+   "work-02": {
+    "A": "@v8a",
+    "B": "@v7",
+    "C": "@v8"
+   },
+   "opin-01": {
+    "A": "@v7",
+    "B": "@v8",
+    "C": "@v8a"
+   },
+   "opin-02": {
+    "A": "@v8",
+    "B": "@v8a",
+    "C": "@v7"
+   },
+   "app-07": {
+    "A": "@v8",
+    "B": "@v7",
+    "C": "@v8a"
+   },
+   "app-08": {
+    "A": "@v7",
+    "B": "@v8",
+    "C": "@v8a"
+   },
+   "sci-04": {
+    "A": "@v8a",
+    "B": "@v7",
+    "C": "@v8"
+   },
+   "hist-05": {
+    "A": "@v8a",
+    "B": "@v8",
+    "C": "@v7"
+   },
+   "eng-04": {
+    "A": "@v8a",
+    "B": "@v7",
+    "C": "@v8"
+   },
+   "per-04": {
+    "A": "@v8",
+    "B": "@v8a",
+    "C": "@v7"
+   },
+   "voice-01": {
+    "A": "@v8",
+    "B": "@v8a",
+    "C": "@v7"
+   },
+   "voice-02": {
+    "A": "@v8a",
+    "B": "@v8",
+    "C": "@v7"
+   },
+   "voice-03": {
+    "A": "@v7",
+    "B": "@v8a",
+    "C": "@v8"
+   },
+   "voice-04": {
+    "A": "@v8",
+    "B": "@v8a",
+    "C": "@v7"
+   },
+   "voice-05": {
+    "A": "@v8",
+    "B": "@v7",
+    "C": "@v8a"
+   },
+   "voice-06": {
+    "A": "@v7",
+    "B": "@v8",
+    "C": "@v8a"
+   },
+   "voice-07": {
+    "A": "@v8",
+    "B": "@v8a",
+    "C": "@v7"
+   },
+   "voice-08": {
+    "A": "@v8",
+    "B": "@v7",
+    "C": "@v8a"
+   }
+  },
+  "human": {
+   "k8s--concepts-containers-container-lifecycle-hooks": {
+    "A": "@v8a",
+    "B": "@v7",
+    "C": "@v8"
+   },
+   "k8s--concepts-overview-working-with-objects-finalizers": {
+    "A": "@v7",
+    "B": "@v8a",
+    "C": "@v8"
+   },
+   "k8s--concepts-policy-pid-limiting": {
+    "A": "@v8a",
+    "B": "@v7",
+    "C": "@v8"
+   },
+   "k8s--concepts-services-networking-dns-pod-service": {
+    "A": "@v8",
+    "B": "@v8a",
+    "C": "@v7"
+   },
+   "k8s--concepts-workloads-controllers-deployment": {
+    "A": "@v7",
+    "B": "@v8",
+    "C": "@v8a"
+   },
+   "k8s--concepts-workloads-controllers-replicationcontroller": {
+    "A": "@v8a",
+    "B": "@v7",
+    "C": "@v8"
+   },
+   "k8s--concepts-workloads-pods-pod-lifecycle": {
+    "A": "@v8",
+    "B": "@v8a",
+    "C": "@v7"
+   },
+   "micusp--CEE.G0.01.1": {
+    "A": "@v8a",
+    "B": "@v8",
+    "C": "@v7"
+   },
+   "micusp--CLS.G0.01.1": {
+    "A": "@v8",
+    "B": "@v7",
+    "C": "@v8a"
+   },
+   "micusp--ECO.G0.01.1": {
+    "A": "@v8a",
+    "B": "@v7",
+    "C": "@v8"
+   },
+   "micusp--EDU.G0.01.1": {
+    "A": "@v7",
+    "B": "@v8",
+    "C": "@v8a"
+   },
+   "micusp--ENG.G0.01.1": {
+    "A": "@v7",
+    "B": "@v8a",
+    "C": "@v8"
+   },
+   "micusp--HIS.G0.01.1": {
+    "A": "@v7",
+    "B": "@v8",
+    "C": "@v8a"
+   },
+   "micusp--IOE.G0.01.1": {
+    "A": "@v8a",
+    "B": "@v8",
+    "C": "@v7"
+   },
+   "micusp--LIN.G0.01.1": {
+    "A": "@v8",
+    "B": "@v7",
+    "C": "@v8a"
+   },
+   "micusp--MEC.G1.01.1": {
+    "A": "@v8",
+    "B": "@v7",
+    "C": "@v8a"
+   },
+   "micusp--NRE.G0.01.1": {
+    "A": "@v8",
+    "B": "@v8a",
+    "C": "@v7"
+   },
+   "micusp--PHI.G0.01.1": {
+    "A": "@v7",
+    "B": "@v8a",
+    "C": "@v8"
+   },
+   "micusp--PHY.G0.01.1": {
+    "A": "@v8a",
+    "B": "@v8",
+    "C": "@v7"
+   },
+   "micusp--POL.G0.01.1": {
+    "A": "@v7",
+    "B": "@v8a",
+    "C": "@v8"
+   },
+   "micusp--PSY.G0.01.1": {
+    "A": "@v7",
+    "B": "@v8",
+    "C": "@v8a"
+   },
+   "micusp--SOC.G0.01.1": {
+    "A": "@v8a",
+    "B": "@v7",
+    "C": "@v8"
+   },
+   "sec--boeing-fy2020": {
+    "A": "@v8",
+    "B": "@v8a",
+    "C": "@v7"
+   },
+   "sec--caterpillar-fy2019": {
+    "A": "@v7",
+    "B": "@v8a",
+    "C": "@v8"
+   },
+   "sec--microsoft-fy2021": {
+    "A": "@v7",
+    "B": "@v8",
+    "C": "@v8a"
+   },
+   "sec--pfizer-fy2021": {
+    "A": "@v8",
+    "B": "@v7",
+    "C": "@v8a"
+   },
+   "sec--walmart-fy2019": {
+    "A": "@v7",
+    "B": "@v8",
+    "C": "@v8a"
+   },
+   "wac--a-theory-of-literate-action--1-01-_the_symbolic_animal_and_the_cultural_transformation_of": {
+    "A": "@v8",
+    "B": "@v8a",
+    "C": "@v7"
+   },
+   "wac--beyond-argument-essaying-as-a--1-01-_introduction": {
+    "A": "@v8a",
+    "B": "@v8",
+    "C": "@v7"
+   },
+   "wac--international-advances-in-writ--01-_introduction": {
+    "A": "@v8",
+    "B": "@v7",
+    "C": "@v8a"
+   },
+   "wac--international-advances-in-writ--02-_pedagogical_aproaches": {
+    "A": "@v8a",
+    "B": "@v8",
+    "C": "@v7"
+   }
+  }
  }
 }

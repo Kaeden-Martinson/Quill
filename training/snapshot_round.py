@@ -78,4 +78,4 @@ def main(n, model_name):
 
 
 if __name__ == "__main__":
-    main(int(sys.argv[1]), sys.argv[2] if len(sys.argv) > 2 else f"quill-editor-v{sys.argv[1]}")
+    main(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else f"quill-editor-v{sys.argv[1]}")
