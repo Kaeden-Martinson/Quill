@@ -2,7 +2,7 @@
 
     .venv\\Scripts\\python training\\generation_eval\\report.py SPLIT RUN [--ratings NAME] [--human-c NAME]
 
-Writes training/generation_eval/report-SPLIT.md and summary-SPLIT.json from whatever exists, saying
+Writes training/generation_eval/report-SPLIT-RUN.md and summary-SPLIT-RUN.json from whatever exists, saying
 plainly what is missing. Detector analysis, per detector:
 - human essays (Tier A for Q2; Tier B separately): false-positive rate at the detector's documented
   label or threshold, Wilson and exact intervals, score quantiles, and exploratory breakdowns by
@@ -193,9 +193,9 @@ def build(split, run, ratings_name=None, human_c_name=None):
             summary["agreement"][f"spearman {a} vs {b}"] = {"rho": None if rho is None else round(rho, 3), "essays": len(common)}
     if ratings_name and (RATINGS / f"{ratings_name}-summary.json").exists():
         summary["ratings"] = json.loads((RATINGS / f"{ratings_name}-summary.json").read_text(encoding="utf-8"))
-    (HERE / f"summary-{split}.json").write_text(json.dumps(summary, indent=1), encoding="utf-8")
-    (HERE / f"report-{split}.md").write_text(render(summary), encoding="utf-8")
-    print(f"wrote report-{split}.md and summary-{split}.json")
+    (HERE / f"summary-{split}-{run}.json").write_text(json.dumps(summary, indent=1), encoding="utf-8")
+    (HERE / f"report-{split}-{run}.md").write_text(render(summary), encoding="utf-8")
+    print(f"wrote report-{split}-{run}.md and summary-{split}-{run}.json")
 
 
 def render(s):

@@ -88,13 +88,16 @@ def persuade(csv_path=None):
     csv_path = csv_path or next((LOCAL / "sources" / "persuade").glob("*.csv"), None)
     if not csv_path:
         raise SystemExit("PERSUADE 2.0 isn't downloaded (data/generation_eval/sources/persuade/*.csv).")
-    rows = list(csv.DictReader(open(csv_path, encoding="utf-8", newline="")))
-    missing = [c for c in PERSUADE_COLUMNS if c not in rows[0]]
+    csv.field_size_limit(1 << 30)
+    reader = csv.DictReader(open(csv_path, encoding="utf-8", newline=""))
+    missing = [c for c in PERSUADE_COLUMNS + ("essay_id_comp",) if c not in reader.fieldnames]
     if missing:
         raise SystemExit(f"{csv_path} lacks expected columns {missing}; adapt PERSUADE_COLUMNS after reading its docs.")
-    by_prompt = {}
-    for r in rows:
-        by_prompt.setdefault(r["prompt_name"], []).append(r)
+    by_prompt, seen = {}, set()
+    for r in reader:   # one row per annotated element; keep one per essay
+        if r["essay_id_comp"] not in seen:
+            seen.add(r["essay_id_comp"])
+            by_prompt.setdefault(r["prompt_name"], []).append(r)
     names = sorted(by_prompt)
     rng = random.Random(SEED + 1)
     rng.shuffle(names)
@@ -106,14 +109,15 @@ def persuade(csv_path=None):
         counts = sorted(int(r["essay_word_count"]) for r in group if r["essay_word_count"].isdigit())
         median = counts[len(counts) // 2] if counts else None
         length = "short" if median and median < 375 else "medium" if not median or median < 700 else "long"
-        grades = sorted({r["grade_level"] for r in group if r["grade_level"]})
+        grades = sorted({r["grade_level"] for r in group if r["grade_level"].strip()}, key=int)
         split = "eval" if name in eval_names else "dev"
         instructions = first["assignment"].strip()
         if first["source_text"].strip():
             instructions += "\n\nSource text:\n" + first["source_text"].strip()
         out[split].append({"id": "p-" + "".join(ch if ch.isalnum() else "-" for ch in name.lower()).strip("-"),
                            "family": "persuade", "genre": f"argumentative ({first['task']})",
-                           "goal": "argumentative essay", "audience": f"my teacher (grade {'/'.join(grades)})",
+                           "goal": "argumentative essay",
+                           "audience": f"my teacher (grade {'/'.join(grades)})" if grades else "my teacher",
                            "topic": name, "instructions": instructions,
                            "evidence": "the source text given" if first["source_text"].strip() else "the writer's reasoning",
                            "constraints": CONSTRAINTS, "voice": VOICE, "length": length, "split": split,

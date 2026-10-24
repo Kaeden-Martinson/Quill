@@ -106,14 +106,15 @@ def validate():
         if r["source"] == "micusp" and editor_micusp_student(r["source_id"]):
             problems.append(f"human: {r['human_id']} is a MICUSP student number the editor experiments use")
 
-    sh = {f"human/{r['human_id']}": (r["split"], shingles(r["text"])) for r in humans}
-    sh.update({f"draft/{k}": ("draft", shingles(t)) for k, t in drafts})
+    sh = {f"human/{r['human_id']}": ((r["split"], r["source"]), shingles(r["text"])) for r in humans}
+    sh.update({f"draft/{k}": (("draft", "quill"), shingles(t)) for k, t in drafts})
     keys = sorted(sh)
     for x, y in combinations(keys, 2):
-        sx, sy = sh[x][0], sh[y][0]
-        cross_split = x.startswith("human") and y.startswith("human") and sx != sy
+        (sx, srcx), (sy, srcy) = sh[x][0], sh[y][0]
+        both_human = x.startswith("human") and y.startswith("human")
+        cross = both_human and (sx != sy or srcx != srcy)   # across splits, or the same essay in two corpora
         human_vs_draft = x.startswith("human") != y.startswith("human")
-        if (cross_split or human_vs_draft) and jaccard(sh[x][1], sh[y][1]) > NEAR_DUP:
+        if (cross or human_vs_draft) and jaccard(sh[x][1], sh[y][1]) > NEAR_DUP:
             problems.append(f"near-duplicate (5-gram Jaccard > {NEAR_DUP}): {x} and {y}")
 
     if DETECT.exists():

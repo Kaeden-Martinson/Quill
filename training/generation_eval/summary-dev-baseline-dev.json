@@ -72,8 +72,11 @@
   }
  },
  "human": {
-  "essays": 0,
-  "by_source_tier": {}
+  "essays": 110,
+  "by_source_tier": {
+   "persuade (tier A)": 70,
+   "ellipse (tier A)": 40
+  }
  },
  "detectors": {},
  "agreement": {},

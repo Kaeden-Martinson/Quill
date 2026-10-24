@@ -82,6 +82,7 @@ def test_plan_flags_as_written():
 def test_human_text_checks():
     assert human.malformed("") == "empty"
     assert human.malformed("1234 5678 90 ## $$ %%") == "mostly non-letter characters"
+    assert human.malformed("A real essay," + " " * 400 + "with long runs of spaces.") is None
     assert human.malformed("Itâ€™s broken") == "encoding damage"
     assert human.malformed("A normal sentence about school.") is None
 

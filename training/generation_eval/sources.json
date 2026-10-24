@@ -2,20 +2,28 @@
  "note": "Human-control sources (plan.md section 5). human.py refuses to ingest a source until license_status is \"confirmed\", which is set by a person after reading the source's actual terms; record what was read and when in license_checked.",
  "sources": {
   "persuade": {
-   "tier": "A", "name": "PERSUADE 2.0 corpus", "url": "to confirm (1.0 is https://github.com/scrosseye/PERSUADE_corpus, which points to a separate 2.0 page; paper: https://zenodo.org/records/8221504)",
-   "collected": "before 2022 per the corpus paper (to confirm)", "writers": "US students, grades 6-12",
-   "provenance_method": "collected by researchers from schools under documented conditions before generative AI was widely available; not verified per author",
-   "license": "unconfirmed (PERSUADE 1.0 data: CC BY-NC-SA 4.0; the Zenodo CC BY 4.0 covers the preprint only)",
-   "license_status": "unconfirmed", "license_checked": null,
-   "permitted_use": "to confirm: non-commercial research; whether submitting essays to external detectors is allowed",
+   "tier": "A", "name": "PERSUADE 2.0 corpus", "url": "https://github.com/scrosseye/persuade_corpus_2.0 (data: Google Drive file 13phHyDzIsb0MHyJr6q-B-qIa9P2tM135, persuade_corpus_2.0_train.csv)",
+   "collected": "before November 2022: the corpus was the basis of Kaggle's Feedback Prize (2021-2022) per the PERSUADE 1.0 README; collection years and writing conditions are not stated in the README or the 1.0 paper",
+   "writers": "US students, grades 6-12; providers in the data: Indiana, Virginia, Florida, NCES, Georgia Virtual (online school; 701 essays, one prompt, no grade recorded)",
+   "provenance_method": "assembled by researchers from a ~500,000-essay collection of student writing and publicly released before generative AI was widely available; writing conditions not documented; not verified per author",
+   "license": "CC BY-NC-SA 4.0 (README of scrosseye/persuade_corpus_2.0: \"The data is provided under a CC BY-NC-SA 4.0 ... license\")",
+   "license_status": "confirmed",
+   "license_checked": "2026-10-23, by Claude at the user's request: read the 2.0 README (license, citation, data links) and the 1.0 README and paper (PMC9767095)",
+   "citation": "Crossley, S. A., Baffour, P., Tian, Y., Franklin, A., Benner, M., & Boser, U. (2024). A large-scale corpus for assessing written argumentation: PERSUADE 2.0. Assessing Writing, 61.",
+   "permitted_use": "non-commercial research with attribution; adaptations share-alike. External detectors: only services whose terms say submissions are neither retained nor reused (otherwise local detectors only); not redistributed from this repository",
    "adapter": "persuade", "per_prompt": {"dev": 10, "eval": 25}
   },
   "ellipse": {
-   "tier": "A", "name": "ELLIPSE corpus (English language learners)", "url": "to confirm (paper: https://zenodo.org/records/11217937; first released through Kaggle's Feedback Prize ELL competition)",
-   "collected": "state-wide standardized testing, before 2022 (to confirm)", "writers": "US English learners, grades 8-12",
-   "provenance_method": "standardized test conditions, collected by researchers; not verified per author",
-   "license": "unconfirmed (Zenodo CC BY 4.0 covers the preprint only)", "license_status": "unconfirmed",
-   "license_checked": null, "permitted_use": "to confirm", "adapter": "ellipse", "sample": {"dev": 40, "eval": 100}
+   "tier": "A", "name": "ELLIPSE corpus (English language learners)", "url": "https://github.com/scrosseye/ELLIPSE-Corpus (ELLIPSE_Final_github_train.csv)",
+   "collected": "during state-wide standardized annual testing in the US; publicly released through Kaggle's Feedback Prize ELL competition in 2022 (before November 2022); years not stated",
+   "writers": "US English language learners, grades 8-12 (ELL status assigned by the states)",
+   "provenance_method": "timed state test: 25-30 minutes, written on a computer, independent prompts with no source texts (ELLIPSE preprint, section 2.1); not verified per author",
+   "license": "CC BY-NC-SA 4.0 (README of scrosseye/ELLIPSE-Corpus: \"The data is provided under a CC BY-NC-SA 4.0 ... license\")",
+   "license_status": "confirmed",
+   "license_checked": "2026-10-23, by Claude at the user's request: read the ELLIPSE-Corpus README and the preprint (zenodo.org/records/11217937)",
+   "citation": "Crossley, S. A., Tian, Y., Baffour, P., Franklin, A., Kim, Y., Morris, W., Benner, B., Picou, A., & Boser, U. (2023). Measuring second language proficiency using the ELLIPSE Corpus. International Journal of Learner Corpus Research, 9(2), 248-269.",
+   "permitted_use": "non-commercial research with attribution; adaptations share-alike. External detectors: only services whose terms say submissions are neither retained nor reused (otherwise local detectors only); not redistributed from this repository",
+   "adapter": "ellipse", "sample": {"dev": 40, "eval": 100}
   },
   "micusp": {
    "tier": "B", "name": "Michigan Corpus of Upper-level Student Papers", "url": "https://micusp.elicorpora.info/",

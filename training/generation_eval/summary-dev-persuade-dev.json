@@ -1,0 +1,69 @@
+{
+ "split": "dev",
+ "run": "persuade-dev",
+ "corpus": {
+  "A": {
+   "samples": 70,
+   "with_text": 70,
+   "errors": 0,
+   "truncated": 0,
+   "length_ratio_by_requested": {
+    "medium": {
+     "n": 30,
+     "min": 0.612,
+     "p25": 0.76,
+     "median": 0.806,
+     "p75": 0.89,
+     "max": 0.948
+    },
+    "short": {
+     "n": 40,
+     "min": 0.832,
+     "p25": 0.904,
+     "median": 0.956,
+     "p75": 1.0,
+     "max": 1.104
+    }
+   },
+   "under_70pct_of_target": 2,
+   "edits_applied": null
+  },
+  "B": {
+   "samples": 70,
+   "with_text": 70,
+   "errors": 0,
+   "truncated": 0,
+   "length_ratio_by_requested": {
+    "medium": {
+     "n": 30,
+     "min": 0.612,
+     "p25": 0.76,
+     "median": 0.806,
+     "p75": 0.89,
+     "max": 0.948
+    },
+    "short": {
+     "n": 40,
+     "min": 0.832,
+     "p25": 0.916,
+     "median": 0.968,
+     "p75": 1.0,
+     "max": 1.112
+    }
+   },
+   "under_70pct_of_target": 2,
+   "edits_applied": 19
+  }
+ },
+ "human": {
+  "essays": 110,
+  "by_source_tier": {
+   "persuade (tier A)": 70,
+   "ellipse (tier A)": 40
+  }
+ },
+ "detectors": {},
+ "agreement": {},
+ "ratings": null,
+ "flags": {}
+}

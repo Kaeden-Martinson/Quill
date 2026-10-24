@@ -28,8 +28,8 @@ def malformed(text):
     """Reasons a text can't be used as an essay (empty, mostly non-letters, or encoding damage)."""
     if not text or not text.strip():
         return "empty"
-    letters = sum(ch.isalpha() for ch in text)
-    if letters / max(1, len(text)) < 0.6:
+    visible = re.sub(r"\s", "", text)   # spacing isn't content: some source essays carry long runs of spaces
+    if sum(ch.isalpha() for ch in visible) / max(1, len(visible)) < 0.6:
         return "mostly non-letter characters"
     if "�" in text or re.search(r"Ã.|â€", text):
         return "encoding damage"
@@ -37,17 +37,24 @@ def malformed(text):
 
 
 def read_persuade(path):
+    """One essay per essay_id_comp (the CSV has a row per annotated element; essay_id was mangled into
+    scientific notation and isn't unique)."""
+    csv.field_size_limit(1 << 30)
+    seen = set()
     for r in csv.DictReader(open(path, encoding="utf-8", newline="")):
-        yield {"source_id": r["essay_id"], "text": r["full_text"], "topic": r["prompt_name"],
-               "genre": f"argumentative ({r.get('task', '')})", "grade": r.get("grade_level"),
-               "ell": r.get("ell_status"), "prompt_name": r["prompt_name"]}
+        if r["essay_id_comp"] in seen:
+            continue
+        seen.add(r["essay_id_comp"])
+        yield {"source_id": r["essay_id_comp"], "text": r["full_text"], "topic": r["prompt_name"],
+               "genre": f"argumentative ({r['task'].lower()})", "grade": r["grade_level"] or None,
+               "ell": (r["ell_status"].strip() or None), "prompt_name": r["prompt_name"], "provider": r["provider"]}
 
 
 def read_ellipse(path):
-    # Column names to be confirmed against the downloaded file; a missing column stops ingestion.
+    # ELLIPSE_Final_github_train.csv: one row per essay; all independent, timed state-test essays by ELLs.
     for r in csv.DictReader(open(path, encoding="utf-8", newline="")):
-        yield {"source_id": r["text_id"], "text": r["full_text"], "topic": r.get("prompt", ""),
-               "genre": "argumentative (standardized test)", "grade": r.get("grade"), "ell": "yes"}
+        yield {"source_id": r["text_id_kaggle"], "text": r["full_text"], "topic": r["prompt"],
+               "genre": f"argumentative ({r['task'].lower()}, timed state test)", "grade": r["grade"], "ell": "yes"}
 
 
 def read_jsonl_source(path):
@@ -57,6 +64,15 @@ def read_jsonl_source(path):
 
 
 ADAPTERS = {"persuade": read_persuade, "ellipse": read_ellipse, "jsonl": read_jsonl_source}
+
+
+def persuade_ids():
+    """Every PERSUADE essay id. ELLIPSE and PERSUADE share Kaggle ids, and 449 ELLIPSE essays are also in
+    PERSUADE (436 word for word), so ELLIPSE essays found there are excluded and the sources stay disjoint."""
+    path = next((LOCAL / "sources" / "persuade").glob("*.csv"), None)
+    if not path:
+        raise SystemExit("Ingesting ELLIPSE needs the PERSUADE CSV, to exclude the essays the two corpora share.")
+    return {r["source_id"] for r in read_persuade(path)}
 
 
 def persuade_splits():
@@ -76,8 +92,10 @@ def ingest(name, path):
         raise SystemExit(f"{name}: license_status is {src['license_status']!r}. Read the source's terms and record "
                          "them in sources.json before ingesting.")
     rows, excluded = [], []
+    shared = persuade_ids() if name == "ellipse" else set()
     for r in ADAPTERS[src["adapter"]](path):
-        reason = malformed(r["text"]) or (f"under {MIN_WORDS} words" if words(r["text"]) < MIN_WORDS else None)
+        reason = ("also in PERSUADE (same Kaggle id)" if r["source_id"] in shared else None) \
+            or malformed(r["text"]) or (f"under {MIN_WORDS} words" if words(r["text"]) < MIN_WORDS else None)
         if reason:
             excluded.append({"source_id": r["source_id"], "reason": reason})
             continue
@@ -104,7 +122,8 @@ def ingest(name, path):
     out = [{"human_id": f"h-{name}-{r['source_id']}", "source": name, "source_id": r["source_id"], "tier": src["tier"],
             "license": src["license"], "permitted_use": src["permitted_use"], "provenance_method": src["provenance_method"],
             "collected": src["collected"], "genre": r["genre"], "topic": r["topic"], "grade": r.get("grade"),
-            "ell": r.get("ell"), "words": words(r["text"]), "edit_history": "unknown", "ai_assistance": "unknown",
+            "ell": r.get("ell"), "provider": r.get("provider"),
+            "words": words(r["text"]), "edit_history": "unknown", "ai_assistance": "unknown",
             "split": r["split"], "text": r["text"].strip()} for r in chosen]
     write_jsonl(HUMAN / f"{name}.jsonl", out)
     (HUMAN / f"{name}-ingest.json").write_text(json.dumps({
