@@ -1,0 +1,38 @@
+{
+ "note": "Human-control sources (plan.md section 5). human.py refuses to ingest a source until license_status is \"confirmed\", which is set by a person after reading the source's actual terms; record what was read and when in license_checked.",
+ "sources": {
+  "persuade": {
+   "tier": "A", "name": "PERSUADE 2.0 corpus", "url": "to confirm (1.0 is https://github.com/scrosseye/PERSUADE_corpus, which points to a separate 2.0 page; paper: https://zenodo.org/records/8221504)",
+   "collected": "before 2022 per the corpus paper (to confirm)", "writers": "US students, grades 6-12",
+   "provenance_method": "collected by researchers from schools under documented conditions before generative AI was widely available; not verified per author",
+   "license": "unconfirmed (PERSUADE 1.0 data: CC BY-NC-SA 4.0; the Zenodo CC BY 4.0 covers the preprint only)",
+   "license_status": "unconfirmed", "license_checked": null,
+   "permitted_use": "to confirm: non-commercial research; whether submitting essays to external detectors is allowed",
+   "adapter": "persuade", "per_prompt": {"dev": 10, "eval": 25}
+  },
+  "ellipse": {
+   "tier": "A", "name": "ELLIPSE corpus (English language learners)", "url": "to confirm (paper: https://zenodo.org/records/11217937; first released through Kaggle's Feedback Prize ELL competition)",
+   "collected": "state-wide standardized testing, before 2022 (to confirm)", "writers": "US English learners, grades 8-12",
+   "provenance_method": "standardized test conditions, collected by researchers; not verified per author",
+   "license": "unconfirmed (Zenodo CC BY 4.0 covers the preprint only)", "license_status": "unconfirmed",
+   "license_checked": null, "permitted_use": "to confirm", "adapter": "ellipse", "sample": {"dev": 40, "eval": 100}
+  },
+  "micusp": {
+   "tier": "B", "name": "Michigan Corpus of Upper-level Student Papers", "url": "https://micusp.elicorpora.info/",
+   "collected": "2006-2009", "writers": "University of Michigan students",
+   "provenance_method": "submitted by students to the corpus project with consent; unsupervised writing",
+   "license": "free for research and teaching, non-commercial; (c) Regents of the University of Michigan",
+   "license_status": "unconfirmed", "license_checked": null,
+   "permitted_use": "to confirm whether submitting text to external detectors counts as permitted use",
+   "adapter": "jsonl", "sample": {"dev": 20, "eval": 60},
+   "exclude_students": "every student id used by data/human_corpus or data/sealed_test (editor sealed test)"
+  },
+  "wac": {
+   "tier": "B", "name": "WAC Clearinghouse open-access books", "url": "https://wac.colostate.edu/books/",
+   "collected": "published before 2022", "writers": "academic authors",
+   "provenance_method": "published, attributed books; not supervised",
+   "license": "per book, mostly CC BY-NC-ND (to confirm per title)", "license_status": "unconfirmed",
+   "license_checked": null, "permitted_use": "to confirm per title", "adapter": "jsonl", "sample": {"dev": 10, "eval": 40}
+  }
+ }
+}

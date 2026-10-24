@@ -1,0 +1,12 @@
+{
+ "seed": 20261023,
+ "held_out_genres": [
+  "compare",
+  "review"
+ ],
+ "files": {
+  "training/generation_eval/prompts/quill-dev.jsonl": "4111f7878c0c5e00e22c04fe94cc3f716c59606a1dff8b1579216d06883980c5",
+  "training/generation_eval/prompts/quill-eval.jsonl": "7b53f1054ef1973eccd6f5e5b1b397a7c142c5e3cd8358a0fe0d9c3964b9e15a",
+  "training/generation_eval/prompts/quill-reserve.jsonl": "b98cf0b816fe54a81d696b838fa7c8781a7e3875337b975c8a0cf10e2e09e076"
+ }
+}

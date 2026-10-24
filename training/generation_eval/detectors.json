@@ -1,0 +1,11 @@
+{
+ "note": "One entry per detector, filled in before any of its results are ingested (plan.md section 7). Leave a field null if the vendor doesn't document it; never guess. score_meaning is what the documentation says the number means; calibrated is true only if the documentation says scores are calibrated probabilities.",
+ "template": {
+  "name": null, "version": null, "access": "local | web | api", "evaluated_on": null,
+  "input_limits": null, "score_meaning": null, "score_range": [0, 1], "higher_means": "ai",
+  "threshold": null, "threshold_source": null, "calibrated": false,
+  "terms_url": null, "terms_checked": null, "data_retention": null,
+  "allowed_groups": ["quill-A", "quill-B"], "notes": null
+ },
+ "detectors": {}
+}
