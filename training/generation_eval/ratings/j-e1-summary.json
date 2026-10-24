@@ -1,0 +1,282 @@
+{
+ "excluded": {
+  "essays": 0,
+  "reasons": []
+ },
+ "model": {
+  "raters": [
+   "claude-1",
+   "claude-2"
+  ],
+  "coverage": {
+   "claude-1": {
+    "cells": 504,
+    "missing": 0
+   },
+   "claude-2": {
+    "cells": 504,
+    "missing": 0
+   }
+  },
+  "by_pipeline": {
+   "baseline-dev+e1-base-dev": {
+    "adherence": {
+     "mean": 4.214,
+     "ci95": [
+      4.045,
+      4.405
+     ],
+     "essays": 21
+    },
+    "thesis_argument": {
+     "mean": 3.762,
+     "ci95": [
+      3.647,
+      3.881
+     ],
+     "essays": 21
+    },
+    "evidence": {
+     "mean": 2.762,
+     "ci95": [
+      2.587,
+      2.921
+     ],
+     "essays": 21
+    },
+    "specificity": {
+     "mean": 2.833,
+     "ci95": [
+      2.568,
+      3.139
+     ],
+     "essays": 21
+    },
+    "organization": {
+     "mean": 3.929,
+     "ci95": [
+      3.816,
+      4.0
+     ],
+     "essays": 21
+    },
+    "coherence": {
+     "mean": 3.762,
+     "ci95": [
+      3.579,
+      3.913
+     ],
+     "essays": 21
+    },
+    "repetition": {
+     "mean": 3.214,
+     "ci95": [
+      2.895,
+      3.575
+     ],
+     "essays": 21
+    },
+    "readability": {
+     "mean": 3.714,
+     "ci95": [
+      3.421,
+      3.917
+     ],
+     "essays": 21
+    },
+    "factual_reliability": {
+     "mean": 4.738,
+     "ci95": [
+      4.524,
+      4.917
+     ],
+     "essays": 21
+    },
+    "genre_fit": {
+     "mean": 4.0,
+     "ci95": [
+      3.925,
+      4.068
+     ],
+     "essays": 21
+    },
+    "voice_style": {
+     "mean": 2.881,
+     "ci95": [
+      2.639,
+      3.125
+     ],
+     "essays": 21
+    },
+    "usefulness": {
+     "mean": 3.19,
+     "ci95": [
+      3.0,
+      3.417
+     ],
+     "essays": 21
+    },
+    "invented_personal_details": {
+     "mean": 1.119,
+     "ci95": [
+      0.591,
+      1.75
+     ],
+     "essays": 21
+    },
+    "unsupported_claims": {
+     "mean": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "essays": 21
+    },
+    "citation_problems": {
+     "mean": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "essays": 21
+    }
+   },
+   "e1-dev": {
+    "adherence": {
+     "mean": 4.762,
+     "ci95": [
+      4.4,
+      5.0
+     ],
+     "essays": 21
+    },
+    "thesis_argument": {
+     "mean": 3.881,
+     "ci95": [
+      3.7,
+      4.0
+     ],
+     "essays": 21
+    },
+    "evidence": {
+     "mean": 4.048,
+     "ci95": [
+      4.0,
+      4.143
+     ],
+     "essays": 21
+    },
+    "specificity": {
+     "mean": 4.0,
+     "ci95": [
+      4.0,
+      4.0
+     ],
+     "essays": 21
+    },
+    "organization": {
+     "mean": 4.19,
+     "ci95": [
+      4.023,
+      4.381
+     ],
+     "essays": 21
+    },
+    "coherence": {
+     "mean": 3.786,
+     "ci95": [
+      3.611,
+      3.913
+     ],
+     "essays": 21
+    },
+    "repetition": {
+     "mean": 3.595,
+     "ci95": [
+      3.278,
+      3.87
+     ],
+     "essays": 21
+    },
+    "readability": {
+     "mean": 3.714,
+     "ci95": [
+      3.474,
+      3.875
+     ],
+     "essays": 21
+    },
+    "factual_reliability": {
+     "mean": 4.714,
+     "ci95": [
+      4.357,
+      4.938
+     ],
+     "essays": 21
+    },
+    "genre_fit": {
+     "mean": 4.071,
+     "ci95": [
+      4.0,
+      4.167
+     ],
+     "essays": 21
+    },
+    "voice_style": {
+     "mean": 3.095,
+     "ci95": [
+      3.0,
+      3.217
+     ],
+     "essays": 21
+    },
+    "usefulness": {
+     "mean": 3.881,
+     "ci95": [
+      3.75,
+      4.0
+     ],
+     "essays": 21
+    },
+    "invented_personal_details": {
+     "mean": 0.238,
+     "ci95": [
+      0.045,
+      0.553
+     ],
+     "essays": 21
+    },
+    "unsupported_claims": {
+     "mean": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "essays": 21
+    },
+    "citation_problems": {
+     "mean": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "essays": 21
+    }
+   }
+  },
+  "alpha": {
+   "adherence": 0.856,
+   "thesis_argument": 0.599,
+   "evidence": 0.958,
+   "specificity": 0.868,
+   "organization": 0.533,
+   "coherence": 0.798,
+   "repetition": 0.844,
+   "readability": 1.0,
+   "factual_reliability": 0.6,
+   "genre_fit": -0.005,
+   "voice_style": 0.597,
+   "usefulness": 0.764
+  }
+ }
+}

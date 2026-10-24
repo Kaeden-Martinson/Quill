@@ -1,0 +1,153 @@
+{
+ "experiment": "e4",
+ "ratings": "j-e4",
+ "variant_run": "e4-dev",
+ "baseline_run": "baseline-dev+e4-base-dev",
+ "judges": 2,
+ "samples": 13,
+ "paired_differences": {
+  "adherence": {
+   "diff": -0.423,
+   "ci95": [
+    -2.167,
+    0.8
+   ],
+   "pairs": 13
+  },
+  "thesis_argument": {
+   "diff": -0.115,
+   "ci95": [
+    -0.667,
+    0.2
+   ],
+   "pairs": 13
+  },
+  "evidence": {
+   "diff": -0.154,
+   "ci95": [
+    -0.667,
+    0.2
+   ],
+   "pairs": 13
+  },
+  "specificity": {
+   "diff": 0.0,
+   "ci95": [
+    -0.667,
+    0.4
+   ],
+   "pairs": 13
+  },
+  "organization": {
+   "diff": -0.385,
+   "ci95": [
+    -1.833,
+    0.6
+   ],
+   "pairs": 13
+  },
+  "coherence": {
+   "diff": -0.115,
+   "ci95": [
+    -0.333,
+    0.2
+   ],
+   "pairs": 13
+  },
+  "repetition": {
+   "diff": 0.385,
+   "ci95": [
+    -0.4,
+    1.333
+   ],
+   "pairs": 13
+  },
+  "readability": {
+   "diff": 0.231,
+   "ci95": [
+    0.0,
+    0.4
+   ],
+   "pairs": 13
+  },
+  "factual_reliability": {
+   "diff": 0.346,
+   "ci95": [
+    0.167,
+    0.5
+   ],
+   "pairs": 13
+  },
+  "genre_fit": {
+   "diff": -0.385,
+   "ci95": [
+    -2.0,
+    0.6
+   ],
+   "pairs": 13
+  },
+  "voice_style": {
+   "diff": 0.038,
+   "ci95": [
+    -0.2,
+    0.3
+   ],
+   "pairs": 13
+  },
+  "usefulness": {
+   "diff": -0.308,
+   "ci95": [
+    -1.333,
+    0.4
+   ],
+   "pairs": 13
+  },
+  "invented_personal_details": {
+   "diff": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "pairs": 13
+  },
+  "unsupported_claims": {
+   "diff": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "pairs": 13
+  },
+  "citation_problems": {
+   "diff": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "pairs": 13
+  },
+  "_variant_factual_mean": 3.692
+ },
+ "lengths": {
+  "variant": {
+   "median_share": {
+    "medium": 0.897,
+    "short": 1.016
+   },
+   "under_70pct": 3
+  },
+  "baseline": {
+   "median_share": {
+    "medium": 0.887,
+    "short": 0.984
+   },
+   "under_70pct": 1
+  }
+ },
+ "invented_details_flagged_by_all_judges": {
+  "variant": 0,
+  "baseline": 0,
+  "of": 13
+ },
+ "decision": "not supported"
+}

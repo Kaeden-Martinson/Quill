@@ -120,8 +120,15 @@ def judges_runs(name, runs):
     samples = [s for s, r in rows[runs[0]].items() if not P.excluded_from_comparison(ps.get(r["prompt_id"], {}))]
     complete = [s for s in samples if all(rows[run].get(s, {}).get("text") for run in runs)]
     missing = sorted(set(samples) - set(complete))
-    items = [{"pipeline": run, "id": s, "prompt_id": rows[run][s]["prompt_id"], "text": rows[run][s]["text"]}
-             for s in complete for run in runs]
+    import experiments as X
+
+    def shown_assignment(r):
+        """The assignment as the writer gave it for that draft: E1 drafts were written from instructions
+        that include the writer's details, so judges must see those details too (or they'd look invented)."""
+        p = X.adjust_prompt_entry(ps[r["prompt_id"]], X.parse(r.get("variant", "baseline")))
+        return assignment_text(p)
+    items = [{"pipeline": run, "id": s, "prompt_id": rows[run][s]["prompt_id"], "text": rows[run][s]["text"],
+              "assignment": shown_assignment(rows[run][s])} for s in complete for run in runs]
     shown = blind(items, name)
     (SHEETS / f"{name}-packet.json").write_text(json.dumps({
         "rubric": (HERE / "rubric.md").read_text(encoding="utf-8"), "criteria": CRITERIA, "counts": COUNTS,

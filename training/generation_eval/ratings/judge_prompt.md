@@ -45,3 +45,18 @@ this shape:
 
 Integers only (or null). Include every item in your range. Reply with just the number of items rated and
 the path written.
+
+## Follow-up experiment packets (2026-10-24)
+`j-e2`, `j-e1`, `j-e4` (and `j-e3`, `j-eval-*` later) use the same instructions, with each subagent told to
+keep any scratch files in its own folder (scratchpad\judges\<packet>-<judge>[-part]) and not to open
+anything else there; packet "info" files are off limits like keys. Two packets add one sentence, applied
+to the variant and its baseline alike since both are rated in the same packet:
+- `j-e1`: "details the assignment does give are not invented" (the E1 variant's instructions include the
+  writer's details).
+- `j-e4`: "these are literary analyses, so check that scenes, events and characters' actions described
+  actually happen in the work, and flag misremembered plot or invented quotations."
+- `j-e1` was first built showing every essay the stored assignment, without the writer details the E1
+  drafts were given, which would have made those details look invented. Its two judges were stopped
+  before writing any ratings; the packet was rebuilt so each essay shows the assignment it was written
+  from (ratings.judges_runs), and two new judges rated it. The first packet and key are kept under
+  data/generation_eval/ratings/superseded.

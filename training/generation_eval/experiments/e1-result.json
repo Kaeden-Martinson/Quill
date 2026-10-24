@@ -1,0 +1,155 @@
+{
+ "experiment": "e1",
+ "ratings": "j-e1",
+ "variant_run": "e1-dev",
+ "baseline_run": "baseline-dev+e1-base-dev",
+ "judges": 2,
+ "samples": 21,
+ "paired_differences": {
+  "adherence": {
+   "diff": 0.548,
+   "ci95": [
+    0.15,
+    0.895
+   ],
+   "pairs": 21
+  },
+  "thesis_argument": {
+   "diff": 0.119,
+   "ci95": [
+    -0.114,
+    0.333
+   ],
+   "pairs": 21
+  },
+  "evidence": {
+   "diff": 1.286,
+   "ci95": [
+    1.095,
+    1.478
+   ],
+   "pairs": 21
+  },
+  "specificity": {
+   "diff": 1.167,
+   "ci95": [
+    0.881,
+    1.429
+   ],
+   "pairs": 21
+  },
+  "organization": {
+   "diff": 0.262,
+   "ci95": [
+    0.059,
+    0.476
+   ],
+   "pairs": 21
+  },
+  "coherence": {
+   "diff": 0.024,
+   "ci95": [
+    -0.114,
+    0.132
+   ],
+   "pairs": 21
+  },
+  "repetition": {
+   "diff": 0.381,
+   "ci95": [
+    0.075,
+    0.705
+   ],
+   "pairs": 21
+  },
+  "readability": {
+   "diff": 0.0,
+   "ci95": [
+    -0.182,
+    0.2
+   ],
+   "pairs": 21
+  },
+  "factual_reliability": {
+   "diff": -0.024,
+   "ci95": [
+    -0.389,
+    0.325
+   ],
+   "pairs": 21
+  },
+  "genre_fit": {
+   "diff": 0.071,
+   "ci95": [
+    0.0,
+    0.175
+   ],
+   "pairs": 21
+  },
+  "voice_style": {
+   "diff": 0.214,
+   "ci95": [
+    0.043,
+    0.389
+   ],
+   "pairs": 21
+  },
+  "usefulness": {
+   "diff": 0.69,
+   "ci95": [
+    0.4,
+    0.935
+   ],
+   "pairs": 21
+  },
+  "invented_personal_details": {
+   "diff": -0.881,
+   "ci95": [
+    -1.333,
+    -0.5
+   ],
+   "pairs": 21
+  },
+  "unsupported_claims": {
+   "diff": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "pairs": 21
+  },
+  "citation_problems": {
+   "diff": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "pairs": 21
+  },
+  "_variant_factual_mean": 4.714
+ },
+ "lengths": {
+  "variant": {
+   "median_share": {
+    "medium": 0.747,
+    "short": 0.884,
+    "long": 0.819
+   },
+   "under_70pct": 2
+  },
+  "baseline": {
+   "median_share": {
+    "medium": 0.818,
+    "short": 1.0,
+    "long": 0.945
+   },
+   "under_70pct": 0
+  }
+ },
+ "invented_details_flagged_by_all_judges": {
+  "variant": 2,
+  "baseline": 12,
+  "of": 21
+ },
+ "decision": "adopt the product idea (ask-first step proposed as its own change)"
+}
