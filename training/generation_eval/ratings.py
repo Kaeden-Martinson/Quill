@@ -108,6 +108,30 @@ def judges(run, name):
     print(f"wrote {SHEETS / name}-packet.json ({len(shown)} essays)")
 
 
+def judges_runs(name, runs):
+    """One blind packet comparing runs on the same samples (followup_plans.md): the first run sets the
+    samples; each other run contributes its draft for each of those sample ids. Items are labeled by
+    run in the key, so aggregate() reports each run separately; drafts excluded by plan.md Amendment 1
+    or missing in any run are left out of the packet and listed."""
+    ps = prompts_by_id()
+    # A run spec may join runs with "+" (e.g. baseline-dev+persuade-dev, whose dev drafts are split in two).
+    rows = {run: {r["sample_id"]: r for part in run.split("+") for r in read_jsonl(CORPUS / part / "A.jsonl")}
+            for run in runs}
+    samples = [s for s, r in rows[runs[0]].items() if not P.excluded_from_comparison(ps.get(r["prompt_id"], {}))]
+    complete = [s for s in samples if all(rows[run].get(s, {}).get("text") for run in runs)]
+    missing = sorted(set(samples) - set(complete))
+    items = [{"pipeline": run, "id": s, "prompt_id": rows[run][s]["prompt_id"], "text": rows[run][s]["text"]}
+             for s in complete for run in runs]
+    shown = blind(items, name)
+    (SHEETS / f"{name}-packet.json").write_text(json.dumps({
+        "rubric": (HERE / "rubric.md").read_text(encoding="utf-8"), "criteria": CRITERIA, "counts": COUNTS,
+        "items": shown}, indent=1, ensure_ascii=False), encoding="utf-8")
+    (SHEETS / f"{name}-packet-info.json").write_text(json.dumps({
+        "runs": list(runs), "samples": len(complete), "left_out_no_draft_in_some_run": missing}, indent=1), encoding="utf-8")
+    print(f"wrote {SHEETS / name}-packet.json ({len(shown)} essays: {len(complete)} samples x {len(runs)} runs; "
+          f"{len(missing)} samples left out: {missing})")
+
+
 def import_ratings(name, path, rater, kind):
     out = {"rater": rater, "kind": kind, "human_rater": kind == "person", "ratings": {}}
     if str(path).endswith(".json"):   # a model judge's JSON: {"ratings": {blind_id: {criterion: n}}}
@@ -134,8 +158,13 @@ def import_ratings(name, path, rater, kind):
 
 def aggregate(name):
     key = json.loads((SHEETS / f"{name}-key.json").read_text(encoding="utf-8"))
-    files = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(RATINGS.glob(f"{name}-*.json"))]
-    report = {}
+    files = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(RATINGS.glob(f"{name}-*.json"))
+             if not p.name.endswith("-summary.json")]
+    ps = prompts_by_id()
+    excluded = {b: P.excluded_from_comparison(ps[v["prompt_id"]]) for b, v in key.items()
+                if v["prompt_id"] in ps and P.excluded_from_comparison(ps[v["prompt_id"]])}
+    key = {b: v for b, v in key.items() if b not in excluded}   # rated and kept, not in the statistics
+    report = {"excluded": {"essays": len(excluded), "reasons": sorted(set(excluded.values()))}}
     for kind in ("person", "model"):
         raters = [f for f in files if f["kind"] == kind]
         if not raters:
@@ -176,6 +205,8 @@ if __name__ == "__main__":
         n_d = int(args[args.index("--drafts") + 1]) if "--drafts" in args else 36
         n_h = int(args[args.index("--human") + 1]) if "--human" in args else 12
         people(args[0], args[1], n_d, n_h)
+    elif cmd == "judges-runs":   # judges-runs NAME RUN RUN [RUN ...]
+        judges_runs(sys.argv[2], sys.argv[3:])
     elif cmd == "judges":
         judges(sys.argv[2], sys.argv[3])
     elif cmd == "import":

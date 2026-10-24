@@ -1,4 +1,8 @@
 {
+ "excluded": {
+  "essays": 0,
+  "reasons": []
+ },
  "model": {
   "raters": [
    "claude-1",

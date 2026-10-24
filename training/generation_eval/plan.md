@@ -169,3 +169,26 @@ About 40 s per 500-word draft on this laptop (existing runs): dev ~180 drafts â‰
 ## 12. Before anything runs
 - Ollama has downloaded 0.40.10 and installs on restart; pin the version for the whole experiment.
 - Confirm data licenses for the human controls; get the original detector details from you.
+
+## Amendment 1 (2026-10-24, before any eval generation or scoring)
+**Change:** PERSUADE's text-dependent prompts are dropped from the generator comparison, in dev and
+eval. Their student essays stay in the human-control sample (detector track) unchanged.
+
+**Why:** PERSUADE distributes only the titles and citations of the articles students read for its
+seven text-dependent prompts (e.g. `"A Cowboy Who Rode the Waves"`), not the articles. Quill was given
+the title alone while the students had the article, so drafts for these prompts can't be compared with
+the students' or judged on evidence use. Found in dev: both model judges rated all 10 drafts for
+"A Cowboy Who Rode the Waves" at adherence 2, evidence 1, for inventing what the article said.
+
+**Effect:**
+- PERSUADE generation family: dev 7 -> 5 prompts (drops A Cowboy Who Rode the Waves, Car-free cities);
+  eval 8 -> 3 prompts (keeps Mandatory extracurricular activities, Seeking multiple opinions, Summer
+  projects). Eval PERSUADE drafts: 80 -> 30 at 10 per prompt; total eval drafts 146 -> 96 (planned
+  research prompts not built yet). The eval split assignment and its lock are unchanged.
+- The 20 dev drafts already generated for the two dropped prompts, and their ratings, are kept and
+  listed as excluded with this reason; summaries and reports compute statistics without them.
+- Human controls: unchanged (270 PERSUADE, 140 ELLIPSE), including essays from text-dependent prompts.
+- Source-based writing is still to be evaluated through the research-essay family (section 4), with
+  openly licensed sources supplied in full.
+
+**Not changed:** research questions, rubric, statistics, decision rules, the detector restriction.

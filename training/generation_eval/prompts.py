@@ -146,6 +146,15 @@ def check():
     return not problems
 
 
+def excluded_from_comparison(p):
+    """plan.md Amendment 1: PERSUADE's text-dependent prompts ship only the articles' titles, not the
+    articles, so they're left out of generation and of the draft statistics. Their student essays stay
+    in the human controls. Returns the reason, or None if the prompt is in the comparison."""
+    if p.get("family") == "persuade" and "text dependent" in p.get("genre", "").lower():
+        return "PERSUADE text-dependent prompt: source articles not in the corpus (plan.md Amendment 1)"
+    return None
+
+
 def load(split, families=("quill-existing", "quill-genre", "persuade")):
     """All prompts of a split, from whichever families are built."""
     rows = []

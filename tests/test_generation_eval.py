@@ -23,7 +23,16 @@ REPLIES = [
     {"title": "x" * 300, "paragraphs": ["a"]},
     {"paragraphs": []},
     None,
+    {"title": "t", "paragraphs": ["Real text.", "]}<tool_call|>{"]},
+    {"title": "t", "paragraphs": ["]}<tool_call|>{"]},
 ]
+
+
+def test_d1_drops_markup_debris_but_keeps_real_paragraphs():
+    title, body = editor.draft_from_reply({"title": "T", "paragraphs": [
+        "It ends here.", "]}<tool_call|>{", "In 2020, 3 of 4 said yes.", "¿Por qué no?", "---", "<b>"]})
+    assert body == "It ends here.\n\nIn 2020, 3 of 4 said yes.\n\n¿Por qué no?"
+    assert editor.draft_from_reply({"title": "T", "paragraphs": ["]}<tool_call|>{"]}) == (None, None)
 
 
 @pytest.mark.parametrize("reply", REPLIES)
@@ -93,3 +102,37 @@ def test_editor_micusp_students_are_excluded_by_rule():
     assert not validate.editor_micusp_student("ENG.G2.06.1")
     assert validate.jaccard(validate.shingles("one two three four five six"),
                             validate.shingles("one two three four five six")) == 1.0
+
+
+def test_amendment_1_excludes_only_persuade_text_dependent_prompts():
+    import prompts
+    assert prompts.excluded_from_comparison({"family": "persuade", "genre": "argumentative (Text dependent)"})
+    assert prompts.excluded_from_comparison({"family": "persuade", "genre": "argumentative (Independent)"}) is None
+    assert prompts.excluded_from_comparison({"family": "quill-genre", "genre": "text dependent"}) is None
+
+
+def _prompt(**kw):
+    return {"id": "q-x-1", "family": "quill-genre", "genre": "argument", "goal": "persuasive essay",
+            "audience": "my teacher", "length": "medium", "instructions": "Argue for X. Points: a, b.", **kw}
+
+
+def test_variants_change_only_their_one_line():
+    base, _ = generate.build_request(_prompt(), seed=1)
+    e2, _ = generate.build_request(_prompt(), seed=1, variants=("e2",))
+    assert e2 == base.replace("Length: about 500 words", "Length: about 500 words (aim for 450-550)")
+    e4_other, _ = generate.build_request(_prompt(), seed=1, variants=("e4",))
+    assert e4_other == base   # e4 touches literary prompts only
+    lit = _prompt(goal="literary analysis essay", genre="literary")
+    lit_base, _ = generate.build_request(lit, seed=1)
+    lit_e4, _ = generate.build_request(lit, seed=1, variants=("e4",))
+    assert lit_e4.replace("\n\n" + generate.X.E4_SENTENCE, "", 1) == lit_base
+    e1_other, _ = generate.build_request(_prompt(), seed=1, variants=("e1",))
+    assert e1_other == base   # e1 touches only prompts with written details
+    pid = next(iter(generate.X.E1_DETAILS))
+    e1, _ = generate.build_request(_prompt(id=pid), seed=1, variants=("e1",))
+    assert "Details I can add:" in e1 and generate.X.E1_DETAILS[pid][0] in e1
+
+
+def test_unknown_variant_is_refused():
+    with pytest.raises(SystemExit):
+        generate.X.parse("e9")

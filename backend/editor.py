@@ -342,6 +342,21 @@ def draft_prompt(instructions, voice, sample=None, goal="", audience="", tone=""
     return "\n\n".join(parts)
 
 
+def draft_from_reply(result):
+    """(title, body) from the drafter's parsed reply, or (None, None) when there's no draft.
+
+    One array item can hold several paragraphs; their breaks are kept instead of merged. A "paragraph"
+    with no words once markup is removed is debris from the model, not text (it once emitted a stray
+    `]}<tool_call|>{` as a final paragraph), so it's dropped."""
+    paragraphs = [" ".join(q.split()) for p in (result or {}).get("paragraphs", []) if isinstance(p, str)
+                  for q in re.split(r"\n\s*\n", p)
+                  if re.search(r"[^\W\d_]", re.sub(r"<[^<>]*>", "", q))]
+    if not paragraphs:
+        return None, None
+    title = " ".join(((result or {}).get("title") or "").split())[:200] or "Untitled draft"
+    return title, "\n\n".join(paragraphs)
+
+
 async def draft_stream(prompt):
     """Yields events: queue, start, draft (title and body), done. Uses the general model."""
     ticket, started = queue.join(), False
@@ -352,14 +367,11 @@ async def draft_stream(prompt):
         yield {"type": "start", "total": 1}
         async with httpx.AsyncClient() as client:
             result = await chat(client, DRAFT_SYSTEM, prompt, DRAFT_SCHEMA, model=OVERVIEW_MODEL, options=DRAFT_OPTIONS)
-        # One array item can hold several paragraphs; keep their breaks instead of merging them.
-        paragraphs = [" ".join(q.split()) for p in (result or {}).get("paragraphs", []) if isinstance(p, str)
-                      for q in re.split(r"\n\s*\n", p) if q.strip()]
-        if not paragraphs:
+        title, body = draft_from_reply(result)
+        if body is None:
             yield {"type": "error", "message": "The model didn't return a draft. Try again or reword the prompt."}
             return
-        title = " ".join(((result or {}).get("title") or "").split())[:200] or "Untitled draft"
-        yield {"type": "draft", "title": title, "body": "\n\n".join(paragraphs)}
+        yield {"type": "draft", "title": title, "body": body}
         yield {"type": "done"}
     finally:
         await queue.leave(ticket, started)

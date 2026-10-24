@@ -22,6 +22,7 @@ from itertools import combinations
 from common import CORPUS, HERE, HUMAN, RATINGS, read_jsonl, require_unsealed, words
 import detectors as D
 import human as H
+import prompts as P
 import stats as S
 
 
@@ -143,7 +144,9 @@ def corpus_section(run):
         path = CORPUS / run / f"{pipeline}.jsonl"
         if not path.exists():
             continue
-        rows = read_jsonl(path)
+        all_rows = read_jsonl(path)
+        ps = {p["id"]: p for split in ("dev", "eval") for p in P.load(split)}
+        rows = [r for r in all_rows if not P.excluded_from_comparison(ps.get(r["prompt_id"], {}))]
         ok = [r for r in rows if r.get("text")]
         ratio = defaultdict(list)
         for r in ok:
@@ -152,7 +155,8 @@ def corpus_section(run):
                          "truncated": sum(1 for r in rows if r.get("truncated")),
                          "length_ratio_by_requested": {k: quantiles(v) for k, v in sorted(ratio.items())},
                          "under_70pct_of_target": sum(1 for r in ok if words(r["text"]) < 0.7 * r["requested_words"]),
-                         "edits_applied": sum(len(r.get("edits_applied", [])) for r in rows) if pipeline == "B" else None}
+                         "edits_applied": sum(len(r.get("edits_applied", [])) for r in rows) if pipeline == "B" else None,
+                         "excluded_amendment_1": len(all_rows) - len(rows)}
     return out
 
 
@@ -204,7 +208,9 @@ def render(s):
     for p, c in s["corpus"].items():
         lines.append(f"- Pipeline {p}: {c['samples']} samples, {c['with_text']} with text, {c['errors']} errors, "
                      f"{c['truncated']} hit the output cap, {c['under_70pct_of_target']} under 70% of the requested length"
-                     + (f", {c['edits_applied']} editor edits applied" if c.get("edits_applied") is not None else ""))
+                     + (f", {c['edits_applied']} editor edits applied" if c.get("edits_applied") is not None else "")
+                     + (f"; {c['excluded_amendment_1']} more kept but excluded from these statistics (plan.md Amendment 1)"
+                        if c.get("excluded_amendment_1") else ""))
     if not s["corpus"]:
         lines.append("- missing: no corpus for this run")
     lines += ["", "## Human controls", f"- {s['human']['essays']} essays: {s['human']['by_source_tier'] or 'missing (none ingested)'}",
@@ -212,7 +218,12 @@ def render(s):
     if not s["ratings"]:
         lines.append("- missing: no ratings aggregated")
     else:
+        excluded = s["ratings"].get("excluded") or {}
+        if excluded.get("essays"):
+            lines.append(f"- {excluded['essays']} rated essays excluded from these statistics: {'; '.join(excluded['reasons'])}")
         for kind, sec in s["ratings"].items():
+            if kind == "excluded":
+                continue
             who = "people" if kind == "person" else "model judges (automated, not people)"
             lines.append(f"### {who}: {', '.join(sec['raters'])}")
             for pipeline, crit in sec["by_pipeline"].items():

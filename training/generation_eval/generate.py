@@ -28,6 +28,7 @@ import httpx
 
 from common import CORPUS, ROOT, read_jsonl, require_unsealed, sha256_file, sha256_text, words
 import prompts as P
+import experiments as X
 
 
 def load_app_settings():
@@ -60,27 +61,43 @@ def requested_words(length):
     return int(re.search(r"\d+", editor.DRAFT_LENGTHS.get(length, editor.DRAFT_LENGTHS["medium"])).group())
 
 
-def build_request(p, seed):
-    """(user prompt, request body) exactly as /api/compose builds them for a writer with no profile."""
+def build_request(p, seed, variants=()):
+    """(user prompt, request body) exactly as /api/compose builds them for a writer with no profile,
+    with the experiment's single change applied when a variant is given (experiments.py)."""
     voice = voices.describe(FRESH_PROFILE, "")
-    prompt = editor.draft_prompt(p["instructions"], voice, voices.sample_for(FRESH_PROFILE),
-                                 p.get("goal", ""), p.get("audience", ""), "", p.get("length", "medium"))
-    num_ctx = editor.context_size(editor.DRAFT_SYSTEM, prompt) or editor.CONTEXT_STEPS[-1]
-    body = {"model": editor.OVERVIEW_MODEL,
-            "messages": [{"role": "system", "content": editor.DRAFT_SYSTEM}, {"role": "user", "content": prompt}],
-            "format": editor.DRAFT_SCHEMA, "stream": False,
-            "options": {**DRAFT_OPTIONS, "seed": seed, "num_ctx": num_ctx}}
-    return prompt, body
+    entry = X.adjust_prompt_entry(p, variants)
+    length = p.get("length", "medium")
+    prompt = editor.draft_prompt(entry["instructions"], voice, voices.sample_for(FRESH_PROFILE),
+                                 p.get("goal", ""), p.get("audience", ""), "", length)
+    prompt = X.adjust_user_prompt(prompt, p, variants, editor.DRAFT_LENGTHS.get(length, editor.DRAFT_LENGTHS["medium"]))
+    return prompt, request_body(editor.DRAFT_SYSTEM, prompt, editor.DRAFT_SCHEMA, seed)
+
+
+def request_body(system, prompt, schema, seed):
+    num_ctx = editor.context_size(system, prompt) or editor.CONTEXT_STEPS[-1]
+    return {"model": editor.OVERVIEW_MODEL,
+            "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
+            "format": schema, "stream": False, "options": {**DRAFT_OPTIONS, "seed": seed, "num_ctx": num_ctx}}
+
+
+def call(body):
+    """One request: (raw reply text, metadata, parsed object, error)."""
+    raw, meta, result, error = None, {}, None, None
+    try:
+        resp = httpx.post(f"{OLLAMA_URL}/api/chat", json=body, timeout=600)
+        resp.raise_for_status()
+        reply = resp.json()
+        raw = reply.get("message", {}).get("content")
+        meta = {k: reply.get(k) for k in ("done_reason", "eval_count", "prompt_eval_count", "total_duration")}
+        result = editor.parse_reply(raw) if raw is not None else None
+    except (httpx.HTTPError, ValueError) as exc:
+        error = f"{type(exc).__name__}: {exc}"
+    return raw, meta, result, error
 
 
 def postprocess(result):
-    """editor.draft_stream's handling of the parsed reply: (title, body) or (None, None) for no draft."""
-    paragraphs = [" ".join(q.split()) for p in (result or {}).get("paragraphs", []) if isinstance(p, str)
-                  for q in re.split(r"\n\s*\n", p) if q.strip()]
-    if not paragraphs:
-        return None, None
-    title = " ".join(((result or {}).get("title") or "").split())[:200] or "Untitled draft"
-    return title, "\n\n".join(paragraphs)
+    """The app's own handling of the parsed reply (editor.draft_from_reply): (title, body) or (None, None)."""
+    return editor.draft_from_reply(result)
 
 
 def environment():
@@ -107,7 +124,8 @@ def check_engine(env):
         raise SystemExit(f"Engine changed mid-run {changed}; stopping. Start a new run name for the new engine.")
 
 
-def run(name, split, families, limit=None, resume=False):
+def run(name, split, families, limit=None, resume=False, variant="baseline", seeds=None, prompt_ids=None):
+    variants = X.parse(variant)
     require_unsealed(split, f"generate.py {name}")
     if not P.check():
         raise SystemExit("A locked prompt file changed; rebuild deliberately or restore it.")
@@ -121,7 +139,17 @@ def run(name, split, families, limit=None, resume=False):
         check_engine({"ollama_version": first["ollama_version"], "model_digest": first["model_digest"]})
         set_aside_infrastructure_failures(out_dir)
     done = {r["sample_id"] for r in read_jsonl(out)} if out.exists() else set()
-    jobs = [(p, k) for p in P.load(split, families) for k in range(SAMPLES[p["family"]])]
+    prompts = P.load(split, families)
+    skipped = [p["id"] for p in prompts if P.excluded_from_comparison(p)]
+    if skipped:
+        print(f"not generated (plan.md Amendment 1): {', '.join(skipped)}")
+    if prompt_ids:
+        unknown = set(prompt_ids) - {p["id"] for p in prompts}
+        if unknown:
+            raise SystemExit(f"unknown prompt ids for {split}: {sorted(unknown)}")
+        prompts = [p for p in prompts if p["id"] in prompt_ids]
+    jobs = [(p, k) for p in prompts if not P.excluded_from_comparison(p)
+            for k in (seeds if seeds is not None else range(SAMPLES[p["family"]]))]
     if limit:
         jobs = jobs[:limit]
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -131,23 +159,27 @@ def run(name, split, families, limit=None, resume=False):
             if sample_id in done:
                 continue
             check_engine(env)
-            seed = seed_for(sample_id)
-            prompt, body = build_request(p, seed)
-            started, raw, meta, error, result = time.time(), None, {}, None, None
-            try:
-                resp = httpx.post(f"{OLLAMA_URL}/api/chat", json=body, timeout=600)
-                resp.raise_for_status()
-                reply = resp.json()
-                raw = reply.get("message", {}).get("content")
-                meta = {k2: reply.get(k2) for k2 in ("done_reason", "eval_count", "prompt_eval_count", "total_duration")}
-                result = editor.parse_reply(raw) if raw is not None else None
-            except (httpx.HTTPError, ValueError) as exc:
-                error = f"{type(exc).__name__}: {exc}"
+            seed = seed_for(sample_id)   # same sample id, same seed: a variant differs only by its change
+            prompt, body = build_request(p, seed, variants)
+            started, plan_record = time.time(), {}
+            if "e3" in variants:
+                plan_raw, _, plan, plan_error = call(request_body(X.E3_PLAN_SYSTEM, prompt, X.E3_PLAN_SCHEMA, seed))
+                items = (plan or {}).get("plan") if isinstance(plan, dict) else None
+                plan_record = {"plan": items, "plan_raw": plan_raw, "plan_error": plan_error}
+                if items:
+                    prompt = X.with_plan(prompt, items)
+                    body = request_body(editor.DRAFT_SYSTEM, prompt, editor.DRAFT_SCHEMA, seed)
+            if plan_record and not plan_record["plan"]:
+                raw, meta, result = None, {}, None
+                error = f"e3 plan failed: {plan_record['plan_error'] or 'no plan items'}"
+            else:
+                raw, meta, result, error = call(body)
             title, text = postprocess(result)
             if error is None and text is None:
                 error = "no draft (the app shows: The model didn't return a draft)"
             row = {"sample_id": sample_id, "prompt_id": p["id"], "family": p["family"], "genre": p["genre"],
-                   "split": split, "sample_index": k, "pipeline": "A",
+                   "split": split, "sample_index": k, "pipeline": "A", "variant": "+".join(variants) or "baseline",
+                   **plan_record,
                    "system_prompt_sha256": sha256_text(editor.DRAFT_SYSTEM), "user_prompt": prompt,
                    "options": body["options"], "seed": seed, **env,
                    "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S%z", time.localtime(started)),
@@ -155,7 +187,7 @@ def run(name, split, families, limit=None, resume=False):
                    "requested_words": requested_words(p.get("length", "medium")),
                    "title": title, "text": text, "actual_words": words(text) if text else 0,
                    "raw_reply": raw, **meta, "truncated": meta.get("done_reason") == "length",
-                   "retries": 0, "postprocessing": "editor.draft_stream: whitespace collapsed, paragraphs split, title trimmed",
+                   "retries": 0, "postprocessing": "editor.draft_from_reply (as the app): whitespace collapsed, paragraphs split, markup-only paragraphs dropped, title trimmed",
                    "error": error}
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
             f.flush()
@@ -193,12 +225,14 @@ def set_aside_infrastructure_failures(out_dir):
 def write_manifest(out_dir, split, families, env):
     rows = read_jsonl(out_dir / "A.jsonl")
     code = {rel: sha256_file(ROOT / rel) for rel in ("backend/editor.py", "backend/config.py", "backend/voices.py",
-                                                       "training/generation_eval/generate.py")}
+                                                       "training/generation_eval/generate.py",
+                                                       "training/generation_eval/experiments.py")}
     prompt_files = {str(p.relative_to(ROOT)).replace("\\", "/"): sha256_file(p)
                     for p in (P.PROMPTS / f"quill-{split}.jsonl", P.LOCAL / "prompts" / f"persuade-{split}.jsonl")
                     if p.exists()}
     git = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=ROOT).stdout.strip()
     manifest = {"split": split, "families": list(families), "samples": len(rows),
+                "variants": sorted({r.get("variant", "baseline") for r in rows}),
                 "errors": sum(1 for r in rows if r["error"]), "truncated": sum(1 for r in rows if r.get("truncated")),
                 "infrastructure_failures_retried": [r["sample_id"] + ": " + r["error"] for r in read_jsonl(out_dir / "A-infrastructure.jsonl")]
                 if (out_dir / "A-infrastructure.jsonl").exists() else [],
@@ -215,5 +249,9 @@ if __name__ == "__main__":
     ap.add_argument("--families", default="quill-existing,quill-genre,persuade")
     ap.add_argument("--limit", type=int)
     ap.add_argument("--resume", action="store_true")
+    ap.add_argument("--variant", default="baseline", help="e1, e2, e3, e4 or a '+' combination (experiments.py)")
+    ap.add_argument("--seeds", help="sample indexes, e.g. 0,1,2 (default: the family's usual count)")
+    ap.add_argument("--prompts", help="only these prompt ids, comma-separated")
     a = ap.parse_args()
-    run(a.run, a.split, tuple(a.families.split(",")), a.limit, a.resume)
+    run(a.run, a.split, tuple(a.families.split(",")), a.limit, a.resume, a.variant,
+        [int(s) for s in a.seeds.split(",")] if a.seeds else None, a.prompts.split(",") if a.prompts else None)

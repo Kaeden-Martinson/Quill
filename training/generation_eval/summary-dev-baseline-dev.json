@@ -34,7 +34,8 @@
     }
    },
    "under_70pct_of_target": 4,
-   "edits_applied": null
+   "edits_applied": null,
+   "excluded_amendment_1": 0
   },
   "B": {
    "samples": 53,
@@ -68,7 +69,8 @@
     }
    },
    "under_70pct_of_target": 4,
-   "edits_applied": 6
+   "edits_applied": 6,
+   "excluded_amendment_1": 0
   }
  },
  "human": {
@@ -81,6 +83,10 @@
  "detectors": {},
  "agreement": {},
  "ratings": {
+  "excluded": {
+   "essays": 0,
+   "reasons": []
+  },
   "model": {
    "raters": [
     "claude-1",

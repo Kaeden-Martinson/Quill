@@ -12,3 +12,6 @@ training/writing_eval/runs/
 training/writing_eval/logs/
 # packets quote the human corpus (some CC BY-NC-ND), so they stay local like the corpus itself
 training/writing_eval/packets/
+# run logs written to the repo root by long jobs
+/generation-*.log
+/training-*.log

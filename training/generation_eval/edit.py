@@ -1,7 +1,7 @@
 """Pipelines B and C: texts through Quill's live editor, every suggestion applied (plan.md section 1).
 
     .venv\\Scripts\\python training\\generation_eval\\edit.py drafts RUN            # B: RUN/A.jsonl -> RUN/B.jsonl
-    .venv\\Scripts\\python training\\generation_eval\\edit.py human SOURCE_FILE NAME # C: human essays -> human/NAME-C.jsonl
+    .venv\\Scripts\\python training\\generation_eval\\edit.py human SPLIT            # C: a split's human essays -> human/SPLIT-C.jsonl
 
 Each paragraph goes through editor.review_paragraph, the app's own call (model suggestions filtered as
 the app filters them, plus rules.apply's mechanical fixes), with the voice measured from the whole text
@@ -82,14 +82,20 @@ def drafts(run):
     record(CORPUS / run / "B-manifest.json", CORPUS / run / "B.jsonl", rows, skipped)
 
 
-def human(source_file, name):
-    rows = read_jsonl(source_file)
+def human(split):
+    """Every ingested human essay of one split (all sources), with no goal set, as a writer pasting
+    their own essay would. Writes human/SPLIT-C.jsonl."""
+    require_unsealed(split, f"edit.py human {split}")
+    import human as H
+    rows = H.load(split)
+    if not rows:
+        raise SystemExit(f"No human essays ingested for {split}.")
 
     async def go():
-        return [row async for row in edit_rows(rows, lambda r: goal_line(r.get("goal", "")))]
+        return [row async for row in edit_rows(rows, lambda r: goal_line(""))]
     out = [{**r, "pipeline": "C"} for r in asyncio.run(go())]
-    write_jsonl(HUMAN / f"{name}-C.jsonl", out)
-    record(HUMAN / f"{name}-C-manifest.json", HUMAN / f"{name}-C.jsonl", out, [])
+    write_jsonl(HUMAN / f"{split}-C.jsonl", out)
+    record(HUMAN / f"{split}-C-manifest.json", HUMAN / f"{split}-C.jsonl", out, [])
 
 
 def record(path, output, rows, skipped):
@@ -107,4 +113,4 @@ if __name__ == "__main__":
     if sys.argv[1] == "drafts":
         drafts(sys.argv[2])
     elif sys.argv[1] == "human":
-        human(sys.argv[2], sys.argv[3])
+        human(sys.argv[2])

@@ -4,6 +4,19 @@ Used for packet `j-dev` (2026-10-23): two independent Claude judges ("claude-1",
 two subagents over halves of the packet (blind ids r-001..r-053 and r-054..r-106), model claude-opus-5-5,
 general-purpose subagent. Same text for every judge; only {JUDGE}, {PART}, {RANGE} change.
 
+Also used, unchanged apart from the packet name (j-pdev) and ranges (r-001..r-070, r-071..r-140), for
+packet `j-pdev` (2026-10-24): the 70 PERSUADE-prompt dev drafts from pipelines A and B.
+
+Process notes for j-pdev, as the judges reported them:
+- claude-2, part 1: a script error briefly displayed the essay text of r-071..r-087 (the other half);
+  only packet text, no key; none of those items are in its output.
+- claude-2, part 2: the shared scratchpad held another judge's helper script, and one command showed
+  its first 300 characters, including one rating for r-054 (outside its range, rated by another agent).
+  It reports its ratings were already drafted. Future judges get separate working folders.
+- The two text-dependent dev prompts (A Cowboy Who Rode the Waves, Car-free cities) gave the generator
+  only the article titles, because PERSUADE doesn't include the articles. Their ratings are kept but
+  don't measure the generator; summaries report the five independent prompts separately.
+
 ---
 
 You are a blind evaluator of essay drafts. Read ONLY this file:

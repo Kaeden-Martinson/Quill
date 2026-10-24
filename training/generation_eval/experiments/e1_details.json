@@ -1,0 +1,45 @@
+{
+ "note": "E1 (followup_plans.md): three writer details per personal-experience dev prompt, written 2026-10-24 before any E1 generation. They answer the questions a drafter would need (a moment, a person, an outcome) and are appended to the instructions as the writer's own words.",
+ "details": {
+  "a-narrative-drivers-test": [
+   "The second time I failed, I rolled through a stop sign two blocks from the DMV.",
+   "Grandpa was waiting in his truck. He said, \"The road will still be there next month.\"",
+   "I passed on the third try, and I drove him home that day."
+  ],
+  "a-scholarship-nursing": [
+   "My mom sometimes worked double shifts and still came home and talked about her residents by name.",
+   "At the nursing home I mostly read the newspaper aloud to a man named Mr. Alvarez who had lost most of his sight.",
+   "I'm in my school's health sciences pathway and got my first aid and CPR certification this spring."
+  ],
+  "a-blog-no-social-media": [
+   "The first three days I kept unlocking my phone without thinking and staring at the home screen.",
+   "I started reading at night instead and finished two novels that month.",
+   "When I came back I deleted two apps for good and kept only the group chat with my friends."
+  ],
+  "a-camp-counselor": [
+   "My cousins are 6 and 9, and I'm the one who gets them through homework, dinner and bedtime on Thursdays.",
+   "At camp my favorite counselor taught me to canoe and made sure the quiet kids got picked for teams.",
+   "I want to run the arts and crafts cabin, because I already plan rainy-day projects for my cousins."
+  ],
+  "q-blog-1": [
+   "I unsubscribed from every store email on the second day.",
+   "The one thing I almost bought was a pair of headphones; I waited a week and didn't want them anymore.",
+   "I saved about $150 and put it toward a summer trip."
+  ],
+  "q-blog-2": [
+   "My route goes along the creek path and past the bakery that opens at 6.",
+   "I mostly listen to a history podcast and a comedy one my brother recommended.",
+   "My math teacher noticed I was answering more questions in first period."
+  ],
+  "q-personal-3": [
+   "Her filling was pork, cabbage and ginger, and she folded each dumpling with exactly seven pleats.",
+   "The first three times my dough was too thick and the dumplings split when I boiled them.",
+   "Mom finally said they tasted right at our kitchen table on New Year's Eve, and we called Grandma in the hospital to tell her."
+  ],
+  "q-personal-4": [
+   "I told my parents at dinner after my spring recital, where I'd made mistakes in a Chopin nocturne.",
+   "My mom didn't say much for a few days; my dad said he'd paid for eight years of lessons.",
+   "Two years later I taught myself the piano part of a song from a movie I loved, just by ear."
+  ]
+ }
+}
