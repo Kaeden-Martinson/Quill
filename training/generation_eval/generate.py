@@ -7,8 +7,9 @@
 The request is the app's own (editor.draft_prompt, editor.DRAFT_SYSTEM, editor.DRAFT_SCHEMA, the
 model and DRAFT_OPTIONS from quill.env, num_ctx as editor.chat picks it), plus a recorded per-sample
 seed: production sends none, and a seed fixes the draw without changing the sampling distribution.
-The reply is post-processed exactly as editor.draft_stream does. No retries (the app has none):
-errors and empty drafts are recorded, never regenerated or dropped. The one exception: a request that
+The reply is post-processed exactly as editor.draft_stream does. No retries: errors and empty drafts
+are recorded, never regenerated or dropped, so failure counts here are first-attempt rates. (Since
+2026-10-24, after every run in this experiment, the app retries an empty draft once.) The one exception: a request that
 got no reply because the server was down or the connection was cut is set aside (kept in
 A-infrastructure.jsonl, listed in the manifest) and retried by --resume.
 

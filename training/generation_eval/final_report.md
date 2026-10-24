@@ -17,6 +17,9 @@ has been run (see section 5).
   (E3: drafts got worse on every main measure), allowing scenes in literary analysis (E4: no change).
   The live drafting prompt is unchanged.
 - **One defect fixed:** model debris such as `]}<tool_call|>{` could end a draft; it's now dropped (D1).
+- **Empty drafts now retried:** the model sometimes returns a title with no paragraphs (first-attempt
+  rate 1-4% per run here, mostly personal and application pieces); since 2026-10-24 the app retries
+  once before showing an error. Every run in this report predates that and counts first attempts.
 - **Editor on student writing:** applying every suggestion changes a median 7.7% of a student essay's
   words (12.2% for English learners); whether that shifts detector labels is the detector track's open
   question.

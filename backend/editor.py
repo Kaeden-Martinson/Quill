@@ -367,7 +367,14 @@ async def draft_stream(prompt):
         yield {"type": "start", "total": 1}
         async with httpx.AsyncClient() as client:
             result = await chat(client, DRAFT_SYSTEM, prompt, DRAFT_SCHEMA, model=OVERVIEW_MODEL, options=DRAFT_OPTIONS)
-        title, body = draft_from_reply(result)
+            title, body = draft_from_reply(result)
+            if body is None:
+                # The model sometimes answers with a title and an empty paragraph list (about 1 in 25-35
+                # drafts in training/generation_eval, mostly personal pieces). One more sample usually
+                # works; with a fixed seed the same draw would repeat, so the retry moves it on.
+                options = {**DRAFT_OPTIONS, "seed": DRAFT_OPTIONS["seed"] + 1} if "seed" in DRAFT_OPTIONS else DRAFT_OPTIONS
+                result = await chat(client, DRAFT_SYSTEM, prompt, DRAFT_SCHEMA, model=OVERVIEW_MODEL, options=options)
+                title, body = draft_from_reply(result)
         if body is None:
             yield {"type": "error", "message": "The model didn't return a draft. Try again or reword the prompt."}
             return

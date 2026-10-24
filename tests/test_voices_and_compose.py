@@ -164,3 +164,50 @@ def test_compose_limits_details(client, user):
     _, h = user
     assert client.post("/api/compose", headers=h, json={"instructions": "Why I bike to school", "details": ["a"] * 4}).status_code == 422
     assert client.post("/api/compose", headers=h, json={"instructions": "Why I bike to school", "details": ["x" * 301]}).status_code == 422
+
+
+def fake_drafter_sequence(monkeypatch, replies):
+    """Each call to the model returns the next reply; records the options sent."""
+    calls = []
+
+    async def chat(client, system, prompt, schema, model=None, options=None):
+        calls.append(options)
+        return replies[min(len(calls), len(replies)) - 1]
+
+    monkeypatch.setattr(editor, "chat", chat)
+    return calls
+
+
+def test_an_empty_draft_is_retried_once(client, user, monkeypatch):
+    _, h = user
+    calls = fake_drafter_sequence(monkeypatch, [{"title": "T", "paragraphs": []},
+                                                {"title": "Why I bike", "paragraphs": ["Bikes are fast."]}])
+    events = stream_events(client.post("/api/compose", headers=h, json={"instructions": "Why I bike to school every day"}))
+    assert [e["type"] for e in events] == ["start", "draft", "done"]
+    assert len(calls) == 2
+    draft = client.get(f"/api/drafts/{events[1]['id']}", headers=h).json()
+    assert draft["body"] == "Bikes are fast."
+
+
+def test_two_empty_drafts_give_the_error_without_more_retries(client, user, monkeypatch):
+    _, h = user
+    calls = fake_drafter_sequence(monkeypatch, [{"title": "T", "paragraphs": []}])
+    events = stream_events(client.post("/api/compose", headers=h, json={"instructions": "Why I bike to school every day"}))
+    assert events[-1]["type"] == "error" and len(calls) == 2
+    assert client.get("/api/drafts", headers=h).json() == []
+
+
+def test_a_good_first_draft_is_not_retried(client, user, monkeypatch):
+    _, h = user
+    calls = fake_drafter_sequence(monkeypatch, [{"title": "T", "paragraphs": ["Fine."]}])
+    stream_events(client.post("/api/compose", headers=h, json={"instructions": "Why I bike to school every day"}))
+    assert len(calls) == 1
+
+
+def test_a_retry_with_a_fixed_seed_moves_the_seed(client, user, monkeypatch):
+    _, h = user
+    monkeypatch.setattr(editor, "DRAFT_OPTIONS", {**editor.DRAFT_OPTIONS, "seed": 41})
+    calls = fake_drafter_sequence(monkeypatch, [{"title": "T", "paragraphs": []},
+                                                {"title": "T", "paragraphs": ["Fine."]}])
+    stream_events(client.post("/api/compose", headers=h, json={"instructions": "Why I bike to school every day"}))
+    assert [c["seed"] for c in calls] == [41, 42]
