@@ -1,11 +1,110 @@
 {
  "note": "One entry per detector, filled in before any of its results are ingested (plan.md section 7). Leave a field null if the vendor doesn't document it; never guess. score_meaning is what the documentation says the number means; calibrated is true only if the documentation says scores are calibrated probabilities.",
  "template": {
-  "name": null, "version": null, "access": "local | web | api", "evaluated_on": null,
-  "input_limits": null, "score_meaning": null, "score_range": [0, 1], "higher_means": "ai",
-  "threshold": null, "threshold_source": null, "calibrated": false,
-  "terms_url": null, "terms_checked": null, "data_retention": null,
-  "allowed_groups": ["quill-A", "quill-B"], "notes": null
+  "name": null,
+  "version": null,
+  "access": "local | web | api",
+  "evaluated_on": null,
+  "input_limits": null,
+  "score_meaning": null,
+  "score_range": [
+   0,
+   1
+  ],
+  "higher_means": "ai",
+  "threshold": null,
+  "threshold_source": null,
+  "calibrated": false,
+  "terms_url": null,
+  "terms_checked": null,
+  "data_retention": null,
+  "allowed_groups": [
+   "quill-A",
+   "quill-B"
+  ],
+  "notes": null
  },
- "detectors": {}
+ "detectors": {
+  "desklib": {
+   "name": "Desklib AI Text Detector v1.01 (desklib/ai-text-detector-v1.01)",
+   "version": "desklib/ai-text-detector-v1.01@5fdea974cd4287c61674951ec78803aa274e2fb7",
+   "access": "local",
+   "evaluated_on": "2026-10-24 (local, cuda, torch 2.11.0+cu128)",
+   "input_limits": "first 768 tokens (truncated)",
+   "score_meaning": "sigmoid probability that the text is AI-generated, the model's own output",
+   "score_range": [
+    0,
+    1
+   ],
+   "higher_means": "ai",
+   "threshold": 0.5,
+   "threshold_source": "model card (probability >= 0.5 labelled AI)",
+   "calibrated": false,
+   "terms_url": "https://huggingface.co/desklib/ai-text-detector-v1.01",
+   "terms_checked": "2026-10-24: MIT license",
+   "data_retention": "none (runs locally)",
+   "allowed_groups": [
+    "human",
+    "human-C",
+    "quill-A",
+    "quill-B"
+   ],
+   "notes": "DeBERTa-v3-large fine-tuned on RAID; reported as leading the RAID leaderboard at submission"
+  },
+  "openai-roberta": {
+   "name": "OpenAI GPT-2 output detector (openai-community/roberta-base-openai-detector)",
+   "version": "openai-community/roberta-base-openai-detector@6cba99c003b711c7fe94f8a3aa2be35a792cb6fa",
+   "access": "local",
+   "evaluated_on": "2026-10-24 (local, cuda, torch 2.11.0+cu128)",
+   "input_limits": "first 512 tokens (truncated)",
+   "score_meaning": "softmax probability of the model's 'Fake' (GPT-2-generated) class",
+   "score_range": [
+    0,
+    1
+   ],
+   "higher_means": "ai",
+   "threshold": 0.5,
+   "threshold_source": "argmax of the two classes",
+   "calibrated": false,
+   "terms_url": "https://huggingface.co/openai-community/roberta-base-openai-detector",
+   "terms_checked": "2026-10-24: MIT license",
+   "data_retention": "none (runs locally)",
+   "allowed_groups": [
+    "human",
+    "human-C",
+    "quill-A",
+    "quill-B"
+   ],
+   "notes": "dated baseline trained on GPT-2 output; its card advises against using it on ChatGPT-era text or for misconduct decisions"
+  },
+  "fast-detectgpt": {
+   "name": "Fast-DetectGPT (Bao et al., ICLR 2024), gpt-neo-2.7B sampling and scoring",
+   "version": "EleutherAI/gpt-neo-2.7B@e24fa291132763e59f4a5422741b424fb5d59056",
+   "access": "local",
+   "evaluated_on": "2026-10-24 (local, cuda, torch 2.11.0+cu128)",
+   "input_limits": "first 2,048 tokens (truncated)",
+   "score_meaning": "probability from the authors' published normal fits of the sampling-discrepancy criterion for this model pair (local_infer.py), equal priors",
+   "score_range": [
+    0,
+    1
+   ],
+   "higher_means": "ai",
+   "threshold": 0.5,
+   "threshold_source": "authors' local_infer.py probability, 0.5 cut",
+   "calibrated": false,
+   "terms_url": "https://github.com/baoguangsheng/fast-detect-gpt",
+   "terms_checked": "2026-10-24: MIT license (code); gpt-neo-2.7B MIT",
+   "data_retention": "none (runs locally)",
+   "allowed_groups": [
+    "human",
+    "human-C",
+    "quill-A",
+    "quill-B"
+   ],
+   "notes": "the authors' weakest documented pair, chosen because it fits 8 GB; their falcon-7b and llama3-8b pairs are stronger"
+  }
+ },
+ "requested_but_not_run": {
+  "ZeroGPT, GPTZero, QuillBot": "hosted services with no downloadable model; GPTZero states it keeps a copy of submitted text, and the student corpora may only go to services that neither retain nor reuse submissions (sources.json). Running them needs the user's accounts; not done."
+ }
 }

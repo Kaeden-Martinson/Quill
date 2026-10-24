@@ -80,8 +80,782 @@
    "ellipse (tier A)": 100
   }
  },
- "detectors": {},
- "agreement": {},
+ "detectors": {
+  "desklib": {
+   "detector": "desklib",
+   "version": "desklib/ai-text-detector-v1.01@5fdea974cd4287c61674951ec78803aa274e2fb7",
+   "score_meaning": "sigmoid probability that the text is AI-generated, the model's own output",
+   "threshold": 0.5,
+   "calibrated": false,
+   "missing": {
+    "human tier A": 0,
+    "human tier B": 0,
+    "quill-A": 0,
+    "quill-B": 0
+   },
+   "errors": {
+    "human tier A": 0,
+    "human tier B": 0,
+    "quill-A": 0,
+    "quill-B": 0
+   },
+   "human_tier_A": {
+    "false_positive": {
+     "flagged": 15,
+     "n": 300,
+     "rate": 0.05,
+     "wilson95": [
+      0.0305,
+      0.0808
+     ],
+     "exact95": [
+      0.0283,
+      0.0811
+     ]
+    },
+    "scores": {
+     "n": 300,
+     "min": 0.000338,
+     "p25": 0.00623,
+     "median": 0.015061,
+     "p75": 0.059665,
+     "max": 0.997882
+    },
+    "essays": 300,
+    "exploratory_breakdowns": {
+     "source": {
+      "ellipse": {
+       "flagged": 4,
+       "n": 100,
+       "rate": 0.04,
+       "wilson95": [
+        0.0157,
+        0.0984
+       ],
+       "exact95": [
+        0.011,
+        0.0993
+       ]
+      },
+      "persuade": {
+       "flagged": 11,
+       "n": 200,
+       "rate": 0.055,
+       "wilson95": [
+        0.031,
+        0.0958
+       ],
+       "exact95": [
+        0.0278,
+        0.0963
+       ]
+      }
+     },
+     "genre": {
+      "argumentative (independent)": {
+       "flagged": 3,
+       "n": 75,
+       "rate": 0.04,
+       "wilson95": [
+        0.0137,
+        0.1111
+       ],
+       "exact95": [
+        0.0083,
+        0.1125
+       ]
+      },
+      "argumentative (independent, timed state test)": {
+       "flagged": 4,
+       "n": 100,
+       "rate": 0.04,
+       "wilson95": [
+        0.0157,
+        0.0984
+       ],
+       "exact95": [
+        0.011,
+        0.0993
+       ]
+      },
+      "argumentative (text dependent)": {
+       "flagged": 8,
+       "n": 125,
+       "rate": 0.064,
+       "wilson95": [
+        0.0328,
+        0.1212
+       ],
+       "exact95": [
+        0.028,
+        0.1222
+       ]
+      }
+     },
+     "length": {
+      "300-600": {
+       "flagged": 8,
+       "n": 172,
+       "rate": 0.0465,
+       "wilson95": [
+        0.0238,
+        0.0891
+       ],
+       "exact95": [
+        0.0203,
+        0.0896
+       ]
+      },
+      "over 600": {
+       "flagged": 3,
+       "n": 60,
+       "rate": 0.05,
+       "wilson95": [
+        0.0171,
+        0.137
+       ],
+       "exact95": [
+        0.0104,
+        0.1392
+       ]
+      },
+      "under 300": {
+       "flagged": 4,
+       "n": 68,
+       "rate": 0.0588,
+       "wilson95": [
+        0.0231,
+        0.1417
+       ],
+       "exact95": [
+        0.0163,
+        0.1438
+       ]
+      }
+     },
+     "english_learner": {
+      "No": {
+       "flagged": 9,
+       "n": 183,
+       "rate": 0.0492,
+       "wilson95": [
+        0.0261,
+        0.0908
+       ],
+       "exact95": [
+        0.0227,
+        0.0913
+       ]
+      },
+      "Yes": {
+       "flagged": 2,
+       "n": 17,
+       "rate": 0.1176,
+       "wilson95": [
+        0.0329,
+        0.3434
+       ],
+       "exact95": [
+        0.0146,
+        0.3644
+       ]
+      },
+      "yes": {
+       "flagged": 4,
+       "n": 100,
+       "rate": 0.04,
+       "wilson95": [
+        0.0157,
+        0.0984
+       ],
+       "exact95": [
+        0.011,
+        0.0993
+       ]
+      }
+     }
+    }
+   },
+   "human_tier_B": {
+    "false_positive": null,
+    "scores": null,
+    "essays": 0
+   },
+   "quill-A": {
+    "true_positive_rate": {
+     "rate": 1.0,
+     "cluster_bootstrap95": [
+      1.0,
+      1.0
+     ],
+     "n": 75
+    },
+    "scores": {
+     "n": 75,
+     "min": 0.961427,
+     "p25": 0.999544,
+     "median": 0.999872,
+     "p75": 0.999956,
+     "max": 0.999991
+    },
+    "auroc_vs_tier_A": 0.9996,
+    "note": "aggregate only by design (plan.md section 0)"
+   },
+   "quill-B": {
+    "true_positive_rate": {
+     "rate": 1.0,
+     "cluster_bootstrap95": [
+      1.0,
+      1.0
+     ],
+     "n": 75
+    },
+    "scores": {
+     "n": 75,
+     "min": 0.961427,
+     "p25": 0.999544,
+     "median": 0.999859,
+     "p75": 0.999956,
+     "max": 0.999991
+    },
+    "auroc_vs_tier_A": 0.9996,
+    "note": "aggregate only by design (plan.md section 0)"
+   },
+   "editor_effect_Q3": {
+    "pairs": 300,
+    "became_ai": 38,
+    "became_human": 1,
+    "mcnemar_p": 1.4551915228366852e-10,
+    "mean_score_change": [
+     0.1438,
+     0.1214,
+     0.1676
+    ]
+   }
+  },
+  "fast-detectgpt": {
+   "detector": "fast-detectgpt",
+   "version": "EleutherAI/gpt-neo-2.7B@e24fa291132763e59f4a5422741b424fb5d59056",
+   "score_meaning": "probability from the authors' published normal fits of the sampling-discrepancy criterion for this model pair (local_infer.py), equal priors",
+   "threshold": 0.5,
+   "calibrated": false,
+   "missing": {
+    "human tier A": 0,
+    "human tier B": 0,
+    "quill-A": 0,
+    "quill-B": 0
+   },
+   "errors": {
+    "human tier A": 0,
+    "human tier B": 0,
+    "quill-A": 0,
+    "quill-B": 0
+   },
+   "human_tier_A": {
+    "false_positive": {
+     "flagged": 67,
+     "n": 300,
+     "rate": 0.2233,
+     "wilson95": [
+      0.1799,
+      0.2738
+     ],
+     "exact95": [
+      0.1775,
+      0.2747
+     ]
+    },
+    "scores": {
+     "n": 300,
+     "min": 0.187469,
+     "p25": 0.201262,
+     "median": 0.273773,
+     "p75": 0.455734,
+     "max": 0.984412
+    },
+    "essays": 300,
+    "exploratory_breakdowns": {
+     "source": {
+      "ellipse": {
+       "flagged": 22,
+       "n": 100,
+       "rate": 0.22,
+       "wilson95": [
+        0.15,
+        0.3107
+       ],
+       "exact95": [
+        0.1433,
+        0.3139
+       ]
+      },
+      "persuade": {
+       "flagged": 45,
+       "n": 200,
+       "rate": 0.225,
+       "wilson95": [
+        0.1726,
+        0.2877
+       ],
+       "exact95": [
+        0.1691,
+        0.2892
+       ]
+      }
+     },
+     "genre": {
+      "argumentative (independent)": {
+       "flagged": 21,
+       "n": 75,
+       "rate": 0.28,
+       "wilson95": [
+        0.191,
+        0.3904
+       ],
+       "exact95": [
+        0.1824,
+        0.3956
+       ]
+      },
+      "argumentative (independent, timed state test)": {
+       "flagged": 22,
+       "n": 100,
+       "rate": 0.22,
+       "wilson95": [
+        0.15,
+        0.3107
+       ],
+       "exact95": [
+        0.1433,
+        0.3139
+       ]
+      },
+      "argumentative (text dependent)": {
+       "flagged": 24,
+       "n": 125,
+       "rate": 0.192,
+       "wilson95": [
+        0.1326,
+        0.2698
+       ],
+       "exact95": [
+        0.1271,
+        0.2721
+       ]
+      }
+     },
+     "length": {
+      "300-600": {
+       "flagged": 38,
+       "n": 172,
+       "rate": 0.2209,
+       "wilson95": [
+        0.1654,
+        0.2887
+       ],
+       "exact95": [
+        0.1613,
+        0.2904
+       ]
+      },
+      "over 600": {
+       "flagged": 17,
+       "n": 60,
+       "rate": 0.2833,
+       "wilson95": [
+        0.1851,
+        0.4077
+       ],
+       "exact95": [
+        0.1745,
+        0.4144
+       ]
+      },
+      "under 300": {
+       "flagged": 12,
+       "n": 68,
+       "rate": 0.1765,
+       "wilson95": [
+        0.1039,
+        0.2836
+       ],
+       "exact95": [
+        0.0947,
+        0.288
+       ]
+      }
+     },
+     "english_learner": {
+      "No": {
+       "flagged": 42,
+       "n": 183,
+       "rate": 0.2295,
+       "wilson95": [
+        0.1745,
+        0.2956
+       ],
+       "exact95": [
+        0.1707,
+        0.2973
+       ]
+      },
+      "Yes": {
+       "flagged": 3,
+       "n": 17,
+       "rate": 0.1765,
+       "wilson95": [
+        0.0619,
+        0.4103
+       ],
+       "exact95": [
+        0.038,
+        0.4343
+       ]
+      },
+      "yes": {
+       "flagged": 22,
+       "n": 100,
+       "rate": 0.22,
+       "wilson95": [
+        0.15,
+        0.3107
+       ],
+       "exact95": [
+        0.1433,
+        0.3139
+       ]
+      }
+     }
+    }
+   },
+   "human_tier_B": {
+    "false_positive": null,
+    "scores": null,
+    "essays": 0
+   },
+   "quill-A": {
+    "true_positive_rate": {
+     "rate": 0.8933,
+     "cluster_bootstrap95": [
+      0.7945,
+      0.9659
+     ],
+     "n": 75
+    },
+    "scores": {
+     "n": 75,
+     "min": 0.26906,
+     "p25": 0.724673,
+     "median": 0.958197,
+     "p75": 0.992247,
+     "max": 0.999988
+    },
+    "auroc_vs_tier_A": 0.9336,
+    "note": "aggregate only by design (plan.md section 0)"
+   },
+   "quill-B": {
+    "true_positive_rate": {
+     "rate": 0.8933,
+     "cluster_bootstrap95": [
+      0.7945,
+      0.9659
+     ],
+     "n": 75
+    },
+    "scores": {
+     "n": 75,
+     "min": 0.269355,
+     "p25": 0.768267,
+     "median": 0.958197,
+     "p75": 0.992247,
+     "max": 0.99999
+    },
+    "auroc_vs_tier_A": 0.9342,
+    "note": "aggregate only by design (plan.md section 0)"
+   },
+   "editor_effect_Q3": {
+    "pairs": 300,
+    "became_ai": 51,
+    "became_human": 5,
+    "mcnemar_p": 1.170292474039769e-10,
+    "mean_score_change": [
+     0.1039,
+     0.0881,
+     0.1201
+    ]
+   }
+  },
+  "openai-roberta": {
+   "detector": "openai-roberta",
+   "version": "openai-community/roberta-base-openai-detector@6cba99c003b711c7fe94f8a3aa2be35a792cb6fa",
+   "score_meaning": "softmax probability of the model's 'Fake' (GPT-2-generated) class",
+   "threshold": 0.5,
+   "calibrated": false,
+   "missing": {
+    "human tier A": 0,
+    "human tier B": 0,
+    "quill-A": 0,
+    "quill-B": 0
+   },
+   "errors": {
+    "human tier A": 0,
+    "human tier B": 0,
+    "quill-A": 0,
+    "quill-B": 0
+   },
+   "human_tier_A": {
+    "false_positive": {
+     "flagged": 7,
+     "n": 300,
+     "rate": 0.0233,
+     "wilson95": [
+      0.0113,
+      0.0474
+     ],
+     "exact95": [
+      0.0094,
+      0.0475
+     ]
+    },
+    "scores": {
+     "n": 300,
+     "min": 0.000168,
+     "p25": 0.00018,
+     "median": 0.000211,
+     "p75": 0.000313,
+     "max": 0.999245
+    },
+    "essays": 300,
+    "exploratory_breakdowns": {
+     "source": {
+      "ellipse": {
+       "flagged": 2,
+       "n": 100,
+       "rate": 0.02,
+       "wilson95": [
+        0.0055,
+        0.07
+       ],
+       "exact95": [
+        0.0024,
+        0.0704
+       ]
+      },
+      "persuade": {
+       "flagged": 5,
+       "n": 200,
+       "rate": 0.025,
+       "wilson95": [
+        0.0107,
+        0.0572
+       ],
+       "exact95": [
+        0.0082,
+        0.0574
+       ]
+      }
+     },
+     "genre": {
+      "argumentative (independent)": {
+       "flagged": 4,
+       "n": 75,
+       "rate": 0.0533,
+       "wilson95": [
+        0.0209,
+        0.1293
+       ],
+       "exact95": [
+        0.0147,
+        0.131
+       ]
+      },
+      "argumentative (independent, timed state test)": {
+       "flagged": 2,
+       "n": 100,
+       "rate": 0.02,
+       "wilson95": [
+        0.0055,
+        0.07
+       ],
+       "exact95": [
+        0.0024,
+        0.0704
+       ]
+      },
+      "argumentative (text dependent)": {
+       "flagged": 1,
+       "n": 125,
+       "rate": 0.008,
+       "wilson95": [
+        0.0014,
+        0.0439
+       ],
+       "exact95": [
+        0.0002,
+        0.0438
+       ]
+      }
+     },
+     "length": {
+      "300-600": {
+       "flagged": 5,
+       "n": 172,
+       "rate": 0.0291,
+       "wilson95": [
+        0.0125,
+        0.0662
+       ],
+       "exact95": [
+        0.0095,
+        0.0665
+       ]
+      },
+      "over 600": {
+       "flagged": 0,
+       "n": 60,
+       "rate": 0.0,
+       "wilson95": [
+        0.0,
+        0.0602
+       ],
+       "exact95": [
+        0.0,
+        0.0596
+       ]
+      },
+      "under 300": {
+       "flagged": 2,
+       "n": 68,
+       "rate": 0.0294,
+       "wilson95": [
+        0.0081,
+        0.101
+       ],
+       "exact95": [
+        0.0036,
+        0.1022
+       ]
+      }
+     },
+     "english_learner": {
+      "No": {
+       "flagged": 5,
+       "n": 183,
+       "rate": 0.0273,
+       "wilson95": [
+        0.0117,
+        0.0624
+       ],
+       "exact95": [
+        0.0089,
+        0.0626
+       ]
+      },
+      "Yes": {
+       "flagged": 0,
+       "n": 17,
+       "rate": 0.0,
+       "wilson95": [
+        0.0,
+        0.1843
+       ],
+       "exact95": [
+        0.0,
+        0.1951
+       ]
+      },
+      "yes": {
+       "flagged": 2,
+       "n": 100,
+       "rate": 0.02,
+       "wilson95": [
+        0.0055,
+        0.07
+       ],
+       "exact95": [
+        0.0024,
+        0.0704
+       ]
+      }
+     }
+    }
+   },
+   "human_tier_B": {
+    "false_positive": null,
+    "scores": null,
+    "essays": 0
+   },
+   "quill-A": {
+    "true_positive_rate": {
+     "rate": 0.0133,
+     "cluster_bootstrap95": [
+      0.0,
+      0.0492
+     ],
+     "n": 75
+    },
+    "scores": {
+     "n": 75,
+     "min": 0.00017,
+     "p25": 0.000192,
+     "median": 0.000216,
+     "p75": 0.00031,
+     "max": 0.971946
+    },
+    "auroc_vs_tier_A": 0.5456,
+    "note": "aggregate only by design (plan.md section 0)"
+   },
+   "quill-B": {
+    "true_positive_rate": {
+     "rate": 0.0133,
+     "cluster_bootstrap95": [
+      0.0,
+      0.0492
+     ],
+     "n": 75
+    },
+    "scores": {
+     "n": 75,
+     "min": 0.00017,
+     "p25": 0.000193,
+     "median": 0.000222,
+     "p75": 0.000311,
+     "max": 0.971946
+    },
+    "auroc_vs_tier_A": 0.5461,
+    "note": "aggregate only by design (plan.md section 0)"
+   },
+   "editor_effect_Q3": {
+    "pairs": 300,
+    "became_ai": 63,
+    "became_human": 1,
+    "mcnemar_p": 7.047314121155779e-18,
+    "mean_score_change": [
+     0.2093,
+     0.1674,
+     0.2515
+    ]
+   }
+  }
+ },
+ "agreement": {
+  "human_labels_fleiss_kappa": {
+   "kappa": -0.013,
+   "essays": 410
+  },
+  "spearman desklib vs fast-detectgpt": {
+   "rho": 0.1,
+   "essays": 410
+  },
+  "spearman desklib vs openai-roberta": {
+   "rho": 0.09,
+   "essays": 410
+  },
+  "spearman fast-detectgpt vs openai-roberta": {
+   "rho": 0.038,
+   "essays": 410
+  }
+ },
  "ratings": {
   "excluded": {
    "essays": 0,
@@ -364,5 +1138,20 @@
    }
   }
  },
- "flags": {}
+ "flags": {
+  "desklib": [
+   "worth investigating: Tier A false-positive interval lies wholly above 1%",
+   "worth investigating (exploratory): english_learner=Yes rate 0.1176 is at least double the overall",
+   "worth investigating: the editor changes labels on human essays (McNemar p < 0.05)"
+  ],
+  "fast-detectgpt": [
+   "worth investigating: Tier A false-positive interval lies wholly above 1%",
+   "worth investigating: the editor changes labels on human essays (McNemar p < 0.05)"
+  ],
+  "openai-roberta": [
+   "worth investigating: Tier A false-positive interval lies wholly above 1%",
+   "worth investigating (exploratory): genre=argumentative (independent) rate 0.0533 is at least double the overall",
+   "worth investigating: the editor changes labels on human essays (McNemar p < 0.05)"
+  ]
+ }
 }

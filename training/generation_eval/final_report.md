@@ -2,8 +2,8 @@
 
 2026-10-24. Plan: `plan.md` (approved 2026-10-23; Amendment 1, 2026-10-24). Follow-ups:
 `followup_plans.md`. Dev findings: `dev_findings.md`. Unless stated, quality ratings are from two
-blind **model judges** (automated, not people); no human ratings have been collected. No AI detector
-has been run (see section 5).
+blind **model judges** (automated, not people); no human ratings have been collected. Detectors:
+three local open-weight detectors (section 5); the requested hosted ones couldn't be run.
 
 ## Summary
 - **The generator** is stock `gemma4:e4b` (Ollama 0.40.4) with Quill's drafting prompt; nothing is
@@ -20,9 +20,14 @@ has been run (see section 5).
 - **Empty drafts now retried:** the model sometimes returns a title with no paragraphs (first-attempt
   rate 1-4% per run here, mostly personal and application pieces); since 2026-10-24 the app retries
   once before showing an error. Every run in this report predates that and counts first attempts.
-- **Editor on student writing:** applying every suggestion changes a median 7.7% of a student essay's
-  words (12.2% for English learners); whether that shifts detector labels is the detector track's open
-  question.
+- **Detectors (local, open-weight; the requested ZeroGPT, GPTZero and QuillBot are hosted services and
+  weren't run):** on 300 verified pre-2022 student essays, the strongest detector here (Desklib)
+  wrongly flags 5.0% as AI; Fast-DetectGPT flags 22.3%. They don't agree on which students (kappa
+  -0.01). Quill's drafts are flagged 100% / 89%, a correct result.
+- **The editor raises false positives on students' own essays:** with every suggestion applied
+  (mostly grammar fixes, a median 7% of words), Desklib's false-positive rate goes from 5.0% to 17.3%,
+  Fast-DetectGPT's from 22% to 38%; replicated on dev, not a formatting artifact. This is the most
+  important risk this evaluation found for Quill's users.
 - **Locked evaluation** (78 drafts, opened once after every dev decision): the same picture on new
   prompts: adherence 4.51, factual reliability 4.76, specificity 3.15, evidence 3.25, usefulness 3.70.
   The two genres held out of dev (compare, review) are weakest (usefulness 3.40), a sign the prompt
@@ -69,10 +74,53 @@ recorded per essay. Detector use of these essays: only services whose terms say 
 retained or reused, otherwise local detectors only.
 
 ## 5. Detectors
-Not run. Waiting on (a) which detectors produced the original 98-100%, on which essays, when; (b) a
-choice of detectors: local open-weight ones (install needs approval) or commercial ones run by you
-under their terms. Ingestion, validation and analysis are built (`detectors.py`, `report.py`), with
-the aggregate-only rule for Quill drafts enforced in code.
+**Requested:** ZeroGPT, GPTZero, QuillBot. All three are hosted services with no downloadable model;
+GPTZero states it keeps a copy of submitted text, and the student corpora may only go to services that
+neither retain nor reuse submissions (`sources.json`). They weren't run. As instructed, local
+open-weight detectors stand in (`run_local_detectors.py`, run in the training environment, nothing
+installed, nothing sent anywhere; registry with licenses and revisions in `detectors.json`):
+
+| Detector | Kind | Decision rule (documented) |
+|---|---|---|
+| Desklib v1.01 (DeBERTa-v3-large) | classifier trained on RAID; reported top of the RAID leaderboard | probability >= 0.5 |
+| Fast-DetectGPT, gpt-neo-2.7B pair | zero-shot (Bao et al., ICLR 2024); the authors' weakest documented pair, the one that fits 8 GB | authors' fitted probability >= 0.5 |
+| OpenAI RoBERTa GPT-2 detector | dated classifier; its card warns it isn't reliable on ChatGPT-era text | "Fake" class >= 0.5 |
+
+Scores are not calibrated probabilities of authorship (none of the three documents calibration).
+
+**Q2. False positives on verified student essays (eval, 300 Tier A essays written before 2022):**
+
+| Detector | Flagged as AI | 95% Wilson CI | ELLIPSE (learners) | PERSUADE |
+|---|---|---|---|---|
+| Desklib | 15/300 = **5.0%** | 3.1-8.1% | 4/100 | 11/200 |
+| Fast-DetectGPT | 67/300 = **22.3%** | 18.0-27.4% | 22/100 | 45/200 |
+| OpenAI RoBERTa | 7/300 = 2.3% | 1.1-4.7% | 2/100 | 5/200 |
+
+Every interval lies wholly above 1%, which the plan marks "worth investigating". Dev agrees (Desklib
+5.5%, Fast-DetectGPT 20.0%, OpenAI 6.4% of 110). The detectors don't agree on which essays they flag
+(Fleiss' kappa -0.01; score correlations 0.04-0.10), so one detector's flag says little on its own.
+
+**Q3. Quill's editor on the same essays (every suggestion applied, an upper bound):**
+
+| Detector | Before editing | After editing | Flipped to AI / to human | McNemar p |
+|---|---|---|---|---|
+| Desklib | 5.0% | **17.3%** (13.5-22.0%) | 38 / 1 | < 1e-9 |
+| Fast-DetectGPT | 22.3% | **37.7%** (32.4-43.3%) | 51 / 5 | < 1e-9 |
+| OpenAI RoBERTa | 2.3% | **23.0%** (18.6-28.1%); learners 34.2% | 63 / 1 | < 1e-17 |
+
+- Replicated on dev (Desklib 5.5% -> 21.8%).
+- Not a formatting artifact: re-joining paragraphs alone leaves all 410 essays byte-identical, and
+  the 7 essays the editor didn't change are identical to their originals. The edits are 93-94% grammar
+  corrections.
+- Even light editing flips labels: essays with under 5% of words changed were newly flagged 10-17% of
+  the time; more editing goes with somewhat more flips (AUROC 0.58-0.66 for share changed).
+- Per the plan this is investigated by looking at the editor's changes, never by tuning the editor
+  against detectors. The finding is about risk to writers: correcting a student's grammar can make
+  their own essay look machine-written to these detectors.
+
+**Quill's drafts (aggregate only, by design):** flagged 100% (Desklib), 89% (Fast-DetectGPT), 1%
+(OpenAI RoBERTa). AUROC against the student essays 0.9996, 0.93 and 0.55. AI-written drafts being
+identified as AI is a correct result, consistent with the 98-100% you saw.
 
 ## 6. Quality rubric and review
 12 criteria scored 1-5 with written anchors plus three counts (`rubric.md`). Two model judges per
@@ -174,11 +222,18 @@ All of plan.md section 10 is built and tested (backend 135, frontend 23 tests). 
 - One seed per variant sample; small prompt counts for E4 (3 prompts) and personal genres (8).
 - E1 tested writer details written for the experiment, a best case; real writers may give fewer.
 - PERSUADE provenance conditions undocumented; Tier B controls not ingested.
-- No detector results yet; the original 98-100% results unavailable.
+- Detectors are local open-weight stand-ins, not the hosted ZeroGPT, GPTZero or QuillBot; commercial
+  detectors may behave differently. Fast-DetectGPT ran with its weakest documented model pair. The
+  original 98-100% results weren't available to compare.
+- The editor effect applies every suggestion (an upper bound); writers accept suggestions one at a time.
 
 ## 12. What needs you
-1. The original detector details, and which detectors to run (or approval to install local ones).
-2. Human raters for the quality sheets (and the editor's `r8h` sheets).
-3. Whether to build the research-essay family (choosing openly licensed sources) and Tier B controls.
-4. Pushing the commits to GitHub (all committed locally; nothing pushed).
+1. **The editor finding.** Decide how Quill should respond to its editor raising detector false
+   positives on students' own essays. Options that don't involve tuning against detectors: tell writers
+   (a note where they accept suggestions), point them to the writing history Quill already keeps as
+   evidence of authorship, and keep the writer's original version easy to export.
+2. Whether to run the hosted detectors yourself on text you're free to submit (for example your own
+   essays and Quill's drafts), under their terms; their results can be ingested with `detectors.py`.
+3. Human raters for the quality sheets (and the editor's `r8h` sheets).
+4. Whether to build the research-essay family (openly licensed sources) and Tier B controls.
 5. Turning Ollama's auto-update back on once experiments are finished.
