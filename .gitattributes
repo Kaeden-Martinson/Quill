@@ -1,3 +1,5 @@
 * text=auto
 *.ps1 text eol=crlf
 *.woff2 binary
+# locked by sha256 (prompts/lock.json): stored byte for byte
+training/generation_eval/prompts/*.jsonl -text
