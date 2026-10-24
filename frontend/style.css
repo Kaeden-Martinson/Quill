@@ -666,6 +666,11 @@ kbd { font: 500 11px var(--sans); border: 1px solid var(--rule-strong); border-b
 .dialog-body textarea { border: 1px solid var(--rule); background: var(--paper-2); padding: 12px 14px; font: var(--t-md)/1.6 var(--serif); color: var(--ink); resize: vertical; letter-spacing: 0; }
 .dialog-body textarea:focus { outline: none; border-color: var(--rule-strong); }
 .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+.compose-details { border-top: 1px solid var(--rule); padding-top: 12px; }
+.compose-details summary { cursor: pointer; font: 500 var(--t-sm) var(--sans); color: var(--ink); }
+.compose-details[open] { display: grid; gap: 12px; }
+.compose-details .aside { margin-top: 8px; font-size: var(--t-sm); }
+.compose-details .aside.asking { color: var(--pen); font-style: normal; }
 select { width: 100%; border: 0; border-bottom: 1px solid var(--rule-strong); background: transparent; padding: 6px 0; font: var(--t-md) var(--serif); color: var(--ink); border-radius: 0; }
 select option { background: var(--paper); color: var(--ink); }
 .paper-dialog.wide { width: min(860px, calc(100vw - 32px)); }

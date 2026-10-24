@@ -141,3 +141,26 @@ def test_paragraph_breaks_inside_one_item_are_kept(client, user, monkeypatch):
     fake_drafter(monkeypatch, [two, "Third."])
     events = stream_events(client.post("/api/compose", headers=h, json={"instructions": "Why I bike to school"}))
     assert events[1]["body"].split(chr(10) * 2) == ["Bikes are fast.", "They're cheap too.", "Third."]
+
+
+def test_compose_adds_the_writers_details_to_the_instructions(client, user, monkeypatch):
+    _, h = user
+    prompts = fake_drafter(monkeypatch, ["A draft."])
+    stream_events(client.post("/api/compose", headers=h, json={
+        "instructions": "Write about failing my driving test twice.", "goal": "personal essay",
+        "details": ["I rolled through a stop sign.", "  ", "Grandpa said the road would wait."]}))
+    assert ("Write about failing my driving test twice.\n\nDetails I can add:\n- I rolled through a stop sign.\n"
+            "- Grandpa said the road would wait.") in prompts[0][1]
+
+
+def test_compose_without_details_sends_the_instructions_unchanged(client, user, monkeypatch):
+    _, h = user
+    prompts = fake_drafter(monkeypatch, ["A draft."])
+    stream_events(client.post("/api/compose", headers=h, json={"instructions": "Why I bike to school every day"}))
+    assert "Details I can add" not in prompts[0][1]
+
+
+def test_compose_limits_details(client, user):
+    _, h = user
+    assert client.post("/api/compose", headers=h, json={"instructions": "Why I bike to school", "details": ["a"] * 4}).status_code == 422
+    assert client.post("/api/compose", headers=h, json={"instructions": "Why I bike to school", "details": ["x" * 301]}).status_code == 422

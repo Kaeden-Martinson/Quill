@@ -380,6 +380,13 @@
             <select name="length"><option value="short">Short, about 250 words</option><option value="medium" selected>Medium, about 500 words</option><option value="long">Long, about 900 words</option></select>
           </label>
         </div>
+        <details id="compose-details" class="compose-details">
+          <summary>Details only you know <span class="aside">(optional)</span></summary>
+          <p class="aside" id="compose-details-why">For a piece about your own life, give Quill the real moments, people and outcomes. Without them it tends to make some up, and you'd have to find and replace them.</p>
+          <label>A moment that stands out <input name="detail1" maxlength="300" placeholder="The second time, I rolled through a stop sign two blocks from the test center"></label>
+          <label>Someone in it, and what they said or did <input name="detail2" maxlength="300" placeholder="My grandpa, waiting in his truck: “The road will still be there next month.”"></label>
+          <label>How it turned out <input name="detail3" maxlength="300" placeholder="I passed on the third try and drove him home"></label>
+        </details>
         <p class="aside">Writes in <span id="compose-voice">your voice</span>. <button type="button" class="link" id="compose-change-voice">Change the voice</button></p>
         <p class="ai-note">This draft is marked as written by Quill's AI. Its paragraphs stay tinted on the page, and your writing history says how much is still AI text, until you rewrite them in your own words.</p>
         <div id="compose-progress" class="progress" role="status" aria-live="polite" hidden></div>

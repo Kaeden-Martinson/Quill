@@ -136,3 +136,10 @@ def test_variants_change_only_their_one_line():
 def test_unknown_variant_is_refused():
     with pytest.raises(SystemExit):
         generate.X.parse("e9")
+
+
+def test_app_details_format_matches_experiment_e1():
+    import app as quill
+    pid = next(iter(generate.X.E1_DETAILS))
+    entry = {"id": pid, "instructions": "Base."}
+    assert quill.with_details("Base.", generate.X.E1_DETAILS[pid]) == generate.X.adjust_prompt_entry(entry, ("e1",))["instructions"]

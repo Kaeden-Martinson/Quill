@@ -1492,6 +1492,10 @@ function openCompose() {
   closeSide();
   $("#compose-voice").textContent = voiceName();
   if (!composeRun) composeProgress.hide();
+  const form = $("#compose-form");
+  delete form.dataset.askedDetails;
+  $("#compose-details-why").classList.remove("asking");
+  if (!["detail1", "detail2", "detail3"].some((k) => form[k].value.trim())) $("#compose-details").open = false;
   $("#compose-dialog").showModal();
   $("#compose-form").instructions.focus();
 }
@@ -1509,6 +1513,16 @@ $("#compose-form").addEventListener("submit", async (e) => {
   if (composeRun) { composeRun.abort(); return; } // second click = Stop
   const form = e.target;
   const body = Object.fromEntries(["instructions", "goal", "audience", "tone", "length"].map((k) => [k, form[k].value]));
+  body.details = ["detail1", "detail2", "detail3"].map((k) => form[k].value.trim()).filter(Boolean);
+  // Ask first: for a piece about the writer's own life, offer the details fields once before drafting.
+  // A second click drafts anyway; nothing here is required.
+  if (looksPersonal(body.goal, body.instructions) && !body.details.length && !form.dataset.askedDetails) {
+    form.dataset.askedDetails = "1";
+    $("#compose-details").open = true;
+    $("#compose-details-why").classList.add("asking");
+    form.detail1.focus();
+    return;
+  }
   const go = $("#compose-go span");
   const run = (composeRun = new AbortController());
   go.textContent = "Stop";
@@ -1535,6 +1549,7 @@ $("#compose-form").addEventListener("submit", async (e) => {
     await new Promise((r) => setTimeout(r, 500)); // let the full bar show for a moment
     $("#compose-dialog").close();
     form.reset();
+    $("#compose-details").open = false;
     await openDraft(draftId);
   }
 });

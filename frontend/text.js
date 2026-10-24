@@ -244,6 +244,15 @@
     return rows;
   }
 
+  // Pieces built on the writer's own life, where a drafter left to fill gaps invents experiences:
+  // personal and application essays, narratives, reflections, blog posts. Quill asks for real details
+  // before drafting these (training/generation_eval experiment E1).
+  const PERSONAL = /\b(personal|narrative|memoir|reflect\w*|application|admissions?|college essay|scholarship|cover letter|job|blog|about (myself|me|my)|my (life|story|experience))\b/i;
+  function looksPersonal(goal, instructions) {
+    return PERSONAL.test(`${goal || ""} ${instructions || ""}`);
+  }
+
+  exports.looksPersonal = looksPersonal;
   exports.applyCutoffs = applyCutoffs;
   exports.paragraphSpans = paragraphSpans;
   exports.occurrences = occurrences;

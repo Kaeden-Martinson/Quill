@@ -6,6 +6,7 @@ import json
 import os
 import secrets
 from datetime import datetime
+from typing import Annotated
 
 import httpx
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
@@ -409,6 +410,19 @@ class DraftRequest(BaseModel):
     audience: str = Field(default="", max_length=100)
     tone: str = Field(default="", max_length=100)
     length: str = "medium"
+    # Answers to "details only you know" (a moment, a person, how it turned out), asked before drafting
+    # personal pieces.
+    details: list[Annotated[str, Field(max_length=300)]] = Field(default_factory=list, max_length=3)
+
+
+def with_details(instructions, details):
+    """The writer's own details, added to their instructions in the format tested in
+    training/generation_eval (experiment E1: with them, drafts invented personal details far less often,
+    12 of 21 -> 2 of 21, and were rated more useful and specific)."""
+    kept = [" ".join(d.split()) for d in details if d.strip()]
+    if not kept:
+        return instructions
+    return instructions + "\n\nDetails I can add:\n" + "\n".join(f"- {d}" for d in kept)
 
 
 @app.post("/api/compose")
@@ -419,7 +433,7 @@ async def compose(body: DraftRequest, user=Depends(current_user)):
     profile = load_profile(user["id"])
     # Without a chosen voice there's no draft to measure, so the writer's samples (if any) stand in.
     voice = voices.describe(profile, "\n\n".join(profile["samples"]))
-    prompt = editor.draft_prompt(body.instructions, voice, voices.sample_for(profile),
+    prompt = editor.draft_prompt(with_details(body.instructions, body.details), voice, voices.sample_for(profile),
                                  body.goal, body.audience, body.tone, body.length)
 
     async def save(events):
