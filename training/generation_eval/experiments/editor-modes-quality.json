@@ -1,0 +1,54 @@
+{
+ "data-heldout": {
+  "everything": {
+   "fixed": 0.9608,
+   "perfect": 0.94,
+   "untouched": 0.9841,
+   "extra": 0.033,
+   "planted": 102,
+   "paragraphs": 150
+  },
+  "accept-all fixes": {
+   "fixed": 0.9608,
+   "perfect": 0.9467,
+   "untouched": 1.0,
+   "extra": 0.027,
+   "planted": 102,
+   "paragraphs": 150
+  },
+  "typos mode": {
+   "fixed": 0.9216,
+   "perfect": 0.94,
+   "untouched": 1.0,
+   "extra": 0.007,
+   "planted": 102,
+   "paragraphs": 150
+  }
+ },
+ "data-confirm": {
+  "everything": {
+   "fixed": 0.9307,
+   "perfect": 0.9467,
+   "untouched": 0.9836,
+   "extra": 0.02,
+   "planted": 101,
+   "paragraphs": 150
+  },
+  "accept-all fixes": {
+   "fixed": 0.9307,
+   "perfect": 0.9467,
+   "untouched": 0.9836,
+   "extra": 0.02,
+   "planted": 101,
+   "paragraphs": 150
+  },
+  "typos mode": {
+   "fixed": 0.8416,
+   "perfect": 0.9133,
+   "untouched": 1.0,
+   "extra": 0.0,
+   "planted": 101,
+   "paragraphs": 150
+  }
+ }
+}

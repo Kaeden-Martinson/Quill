@@ -122,3 +122,30 @@ def test_typo_fixes_always_say_exactly_what_changed():
     s = grammar("My freind left.", "My friend left.", reason="“friend” is about 17 letters long")
     [p] = L.localize("My freind left. Then", s)
     assert p["reason"] == "Fixes a typo or punctuation: “freind” → “friend”."
+
+
+def apply_pieces_in_order(paragraph, pieces):
+    for p in pieces:
+        assert p["original"] in paragraph, p["original"]
+        paragraph = paragraph.replace(p["original"], p["revised"], 1)
+    return paragraph
+
+
+def test_traps_found_replaying_real_student_essays():
+    cases = [
+        # a moved comma: a bare "," would match the comma the other change inserts
+        ("In the Pacific and atlantic ocean he took care of animals, while going to Europe. Fun.",
+         [grammar("In the Pacific and atlantic ocean he took care of animals, while going to Europe.",
+                  "In the Pacific and Atlantic Ocean, he took care of animals while going to Europe.")]),
+        # two suggestions: the first creates a "their" the second's piece must not match
+        ("He was helping with there community and when I went their I learned a lot.",
+         [grammar("helping with there community", "helping with their community"),
+          grammar("when I went their I learned", "when I went there, I learned")]),
+        # whitespace changes at a quote's edge
+        ("They will develop self- discipline and their brain  is not going to sleep.",
+         [grammar("They will develop self- discipline and their brain  is not going to sleep.",
+                  "They will develop self-discipline and their brain is not going to sleep.")]),
+    ]
+    for paragraph, suggestions in cases:
+        expected = L.apply_all(paragraph, suggestions)
+        assert apply_pieces_in_order(paragraph, L.localize_all(paragraph, suggestions)) == expected

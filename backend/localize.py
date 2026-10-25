@@ -60,9 +60,11 @@ def _rewrite_reason(reason):
     return reason
 
 
-def localize(paragraph, suggestion):
+def localize(paragraph, suggestion, final=None):
     """Splits one suggestion into localized ones. Returns a list (possibly just [suggestion]) of
-    suggestions with a "kind". Notes without a revision ("revised" is None) pass through as rewrites."""
+    suggestions with a "kind". Notes without a revision ("revised" is None) pass through as rewrites.
+    `final` is the paragraph with every suggestion for it applied: piece quotes must not occur there,
+    so another suggestion's change can't create a second match."""
     original, revised = suggestion.get("original", ""), suggestion.get("revised")
     if revised is None:
         return [{**suggestion, "kind": "rewrite"}]
@@ -94,20 +96,27 @@ def localize(paragraph, suggestion):
 
     # Context window for each hunk: grow outward a word at a time until the quoted text is unique in
     # the paragraph; windows that would overlap or touch are merged into one piece.
-    def window(i1, i2):
-        """Smallest token range around [i1, i2) whose text is unique in the paragraph, growing by
-        one word on each side at a time (the whole quote, which is unique, if nothing smaller is)."""
+    revised_paragraph = paragraph.replace(original, revised, 1)
+    final = final or ""
+
+    def window(h):
+        """Smallest token range around a change whose text is unique in the paragraph and can't be
+        matched anywhere else once every other change is made: in the fully corrected paragraph it may
+        occur only as often as in its own corrected text ("distraction" inside its own "distractions"
+        is fine; a bare "," once matched a comma another change had just inserted). Grows by one word
+        on each side at a time; the whole quote if nothing smaller works."""
+        i1, i2, j1, j2 = h
         lo, hi = i1, i2
         while True:
             span = "".join(a[lo:hi]).strip()
-            if span and paragraph.count(span) == 1:
+            own = "".join(a[lo:i1] + b[j1:j2] + a[i2:hi])
+            if (span and paragraph.count(span) == 1 and revised_paragraph.count(span) <= own.count(span)
+                    and final.count(span) <= own.count(span)):
                 return lo, hi
             if lo == 0 and hi == len(a):
                 return lo, hi
             if lo > 0:                                  # take the previous word (and its spacing)
                 lo -= 1
-                while lo > 0 and (a[lo].isspace() or a[lo - 1].isspace() is False and a[lo].isspace()):
-                    lo -= 1
                 while lo > 0 and a[lo].isspace():
                     lo -= 1
             if hi < len(a):                             # take the next word (and its spacing)
@@ -115,9 +124,29 @@ def localize(paragraph, suggestion):
                 while hi < len(a) and a[hi - 1].isspace():
                     hi += 1
 
+    def padded(lo, hi, h):
+        """Quotes start and end on unchanged words: surrounding spaces are dropped from the quote, and a
+        change that involves whitespace ("self- discipline" -> "self-discipline", "brain  is" ->
+        "brain is") gets an unchanged word on each side, so trimming the quote can't trim the change."""
+        i1, i2, j1, j2 = h
+        while lo < i1 and a[lo].isspace():
+            lo += 1
+        while hi > i2 and a[hi - 1].isspace():
+            hi -= 1
+        if any(x.isspace() for x in a[i1:i2] + b[j1:j2]):
+            if lo >= i1:
+                lo = i1
+                while lo > 0 and (lo == i1 or a[lo].isspace()):
+                    lo -= 1
+            if hi <= i2:
+                hi = i2
+                while hi < len(a) and (hi == i2 or a[hi - 1].isspace()):
+                    hi += 1
+        return lo, hi
+
     groups = []
     for h, kind in zip(hunks, kinds):
-        lo, hi = window(h[0], h[1])
+        lo, hi = padded(*window(h), h)
         if groups and lo <= groups[-1]["hi"]:
             g = groups[-1]
             g["hi"] = max(g["hi"], hi)
@@ -157,7 +186,16 @@ def localize(paragraph, suggestion):
     return pieces
 
 
+def apply_all(paragraph, suggestions):
+    """The paragraph with every suggestion applied in order, first occurrence each (as the app does)."""
+    for s in suggestions:
+        if isinstance(s.get("revised"), str) and s.get("original") and s["original"] in paragraph:
+            paragraph = paragraph.replace(s["original"], s["revised"], 1)
+    return paragraph
+
+
 def localize_all(paragraph, suggestions, mode="all"):
     """Every suggestion for a paragraph, localized, keeping only the kinds the mode shows."""
     keep = MODES.get(mode, MODES["all"])
-    return [p for s in suggestions for p in localize(paragraph, s) if p["kind"] in keep]
+    final = apply_all(paragraph, suggestions)
+    return [p for s in suggestions for p in localize(paragraph, s, final) if p["kind"] in keep]
