@@ -723,3 +723,13 @@ select option { background: var(--paper); color: var(--ink); }
 .edit-mode { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font: var(--t-sm) var(--sans); color: var(--ink-2); }
 .edit-mode select { width: auto; flex: 1; font: var(--t-sm) var(--sans); }
 .note .kind { display: inline-block; margin-right: 6px; padding: 0 6px; border: 1px solid var(--rule-strong); border-radius: 999px; font: 500 var(--t-xs) var(--sans); color: var(--ink-2); font-style: normal; }
+/* Polish: each rewritten paragraph beside what changed, for the writer to take or not. */
+.polish-list { display: grid; gap: 14px; max-height: 60vh; overflow-y: auto; }
+.polish-card { border: 1px solid var(--rule); border-radius: var(--r-ctl); padding: 12px 14px; background: var(--paper-2); }
+.polish-card h4 { font: 500 var(--t-sm) var(--sans); color: var(--ink-2); margin-bottom: 6px; }
+.polish-diff { font: var(--t-md)/1.7 var(--serif); color: var(--ink); }
+.polish-diff del { color: var(--soft); text-decoration-color: var(--pen); }
+.polish-diff ins { text-decoration: none; background: color-mix(in srgb, var(--pen) 14%, transparent); border-radius: 3px; }
+.polish-warn { margin: 8px 0 0 18px; font: var(--t-sm)/1.5 var(--sans); color: var(--pen); }
+.polish-card .acts { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+.polish-card.taken, .polish-card.kept { opacity: .7; }

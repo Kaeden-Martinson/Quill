@@ -11,9 +11,10 @@ from collections import deque
 
 import httpx
 
+import polish
 import rules
 from config import (DRAFT_OPTIONS, EDIT_OPTIONS, LETTER_OPTIONS, MAX_CONCURRENT_REVIEWS, MODEL, OLLAMA_URL,
-                    OVERVIEW_MODEL)
+                    OVERVIEW_MODEL, POLISH_OPTIONS)
 
 CATEGORIES = ["clarity", "flow", "argument", "evidence", "concision", "grammar", "word choice"]
 
@@ -231,6 +232,59 @@ async def review_stream(text, voice, goal=""):
             for i, paragraph in enumerate(paragraphs):
                 suggestions = await review_paragraph(client, paragraph, voice, goal)
                 yield {"type": "paragraph", "index": i, "total": len(paragraphs), "suggestions": suggestions}
+        yield {"type": "done"}
+    finally:
+        await queue.leave(ticket, started)
+
+
+POLISH_SCHEMA = {"type": "object", "properties": {"revised": {"type": "string"}}, "required": ["revised"]}
+
+POLISH_SYSTEM = """You polish one paragraph of a writer's own essay: fix grammar, spelling and punctuation and
+make the sentences flow, so that it is still clearly their paragraph.
+
+Keep:
+- every claim, reason, example, number, name, quotation and source, in the same order;
+- the writer's position and how strongly they state it: don't soften or strengthen it;
+- the writer's vocabulary and tone: change a word only if it is wrong or unclear; keep their
+  contractions, first person and informality if they use them;
+- about the same length.
+
+Don't:
+- add ideas, facts, examples, or transitions the paragraph doesn't need;
+- make casual writing formal, or swap plain words for fancier ones;
+- use stock phrases like "delve", "crucial", "in today's world", "it is important to note".
+
+If the paragraph is already correct and clear, return it unchanged. Return the paragraph as "revised"."""
+
+
+async def polish_stream(text, voice, goal="", only=None):
+    """Yields events: queue, start, paragraph (original, revised, checks), done. Uses the general model,
+    one paragraph at a time; `only` limits it to one paragraph index. A paragraph the model returns
+    empty comes back unchanged with a warning, never dropped."""
+    paragraphs = split_paragraphs(text)
+    indexes = [only] if only is not None and 0 <= only < len(paragraphs) else list(range(len(paragraphs)))
+    ticket, started = queue.join(), False
+    try:
+        async for position in take_turn(ticket):
+            yield {"type": "queue", "position": position}
+        started = True
+        yield {"type": "start", "total": len(indexes)}
+        async with httpx.AsyncClient() as client:
+            for n, i in enumerate(indexes):
+                # A very long paragraph goes in sentence-aligned pieces: whole, the model drops its ending.
+                done = []
+                for piece in polish.pieces(paragraphs[i]):
+                    prompt = (f"Writer's voice:\n{voice}\n\nEssay goal: {goal or 'not specified'}\n\n"
+                              f'Paragraph:\n"""\n{piece}\n"""')
+                    result = await chat(client, POLISH_SYSTEM, prompt, POLISH_SCHEMA, model=OVERVIEW_MODEL, options=POLISH_OPTIONS)
+                    done.append((piece, " ".join(((result or {}).get("revised") or "").split())))
+                revised = " ".join(r or piece for piece, r in done) if any(r for _, r in done) else ""
+                checks = polish.check(paragraphs[i], revised) if revised else {
+                    "warnings": ["Quill couldn't polish this paragraph; it's unchanged"], "kept_words": 1.0, "length_change": 0.0}
+                if revised and not all(r for _, r in done):
+                    checks["warnings"].insert(0, "Quill couldn't polish part of this paragraph; that part is unchanged")
+                yield {"type": "paragraph", "index": i, "step": n, "total": len(indexes),
+                       "original": paragraphs[i], "revised": revised or paragraphs[i], "checks": checks}
         yield {"type": "done"}
     finally:
         await queue.leave(ticket, started)

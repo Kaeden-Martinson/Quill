@@ -84,6 +84,13 @@ CREATE TABLE IF NOT EXISTS ignored (
     created REAL NOT NULL,
     PRIMARY KEY (user_id, phrase)
 );
+-- AI paragraphs added to an essay after it was started (an accepted polish), with when, so the
+-- writing history doesn't mark versions saved before them as AI-written.
+CREATE TABLE IF NOT EXISTS ai_additions (
+    draft_id INTEGER NOT NULL REFERENCES drafts(id),
+    text TEXT NOT NULL,
+    created REAL NOT NULL
+);
 """
 
 

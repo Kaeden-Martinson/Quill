@@ -138,6 +138,7 @@
           <span class="mode-thumb" aria-hidden="true"></span>
         </div>
         <button id="review" class="btn pen hide-phone" disabled><svg class="icon"><use href="#i-pen"/></svg><span>Mark it up</span></button>
+        <button id="polish" class="btn quiet hide-phone" disabled title="Rewrite paragraphs for grammar and flow; you choose what to keep"><span>Polish</span></button>
       </span>
     </header>
 
@@ -369,6 +370,23 @@
     </form>
   </dialog>
 
+  <dialog id="polish-dialog" class="paper-dialog wide">
+    <div>
+      <header class="dialog-head">
+        <h3>Polish with Quill</h3>
+        <button type="button" class="icon-btn" data-close aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
+      </header>
+      <div class="dialog-body">
+        <p class="aside">Quill rewrites each paragraph for grammar and flow, keeping your ideas, examples and as much of your own wording as it can. Nothing changes until you choose. Paragraphs you take are Quill's writing, so your history marks them as AI-written; editing them into your own words clears that.</p>
+        <div id="polish-progress" class="progress" role="status" aria-live="polite" hidden></div>
+        <div id="polish-list" class="polish-list"></div>
+      </div>
+      <div class="row dialog-foot">
+        <button type="button" class="btn quiet" data-close>Close</button>
+        <button type="button" id="polish-go" class="btn ink"><span>Polish the essay</span></button>
+      </div>
+    </div>
+  </dialog>
   <dialog id="compose-dialog" class="paper-dialog">
     <form id="compose-form">
       <header class="dialog-head">

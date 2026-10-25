@@ -411,6 +411,21 @@ async def review(body: ReviewIn, user=Depends(current_user)):
     return ndjson([instant], without_ignored(events, ignored), on_finish=lambda: active_reviews.release(user["id"]))
 
 
+class PolishIn(ReviewIn):
+    paragraph: int | None = Field(default=None, ge=0)   # one paragraph, or the whole essay
+
+
+@app.post("/api/polish")
+async def polish(body: PolishIn, user=Depends(current_user)):
+    """Rewrites paragraphs for grammar and flow, keeping the writer's ideas and wording as far as it
+    can; each comes back beside the original with a content check, for the writer to accept or not.
+    Accepted paragraphs are recorded as AI-written (/api/drafts/{id}/ai-text)."""
+    claim_review(user)
+    profile = load_profile(user["id"])
+    return ndjson([], editor.polish_stream(body.body, writer_voice(profile, body.body), body.goal_line(), body.paragraph),
+                  on_finish=lambda: active_reviews.release(user["id"]))
+
+
 @app.post("/api/overview")
 async def overview(body: ReviewIn, user=Depends(current_user)):
     claim_review(user)
@@ -604,12 +619,31 @@ def update_draft(draft_id: int, body: DraftPatch, user=Depends(current_user)):
     return {"ok": True}
 
 
+class AiTextIn(BaseModel):
+    paragraphs: list[Annotated[str, Field(min_length=1, max_length=10000)]] = Field(min_length=1, max_length=50)
+
+
+@app.post("/api/drafts/{draft_id}/ai-text")
+def add_ai_text(draft_id: int, body: AiTextIn, user=Depends(current_user)):
+    """Records paragraphs Quill's AI wrote into this essay (an accepted polish), so the margin and the
+    writing history count them as AI-written, like a drafted essay's text."""
+    with db.connect() as conn:
+        draft = owned_draft(conn, draft_id, user["id"])
+        added = [" ".join(p.split()) for p in body.paragraphs]
+        text = "\n\n".join(p for p in [draft["ai_text"] or "", *added] if p)
+        conn.execute("UPDATE drafts SET ai_text = ? WHERE id = ?", (text, draft_id))
+        conn.executemany("INSERT INTO ai_additions (draft_id, text, created) VALUES (?, ?, ?)",
+                         [(draft_id, p, db.now()) for p in added])
+    return {"ai_text": text}
+
+
 @app.delete("/api/drafts/{draft_id}")
 def delete_draft(draft_id: int, user=Depends(current_user)):
     with db.connect() as conn:
         owned_draft(conn, draft_id, user["id"])
         conn.execute("DELETE FROM versions WHERE draft_id = ?", (draft_id,))
         conn.execute("DELETE FROM feedback WHERE draft_id = ?", (draft_id,))  # its training data too
+        conn.execute("DELETE FROM ai_additions WHERE draft_id = ?", (draft_id,))
         conn.execute("DELETE FROM drafts WHERE id = ?", (draft_id,))
     return {"ok": True}
 
@@ -638,7 +672,14 @@ def replay(draft_id: int, user=Depends(current_user)):
         versions = conn.execute(
             "SELECT id, body, note, created, source FROM versions WHERE draft_id = ? ORDER BY created", (draft_id,)
         ).fetchall()
-    return [{**dict(v), "ai_paragraphs": authorship.ai_paragraph_flags(v["body"], draft["ai_text"])} for v in versions]
+        additions = conn.execute("SELECT text, created FROM ai_additions WHERE draft_id = ?", (draft_id,)).fetchall()
+    ai = authorship.paragraphs(draft["ai_text"] or "")
+
+    def ai_text_at(created):
+        """The AI text as it stood when a version was saved: later polish additions left out."""
+        later = {a["text"] for a in additions if a["created"] > created}
+        return "\n\n".join(p for p in ai if p not in later)
+    return [{**dict(v), "ai_paragraphs": authorship.ai_paragraph_flags(v["body"], ai_text_at(v["created"]))} for v in versions]
 
 
 @app.get("/api/versions/{version_id}")

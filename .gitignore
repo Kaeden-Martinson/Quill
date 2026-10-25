@@ -17,3 +17,4 @@ training/writing_eval/packets/
 /training-*.log
 /detectors-*.log
 /editor-*.log
+/polish-*.log

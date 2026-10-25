@@ -52,3 +52,6 @@ LETTER_OPTIONS = sampling("LETTER", temperature=0.4, top_p=0.9, num_predict=2048
 # three times human levels by swapping in synonyms; min_p trims unlikely words relative to the top
 # one, so a little more temperature adds variety without wandering.
 DRAFT_OPTIONS = sampling("DRAFT", temperature=0.8, top_p=1.0, min_p=0.05, repeat_penalty=1.0, num_predict=4096)
+# Polish (a paragraph rewritten for grammar and flow): low temperature, so it stays close to the
+# writer's paragraph; room for a long paragraph plus the model's hidden thinking.
+POLISH_OPTIONS = sampling("POLISH", temperature=0.3, top_p=0.9, num_predict=4096)  # room for long paragraphs

@@ -455,7 +455,7 @@ function updateCrumb() {
 }
 
 function setDraftControls(enabled) {
-  for (const id of ["#review", "#review-phone", "#overview", "#save", "#replay", "#export", "#export-docx", "#delete-draft"]) $(id).disabled = !enabled;
+  for (const id of ["#review", "#review-phone", "#overview", "#polish", "#save", "#replay", "#export", "#export-docx", "#delete-draft"]) $(id).disabled = !enabled;
 }
 
 document.addEventListener("keydown", (e) => {
@@ -1486,6 +1486,104 @@ function renderReport() {
 }
 
 // ---------- drafting from a prompt ----------
+
+
+// ---------- polish: paragraphs rewritten for grammar and flow, each one the writer's choice ----------
+
+let polishRun = null;
+let polishTaken = 0;
+const polishProgress = new Progress($("#polish-progress"));
+
+function polishDiff(original, revised) {
+  const out = el("p", { class: "polish-diff" });
+  for (const seg of diffWords(original, revised)) {
+    if (seg.type === "keep") out.append(seg.del);
+    else {
+      if (seg.del.trim()) out.append(el("del", {}, seg.del));
+      if (seg.ins.trim()) out.append(el("ins", {}, seg.ins));
+    }
+  }
+  return out;
+}
+
+// Puts a polished paragraph into the essay (one Ctrl+Z step) and records it as Quill's writing.
+async function takePolish(e, card) {
+  const text = $("#body").value;
+  const span = paragraphSpans(text)[e.index];
+  let start = span && text.slice(span.start, span.end) === e.original ? span.start : text.indexOf(e.original);
+  if (start === -1) {
+    card.querySelector(".acts").replaceChildren(el("span", { class: "aside" }, "This paragraph changed since Quill read it, so it was left alone."));
+    return;
+  }
+  replaceRange(start, start + e.original.length, e.revised);
+  polishTaken += 1;
+  card.classList.add("taken");
+  card.querySelector(".acts").replaceChildren(el("span", { class: "aside" }, "Used. Ctrl+Z puts yours back."));
+  try {
+    const r = await api(`/api/drafts/${state.draftId}/ai-text`, { method: "POST", body: { paragraphs: [e.revised] } });
+    state.aiText = r.ai_text;
+    state.aiCache = new Map();
+    renderMarkup();
+  } catch { /* the paragraph is in; the margin catches up next time the essay opens */ }
+}
+
+function polishCard(e) {
+  const card = el("div", { class: "polish-card" });
+  if (e.revised === e.original) {
+    card.append(el("p", { class: "aside" }, `Paragraph ${e.index + 1}: ${e.checks.warnings[0] || "already reads well; Quill left it as it is."}`));
+    return card;
+  }
+  card.append(el("h4", {}, `Paragraph ${e.index + 1}`), polishDiff(e.original, e.revised));
+  if (e.checks.warnings.length) card.append(el("ul", { class: "polish-warn" }, ...e.checks.warnings.map((w) => el("li", {}, w))));
+  card.append(el("div", { class: "acts" },
+    el("button", { class: "btn ink", onclick: () => takePolish(e, card) }, "Use this"),
+    el("button", { class: "btn quiet", onclick: () => { card.classList.add("kept"); card.querySelector(".acts").replaceChildren(el("span", { class: "aside" }, "Kept yours.")); } }, "Keep mine")));
+  return card;
+}
+
+$("#polish").addEventListener("click", () => {
+  closeSide();
+  if (!polishRun) { $("#polish-list").replaceChildren(); polishProgress.hide(); }
+  $("#polish-dialog").showModal();
+});
+
+$("#polish-go").addEventListener("click", async () => {
+  if (polishRun) { polishRun.abort(); return; } // second click = Stop
+  const body = $("#body").value.trim();
+  if (!body) return;
+  await saveVersion("Before polish");
+  polishTaken = 0;
+  $("#polish-list").replaceChildren();
+  const run = (polishRun = new AbortController());
+  const go = $("#polish-go span");
+  go.textContent = "Stop";
+  polishProgress.start("Starting…", { kind: "polish", expected: 20 * paragraphSpans(body).length });
+  try {
+    await stream("/api/polish", { body, ...goals() }, (event) => {
+      if (event.type === "queue") polishProgress.queue(event.position);
+      else if (event.type === "start") polishProgress.steps(event.total, `Paragraph 1 of ${event.total}`);
+      else if (event.type === "paragraph") {
+        $("#polish-list").append(polishCard(event));
+        polishProgress.step(event.step + 1, event.step + 1 < event.total ? `Paragraph ${event.step + 2} of ${event.total}` : "Done");
+      } else if (event.type === "error") polishProgress.fail(event.message);
+    }, run.signal);
+    polishProgress.finish();
+  } catch (err) {
+    polishProgress.fail(err.name === "AbortError" ? "Stopped." : err.message);
+  } finally {
+    polishRun = null;
+    go.textContent = "Polish the essay";
+  }
+});
+
+function closePolish() {
+  polishRun?.abort();
+  $("#polish-dialog").close();
+  if (polishTaken) saveVersion("Polished by Quill AI");
+  polishTaken = 0;
+}
+$$("#polish-dialog [data-close]").forEach((b) => b.addEventListener("click", closePolish));
+$("#polish-dialog").addEventListener("cancel", () => { polishRun?.abort(); if (polishTaken) saveVersion("Polished by Quill AI"); polishTaken = 0; });
 
 let composeRun = null;
 const composeProgress = new Progress($("#compose-progress"));
