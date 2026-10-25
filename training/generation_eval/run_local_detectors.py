@@ -134,17 +134,25 @@ class FastDetectGPT:
         self.device = device
 
     @staticmethod
-    def criterion(logits_ref, logits_score, labels):
-        """Sampling discrepancy, analytic form (Bao et al.; fast_detect_gpt.py, MIT)."""
+    def criterion(logits_ref, logits_score, labels, chunk=256):
+        """Sampling discrepancy, analytic form (Bao et al.; fast_detect_gpt.py, MIT).
+
+        Computed over slices of `chunk` token positions and summed, which gives the same value as the
+        whole-sequence formula: on long essays the full-vocabulary float32 tables otherwise filled the
+        8 GB GPU and spilled into shared memory, about 50 times slower."""
         if logits_ref.size(-1) != logits_score.size(-1):
             v = min(logits_ref.size(-1), logits_score.size(-1))
             logits_ref, logits_score = logits_ref[..., :v], logits_score[..., :v]
-        lprobs = torch.log_softmax(logits_score.float(), -1)
-        probs_ref = torch.softmax(logits_ref.float(), -1)
-        ll = lprobs.gather(-1, labels.unsqueeze(-1)).squeeze(-1)
-        mean_ref = (probs_ref * lprobs).sum(-1)
-        var_ref = (probs_ref * lprobs.square()).sum(-1) - mean_ref.square()
-        return ((ll.sum(-1) - mean_ref.sum(-1)) / var_ref.sum(-1).sqrt()).mean().item()
+        ll_sum = mean_sum = var_sum = 0.0
+        for s in range(0, labels.size(-1), chunk):
+            lprobs = torch.log_softmax(logits_score[:, s:s + chunk].float(), -1)
+            probs_ref = torch.softmax(logits_ref[:, s:s + chunk].float(), -1)
+            ll = lprobs.gather(-1, labels[:, s:s + chunk].unsqueeze(-1)).squeeze(-1)
+            mean_ref = (probs_ref * lprobs).sum(-1)
+            var_ref = (probs_ref * lprobs.square()).sum(-1) - mean_ref.square()
+            ll_sum, mean_sum, var_sum = ll_sum + ll.sum(-1), mean_sum + mean_ref.sum(-1), var_sum + var_ref.sum(-1)
+            del lprobs, probs_ref
+        return ((ll_sum - mean_sum) / var_sum.sqrt()).mean().item()
 
     def score(self, text):
         enc = self.tok(text, truncation=True, max_length=2048, return_tensors="pt").to(self.device)

@@ -98,6 +98,21 @@ def human(split):
     record(HUMAN / f"{split}-C-manifest.json", HUMAN / f"{split}-C.jsonl", out, [])
 
 
+def editor_set(name):
+    """Pipeline C on a fresh editor set (editor_sets.py): editor-dev, or the locked editor-holdout.
+    Writes human/editor/NAME-C.jsonl."""
+    if name != "editor-dev":
+        require_unsealed("eval", f"edit.py editor-set {name}")
+    import editor_sets
+    rows = editor_sets.load(name)
+
+    async def go():
+        return [row async for row in edit_rows(rows, lambda r: goal_line(""))]
+    out = [{**r, "pipeline": "C"} for r in asyncio.run(go())]
+    write_jsonl(editor_sets.OUT / f"{name}-C.jsonl", out)
+    record(editor_sets.OUT / f"{name}-C-manifest.json", editor_sets.OUT / f"{name}-C.jsonl", out, [])
+
+
 def record(path, output, rows, skipped):
     tags = {m["name"]: m["digest"] for m in httpx.get(f"{generate.OLLAMA_URL}/api/tags", timeout=10).json()["models"]}
     path.write_text(json.dumps({
@@ -112,5 +127,7 @@ def record(path, output, rows, skipped):
 if __name__ == "__main__":
     if sys.argv[1] == "drafts":
         drafts(sys.argv[2])
+    elif sys.argv[1] == "editor-set":   # editor-set editor-dev | editor-holdout
+        editor_set(sys.argv[2])
     elif sys.argv[1] == "human":
         human(sys.argv[2])
