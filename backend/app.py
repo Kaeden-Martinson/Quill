@@ -18,6 +18,7 @@ import authorship
 import db
 import editor
 import lab
+import localize
 import security
 import style
 import voices
@@ -302,6 +303,9 @@ class ReviewIn(BaseModel):
     goal: str = Field(default="", max_length=300)
     audience: str = Field(default="", max_length=100)
     tone: str = Field(default="", max_length=100)
+    # How much the writer wants changed: "typos" (spelling, punctuation, capitals), "grammar" (typos
+    # plus small grammar fixes) or "all" (also rewrites and style suggestions; the default, as before).
+    mode: str = Field(default="all", pattern="^(typos|grammar|all)$")
 
     def goal_line(self):
         """Goal, audience and tone in the one "Essay goal" line the editor was trained on."""
@@ -370,6 +374,15 @@ def writer_voice(profile, draft):
     return voices.describe(profile, draft)
 
 
+async def localized(events, paragraphs, mode):
+    """Each paragraph's suggestions split into one edit per change and labelled typo, grammar or
+    rewrite (localize.py), keeping the kinds the writer's mode asks for."""
+    async for event in events:
+        if event.get("type") == "paragraph":
+            event = {**event, "suggestions": localize.localize_all(paragraphs[event["index"]], event["suggestions"], mode)}
+        yield event
+
+
 async def without_ignored(events, ignored):
     async for event in events:
         if event.get("type") == "paragraph":
@@ -389,10 +402,12 @@ async def review(body: ReviewIn, user=Depends(current_user)):
     ]
     instant = {
         "type": "instant",
-        "suggestions": not_ignored(flags, ignored),
+        # Stock-phrase flags are style notes, so only the "all" mode shows them.
+        "suggestions": not_ignored(flags, ignored) if body.mode == "all" else [],
         "voice_notes": style.compare(body.body, profile["stats"]),
     }
     events = editor.review_stream(body.body, writer_voice(profile, body.body), body.goal_line())
+    events = localized(events, editor.split_paragraphs(body.body), body.mode)
     return ndjson([instant], without_ignored(events, ignored), on_finish=lambda: active_reviews.release(user["id"]))
 
 

@@ -191,6 +191,13 @@
 
             <div id="panel-edits" class="panel" data-panel="edits" role="tabpanel" aria-labelledby="tab-edits">
               <div id="voice-notes"></div>
+              <label class="edit-mode">Quill suggests
+                <select id="edit-mode" aria-label="How much Quill suggests changing">
+                  <option value="typos">Typos and punctuation only</option>
+                  <option value="grammar">Typos and grammar</option>
+                  <option value="all" selected>Everything, including rewrites</option>
+                </select>
+              </label>
               <div id="bulk" class="bulk" hidden>
                 <button id="accept-grammar" class="link"></button>
                 <p class="keys">Alt + <kbd>↓</kbd> <kbd>↑</kbd> move between notes, Alt + <kbd>Enter</kbd> accepts, Alt + <kbd>Backspace</kbd> skips</p>

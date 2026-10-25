@@ -17,3 +17,14 @@ test("analytical and informational pieces are not", () => {
   assert.ok(!looksPersonal("persuasive essay", "Argue for a later school start."));
   assert.ok(!looksPersonal("", ""));
 });
+
+const { isCorrection } = require("../../frontend/text.js");
+
+test("accept-all takes typo and grammar corrections, never rewrites or notes", () => {
+  assert.ok(isCorrection({ kind: "typo", revised: "It's" }));
+  assert.ok(isCorrection({ kind: "grammar", revised: "goes" }));
+  assert.ok(!isCorrection({ kind: "rewrite", category: "grammar", revised: "as I said" }));
+  assert.ok(!isCorrection({ kind: "typo", revised: null }));
+  assert.ok(isCorrection({ category: "grammar", revised: "x" }));          // older suggestions without a kind
+  assert.ok(!isCorrection({ category: "clarity", revised: "x" }));
+});

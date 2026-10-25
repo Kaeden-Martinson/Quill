@@ -252,6 +252,15 @@
     return PERSONAL.test(`${goal || ""} ${instructions || ""}`);
   }
 
+  // What "Accept all fixes" may take: typo and grammar corrections, never rewrites (they change the
+  // writer's wording, so each needs its own yes). Suggestions from before kinds existed fall back to
+  // their category.
+  function isCorrection(s) {
+    if (s.revised == null) return false;
+    return s.kind ? s.kind !== "rewrite" : s.category === "grammar";
+  }
+
+  exports.isCorrection = isCorrection;
   exports.looksPersonal = looksPersonal;
   exports.applyCutoffs = applyCutoffs;
   exports.paragraphSpans = paragraphSpans;

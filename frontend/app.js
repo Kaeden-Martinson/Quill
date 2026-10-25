@@ -1126,7 +1126,8 @@ function queueText(position) {
     : `You're ${ordinal(position)} in line. Others are using Quill right now.`;
 }
 
-const grammarFixes = () => state.suggestions.filter((s) => s.category === "grammar" && s.revised != null);
+// Typo and grammar corrections only; rewrites always need their own yes (isCorrection in text.js).
+const grammarFixes = () => state.suggestions.filter(isCorrection);
 
 function updateCounts() {
   const n = state.suggestions.length;
@@ -1136,7 +1137,7 @@ function updateCounts() {
   const g = grammarFixes().length;
   $("#bulk").hidden = n === 0;
   $("#accept-grammar").hidden = g < 2;
-  $("#accept-grammar").textContent = `Accept all ${g} grammar fixes`;
+  $("#accept-grammar").textContent = `Accept all ${g} typo and grammar fixes`;
   const jump = $("#jump-suggestions");
   jump.hidden = n === 0;
   jump.querySelector("span").textContent = `${n}`;
@@ -1191,6 +1192,14 @@ function setRunning(active) {
   }
 }
 
+// How much Quill suggests: typos only, typos and grammar, or everything (rewrites and style notes too).
+// Remembered per browser; the server labels and filters each suggestion (backend/localize.py).
+function editMode() {
+  return $("#edit-mode").value;
+}
+$("#edit-mode").value = ["typos", "grammar", "all"].includes(storage("quill-edit-mode")) ? storage("quill-edit-mode") : "all";
+$("#edit-mode").addEventListener("change", () => storage("quill-edit-mode", editMode()));
+
 async function runStream(trigger, path, onEvent, { kind, expected }) {
   if (state.run) { stopRun(); return; } // second click = Stop
   const body = $("#body").value.trim();
@@ -1201,7 +1210,7 @@ async function runStream(trigger, path, onEvent, { kind, expected }) {
   progress.start("Starting…", { kind, expected });
   let failed = false;
   try {
-    await stream(path, { body, ...goals() }, (event) => {
+    await stream(path, { body, ...goals(), mode: editMode() }, (event) => {
       if (event.type === "queue") progress.queue(event.position);
       else if (event.type === "error") { failed = true; progress.fail(event.message); }
       else onEvent(event);
@@ -1297,6 +1306,7 @@ function noteFor(s) {
     onmouseleave: () => setActive(s.id, false),
   });
   const act = (label, onclick, cls = "", title = null) => el("button", { class: cls, onclick, ...(title ? { title } : {}) }, label);
+  if (s.kind === "rewrite" && s.revised != null) note.append(el("span", { class: "kind" }, "Rewrite"));
   note.append(el("span", {}, s.reason));
   const never = act("Never flag", () => neverFlag(s), "", `Quill won't flag “${ignorePhrase(s)}” again`);
   if (s.revised == null) {
