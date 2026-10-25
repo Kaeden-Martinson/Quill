@@ -1506,6 +1506,7 @@ function openCompose() {
   delete form.dataset.askedDetails;
   $("#compose-details-why").classList.remove("asking");
   if (!["detail1", "detail2", "detail3"].some((k) => form[k].value.trim())) $("#compose-details").open = false;
+  if (!["example1", "example2", "example3"].some((k) => form[k].value.trim())) $("#compose-examples").open = false;
   $("#compose-dialog").showModal();
   $("#compose-form").instructions.focus();
 }
@@ -1524,6 +1525,7 @@ $("#compose-form").addEventListener("submit", async (e) => {
   const form = e.target;
   const body = Object.fromEntries(["instructions", "goal", "audience", "tone", "length"].map((k) => [k, form[k].value]));
   body.details = ["detail1", "detail2", "detail3"].map((k) => form[k].value.trim()).filter(Boolean);
+  body.examples = ["example1", "example2", "example3"].map((k) => form[k].value.trim()).filter(Boolean);
   // Ask first: for a piece about the writer's own life, offer the details fields once before drafting.
   // A second click drafts anyway; nothing here is required.
   if (looksPersonal(body.goal, body.instructions) && !body.details.length && !form.dataset.askedDetails) {
@@ -1560,6 +1562,7 @@ $("#compose-form").addEventListener("submit", async (e) => {
     $("#compose-dialog").close();
     form.reset();
     $("#compose-details").open = false;
+    $("#compose-examples").open = false;
     await openDraft(draftId);
   }
 });

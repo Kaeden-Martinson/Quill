@@ -211,3 +211,14 @@ def test_a_retry_with_a_fixed_seed_moves_the_seed(client, user, monkeypatch):
                                                 {"title": "T", "paragraphs": ["Fine."]}])
     stream_events(client.post("/api/compose", headers=h, json={"instructions": "Why I bike to school every day"}))
     assert [c["seed"] for c in calls] == [41, 42]
+
+
+def test_compose_adds_the_writers_examples_in_the_tested_format(client, user, monkeypatch):
+    _, h = user
+    prompts = fake_drafter(monkeypatch, ["A draft."])
+    stream_events(client.post("/api/compose", headers=h, json={
+        "instructions": "Argue that our library should open on Sundays.",
+        "examples": ["More than twenty people wait for the computers on Saturdays.", ""]}))
+    assert ("Argue that our library should open on Sundays.\n\nExamples and evidence I can use:\n"
+            "- More than twenty people wait for the computers on Saturdays.") in prompts[0][1]
+    assert client.post("/api/compose", headers=h, json={"instructions": "Why I bike to school", "examples": ["a"] * 4}).status_code == 422

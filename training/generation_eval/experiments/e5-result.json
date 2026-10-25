@@ -1,0 +1,155 @@
+{
+ "experiment": "e5",
+ "ratings": "j-e5",
+ "variant_run": "e5-dev",
+ "baseline_run": "baseline-dev+e5-base-dev",
+ "judges": 2,
+ "samples": 30,
+ "paired_differences": {
+  "adherence": {
+   "diff": 0.3,
+   "ci95": [
+    -0.133,
+    0.7
+   ],
+   "pairs": 30
+  },
+  "thesis_argument": {
+   "diff": 0.167,
+   "ci95": [
+    -0.117,
+    0.433
+   ],
+   "pairs": 30
+  },
+  "evidence": {
+   "diff": 1.683,
+   "ci95": [
+    1.167,
+    2.1
+   ],
+   "pairs": 30
+  },
+  "specificity": {
+   "diff": 1.233,
+   "ci95": [
+    0.683,
+    1.767
+   ],
+   "pairs": 30
+  },
+  "organization": {
+   "diff": -0.033,
+   "ci95": [
+    -0.2,
+    0.133
+   ],
+   "pairs": 30
+  },
+  "coherence": {
+   "diff": -0.083,
+   "ci95": [
+    -0.267,
+    0.1
+   ],
+   "pairs": 30
+  },
+  "repetition": {
+   "diff": 0.3,
+   "ci95": [
+    0.167,
+    0.467
+   ],
+   "pairs": 30
+  },
+  "readability": {
+   "diff": 0.183,
+   "ci95": [
+    0.05,
+    0.333
+   ],
+   "pairs": 30
+  },
+  "factual_reliability": {
+   "diff": 0.1,
+   "ci95": [
+    -0.267,
+    0.417
+   ],
+   "pairs": 30
+  },
+  "genre_fit": {
+   "diff": 0.017,
+   "ci95": [
+    -0.233,
+    0.217
+   ],
+   "pairs": 30
+  },
+  "voice_style": {
+   "diff": 0.2,
+   "ci95": [
+    0.033,
+    0.367
+   ],
+   "pairs": 30
+  },
+  "usefulness": {
+   "diff": 0.567,
+   "ci95": [
+    0.15,
+    0.933
+   ],
+   "pairs": 30
+  },
+  "invented_personal_details": {
+   "diff": 0.017,
+   "ci95": [
+    0.0,
+    0.05
+   ],
+   "pairs": 30
+  },
+  "unsupported_claims": {
+   "diff": -0.117,
+   "ci95": [
+    -0.283,
+    0.017
+   ],
+   "pairs": 30
+  },
+  "citation_problems": {
+   "diff": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "pairs": 30
+  },
+  "_variant_factual_mean": 4.217
+ },
+ "lengths": {
+  "variant": {
+   "median_share": {
+    "medium": 0.8,
+    "short": 0.884,
+    "long": 0.76
+   },
+   "under_70pct": 5
+  },
+  "baseline": {
+   "median_share": {
+    "medium": 0.818,
+    "short": 0.888,
+    "long": 0.839
+   },
+   "under_70pct": 1
+  }
+ },
+ "invented_details_flagged_by_all_judges": {
+  "variant": 0,
+  "baseline": 0,
+  "of": 30
+ },
+ "decision": "adopt (optional examples-and-evidence field in the draft dialog)"
+}

@@ -60,3 +60,6 @@ to the variant and its baseline alike since both are rated in the same packet:
   before writing any ratings; the packet was rebuilt so each essay shows the assignment it was written
   from (ratings.judges_runs), and two new judges rated it. The first packet and key are kept under
   data/generation_eval/ratings/superseded.
+- `j-e5` adds: "examples and evidence the assignment itself gives are not invented or unsupported, but
+  check the essay uses them accurately" (the E5 variant's assignments include the writer's examples;
+  each essay is shown the assignment it was written from).

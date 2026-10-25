@@ -90,6 +90,16 @@ def decide(exp, d, lengths, inv):
         if sp is not None and ev is not None and abs(sp) < 0.1 and abs(ev) < 0.1:
             return "not supported"
         return "inconclusive"
+    if exp == "e5":
+        sp, ev = g("specificity"), g("evidence")
+        guards = (g("factual_reliability") is not None and g("factual_reliability") >= -0.2
+                  and g("adherence") is not None and g("adherence") >= -0.2
+                  and (g("unsupported_claims") or 0) <= 0)
+        if sp is not None and ev is not None and sp >= 0.3 and ev >= 0.3 and guards:
+            return "adopt (optional examples-and-evidence field in the draft dialog)"
+        if sp is not None and ev is not None and abs(sp) < 0.1 and abs(ev) < 0.1:
+            return "not supported"
+        return "inconclusive"
     if exp == "e4":
         sp, fr = g("specificity"), g("factual_reliability")
         if sp is not None and sp >= 0.5 and fr is not None and fr >= -0.3 and d.get("_variant_factual_mean", 0) >= 4.0:

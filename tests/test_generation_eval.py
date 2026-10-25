@@ -151,3 +151,10 @@ def test_e5_adds_the_writers_examples_only_where_written():
     pid = next(iter(generate.X.E5_EXAMPLES))
     e5, _ = generate.build_request(_prompt(id=pid), seed=1, variants=("e5",))
     assert "Examples and evidence I can use:" in e5 and generate.X.E5_EXAMPLES[pid][0] in e5
+
+
+def test_app_examples_format_matches_experiment_e5():
+    import app as quill
+    pid = next(iter(generate.X.E5_EXAMPLES))
+    assert quill.with_details("Base.", [], generate.X.E5_EXAMPLES[pid]) == \
+        generate.X.adjust_prompt_entry({"id": pid, "instructions": "Base."}, ("e5",))["instructions"]

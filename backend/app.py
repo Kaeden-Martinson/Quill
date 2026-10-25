@@ -428,16 +428,20 @@ class DraftRequest(BaseModel):
     # Answers to "details only you know" (a moment, a person, how it turned out), asked before drafting
     # personal pieces.
     details: list[Annotated[str, Field(max_length=300)]] = Field(default_factory=list, max_length=3)
+    # The writer's own examples or evidence for an argument, explanation or letter.
+    examples: list[Annotated[str, Field(max_length=300)]] = Field(default_factory=list, max_length=3)
 
 
-def with_details(instructions, details):
-    """The writer's own details, added to their instructions in the format tested in
-    training/generation_eval (experiment E1: with them, drafts invented personal details far less often,
-    12 of 21 -> 2 of 21, and were rated more useful and specific)."""
-    kept = [" ".join(d.split()) for d in details if d.strip()]
-    if not kept:
-        return instructions
-    return instructions + "\n\nDetails I can add:\n" + "\n".join(f"- {d}" for d in kept)
+def with_details(instructions, details, examples=()):
+    """The writer's own details and examples, added to their instructions in the formats tested in
+    training/generation_eval: personal details (experiment E1: invented personal details 12 of 21 ->
+    2 of 21, more useful and specific drafts) and examples or evidence for other pieces (E5: evidence
+    +1.68, specificity +1.23, usefulness +0.57 on a 1-5 scale, fewer unsupported claims)."""
+    for heading, items in (("Details I can add", details), ("Examples and evidence I can use", examples)):
+        kept = [" ".join(d.split()) for d in items if d.strip()]
+        if kept:
+            instructions += f"\n\n{heading}:\n" + "\n".join(f"- {d}" for d in kept)
+    return instructions
 
 
 @app.post("/api/compose")
@@ -448,7 +452,7 @@ async def compose(body: DraftRequest, user=Depends(current_user)):
     profile = load_profile(user["id"])
     # Without a chosen voice there's no draft to measure, so the writer's samples (if any) stand in.
     voice = voices.describe(profile, "\n\n".join(profile["samples"]))
-    prompt = editor.draft_prompt(with_details(body.instructions, body.details), voice, voices.sample_for(profile),
+    prompt = editor.draft_prompt(with_details(body.instructions, body.details, body.examples), voice, voices.sample_for(profile),
                                  body.goal, body.audience, body.tone, body.length)
 
     async def save(events):
