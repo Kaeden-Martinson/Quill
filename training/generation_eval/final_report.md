@@ -33,6 +33,15 @@ three local open-weight detectors (section 5); the requested hosted ones couldn'
   The two genres held out of dev (compare, review) are weakest (usefulness 3.40), a sign the prompt
   doesn't generalize evenly.
 
+- **Editor changes (2026-10-25, live):** suggestions are now localized (one edit per change, labelled
+  typo, grammar or rewrite); "Accept all" takes typo and grammar fixes only; writers pick a mode (typos
+  only / typos and grammar / everything). On 300 held-out student essays, typos mode keeps false
+  positives at 9.3% (Desklib) and 10.7% (OpenAI RoBERTa), confidently under 20%; "Accept all fixes"
+  17.7% / 20.0% / 29.3% (Fast-DetectGPT). The fix rate on the planted-mistake benchmarks is unchanged.
+- **Generator: the writer's examples (E5, live):** an optional "Examples or evidence to use" section in
+  the draft dialog; drafts given three examples were rated far better supported (+1.68) and more
+  specific (+1.23).
+
 ## 1. Generator architecture and baseline provenance
 - Model `gemma4:e4b` (Ollama digest dc35e8d9c606…, blobs sha256-370c2879…, sha256-4cb21b93…), served by
   Ollama **0.40.4** for every run (pinned: auto-update turned off; reinstalled from the verified 0.40.4
@@ -237,3 +246,59 @@ All of plan.md section 10 is built and tested (backend 135, frontend 23 tests). 
 3. Human raters for the quality sheets (and the editor's `r8h` sheets).
 4. Whether to build the research-essay family (openly licensed sources) and Tier B controls.
 5. Turning Ollama's auto-update back on once experiments are finished.
+
+## 13. Editor and generator development (2026-10-24/25)
+**Problem picked first:** the editor raising detector false positives on writers' own essays.
+**Diagnosis** (`editor_diagnosis.py`, 110 dev essays, edits rebuilt by type): typo, punctuation and
+capitalization fixes barely move false positives (Desklib 5.5% -> 8.2%); correcting many genuine small
+grammar errors drives the rise; rewording alone doesn't. 43% of edits bundled several fixes or reworded
+text, sometimes under a reason claiming no wording change.
+
+**Changes (live):**
+- `backend/localize.py`: each suggestion split into minimal pieces quoting just enough to be unique and
+  unambiguous, labelled typo / grammar / rewrite, with exact descriptions for typos and honest ones for
+  rewrites. Accepting every piece reproduces the model's edit exactly (0 mismatches on 610 essays).
+- `/api/review` takes `mode` (typos | grammar | all, default all); a "Quill suggests" selector; "Accept
+  all" takes corrections only (`isCorrection` in `frontend/text.js`); rewrites are labelled.
+- Draft dialog: optional "Examples or evidence to use" (E5), beside the personal "Details only you
+  know" (E1). Empty drafts are retried once; model debris is dropped (D1).
+
+**Quality and regression results** (`editor_modes_quality.py`, the editor's planted-mistake benchmarks):
+
+| Policy | held-out fixed / perfect / untouched / extra | confirm fixed / perfect / untouched / extra |
+|---|---|---|
+| everything (before) | 96.1% / 94.0% / 98.4% / 0.033 | 93.1% / 94.7% / 98.4% / 0.020 |
+| accept-all fixes (now) | 96.1% / 94.7% / 100.0% / 0.027 | 93.1% / 94.7% / 98.4% / 0.020 |
+| typos mode | 92.2% / 94.0% / 100.0% / 0.007 | 84.2% / 91.3% / 100.0% / 0.000 |
+
+**Detector side effects, baseline vs final** (false-positive rate on real student essays; held-out
+editor set, 300 essays, opened once; full table and dev numbers in `editor_plan.md`):
+
+| Detector | Unedited | Before (every suggestion) | Now: Accept all fixes | Now: typos mode | Target < 20% after editing |
+|---|---|---|---|---|---|
+| Desklib | 4.7% | 20.0% | 17.7% [13.8-22.4] | 9.3% [6.5-13.2] | met (typos, confidently); accept-all point estimate only |
+| OpenAI RoBERTa | 4.0% | 21.0% | 20.0% [15.9-24.9] | 10.7% [7.7-14.7] | met (typos, confidently); accept-all not met |
+| Fast-DetectGPT | 17.0% | 32.0% | 29.3% [24.5-34.7] | 20.3% [16.2-25.2] | not met (detector flags 17% of unedited essays) |
+
+Generated drafts are reported separately (section 5): flagged 100% / 89% / 1% before editing; the
+editor barely changes them (6-19 edits per run). Generator variants were judged on quality only and
+never detector-scored.
+
+**Generator follow-ups:** E1 adopted (writer's details; invented details 12/21 -> 2/21), E2 and E4 not
+supported, E3 worse, E5 adopted (writer's examples; evidence +1.68, specificity +1.23, usefulness +0.57).
+
+**Reproduce** (from the repository root; detectors in `.venv-train`, set `QUILL_GEN_UNSEAL=1` for
+held-out sets):
+- `.venv\Scripts\python training\generation_eval\editor_sets.py build`
+- `.venv\Scripts\python training\generation_eval\edit.py editor-set editor-dev` (and `editor-holdout`)
+- `.venv-train\Scripts\python training\generation_eval\editor_diagnosis.py dev --detector NAME`
+- `.venv-train\Scripts\python training\generation_eval\editor_policies.py editor-dev --detector NAME`
+- `.venv\Scripts\python training\generation_eval\editor_modes_quality.py`
+- `.venv\Scripts\python training\generation_eval\generate.py e5-dev dev --variant e5 --prompts ... --seeds 0,1,2`,
+  then `ratings.py judges-runs`, the two judges, and `compare_runs.py e5 j-e5 e5-dev baseline-dev+e5-base-dev`
+- Tests: `.venv\Scripts\python -m pytest` (154) and `node --test "tests/frontend/*.test.cjs"` (24)
+
+**Limitations:** model judges only, no human ratings; local open-weight detectors stand in for the
+hosted ones; "everything" and "accept-all" are upper bounds on what writers apply; the held-out editor
+set was opened once per detector process (three log lines, one session); the editor model, prompt and
+settings are unchanged, so the remaining false positives come from genuine corrections.
