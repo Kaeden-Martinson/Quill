@@ -104,3 +104,20 @@ hold:
   evidence.
 - D1 is a defect fix and goes in regardless, with its unit test.
 If nothing passes, the live drafting prompt stays exactly as it is.
+
+## E5. Writer's examples and evidence for non-personal pieces (added 2026-10-24, before generation)
+- **Question:** E1 showed writer-supplied details transform personal drafts. Specificity and evidence
+  stay about 3/5 across all genres; does giving the drafter the writer's own examples or evidence lift
+  them in arguments, explanations and letters too?
+- **One change:** for 10 non-personal dev prompts (experiments/e5_examples.json, written before any
+  generation), the instructions gain three examples or pieces of evidence, as "Examples and evidence I
+  can use:". Everything else as E1.
+- **Samples:** 10 prompts x 3 seeds (the baseline's two plus one new, also run for the baseline).
+- **Measures:** specificity and evidence (primary); factual reliability, unsupported claims, adherence,
+  usefulness, voice.
+- **Adopt** (as an optional "Examples or evidence to use" field in the draft dialog) if specificity and
+  evidence each rise by at least 0.3, factual reliability is not lower by more than 0.2, adherence is not
+  lower by more than 0.2, and unsupported claims don't increase. **Not supported** if both primary
+  measures move by less than 0.1. Otherwise inconclusive.
+- Judged on quality only by two blind model judges, variant and baseline in one packet; no detector
+  scoring of variants (plan.md section 0).

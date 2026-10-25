@@ -143,3 +143,11 @@ def test_app_details_format_matches_experiment_e1():
     pid = next(iter(generate.X.E1_DETAILS))
     entry = {"id": pid, "instructions": "Base."}
     assert quill.with_details("Base.", generate.X.E1_DETAILS[pid]) == generate.X.adjust_prompt_entry(entry, ("e1",))["instructions"]
+
+
+def test_e5_adds_the_writers_examples_only_where_written():
+    base, _ = generate.build_request(_prompt(), seed=1)
+    assert generate.build_request(_prompt(), seed=1, variants=("e5",))[0] == base
+    pid = next(iter(generate.X.E5_EXAMPLES))
+    e5, _ = generate.build_request(_prompt(id=pid), seed=1, variants=("e5",))
+    assert "Examples and evidence I can use:" in e5 and generate.X.E5_EXAMPLES[pid][0] in e5

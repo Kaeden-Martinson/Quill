@@ -7,14 +7,16 @@ e1: the writer's details for personal-experience prompts (experiments/e1_details
 e2: the length line states a range ("about 500 words (aim for 450-550)").
 e3: a first call plans one concrete support per writer point; the drafting request gets that plan.
 e4: literary-analysis prompts get one sentence allowing specific scenes, but no unsupplied quotations.
+e5: the writer's own examples and evidence for non-personal prompts (experiments/e5_examples.json).
 Variants combine with "+" (e.g. "e2+e3") only for the eval comparison of adopted changes.
 """
 import json
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-VARIANTS = ("e1", "e2", "e3", "e4")
+VARIANTS = ("e1", "e2", "e3", "e4", "e5")
 E1_DETAILS = json.loads((HERE / "experiments" / "e1_details.json").read_text(encoding="utf-8"))["details"]
+E5_EXAMPLES = json.loads((HERE / "experiments" / "e5_examples.json").read_text(encoding="utf-8"))["examples"]
 E2_RANGES = {"short": (225, 275), "medium": (450, 550), "long": (810, 990)}
 E4_SENTENCE = ("Refer to specific scenes, events and characters' actions from the work; don't quote it "
                "unless the writer gave the quotation.")
@@ -46,10 +48,13 @@ def parse(variant):
 
 
 def adjust_prompt_entry(p, names):
-    """e1 changes the writer's input itself (the instructions), before the request is built."""
+    """e1 and e5 change the writer's input itself (the instructions), before the request is built."""
     if "e1" in names and p["id"] in E1_DETAILS:
         details = "\n".join(f"- {d}" for d in E1_DETAILS[p["id"]])
         return {**p, "instructions": p["instructions"] + "\n\nDetails I can add:\n" + details}
+    if "e5" in names and p["id"] in E5_EXAMPLES:
+        examples = "\n".join(f"- {d}" for d in E5_EXAMPLES[p["id"]])
+        return {**p, "instructions": p["instructions"] + "\n\nExamples and evidence I can use:\n" + examples}
     return p
 
 

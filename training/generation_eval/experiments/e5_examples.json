@@ -1,0 +1,55 @@
+{
+ "note": "E5 (followup_plans.md): three examples or pieces of evidence the writer supplies, per non-personal dev prompt, written 2026-10-24 before any E5 generation. Facts are kept to well-established ones or the writer's own observations. Appended to the instructions as the writer's own words.",
+ "examples": {
+  "a-argue-start-times": [
+   "The American Academy of Pediatrics recommends middle and high schools start at 8:30 a.m. or later.",
+   "In my first-period class half the room is still yawning, and two people fell asleep during a quiz last week.",
+   "My school starts at 7:20, so I have to catch the bus at 6:35."
+  ],
+  "a-history-dust-bowl": [
+   "Farmers plowed up millions of acres of native prairie grass to plant wheat during the 1910s and 1920s.",
+   "A long drought hit the southern Plains in the early 1930s.",
+   "On Black Sunday, April 14, 1935, a huge dust storm swept across Oklahoma and Texas."
+  ],
+  "a-oped-library-sundays": [
+   "On Saturdays I've counted more than twenty people waiting for the library computers.",
+   "My neighbor's kids walk there because they don't have Wi-Fi at home.",
+   "The coffee shop downtown kicks people out if they stay more than an hour without buying something."
+  ],
+  "a-explain-vaccines": [
+   "White blood cells make antibodies that fit a germ's shape, like a key in a lock.",
+   "Some vaccines use a weakened or inactivated germ; others teach the body using just one piece of it.",
+   "Memory cells stay in the body, which is why you usually don't get chickenpox twice."
+  ],
+  "a-ethics-historical-figures": [
+   "Thomas Jefferson wrote that all men are created equal while enslaving people at Monticello.",
+   "Some people at the time already argued that slavery was wrong, so it wasn't only a modern idea.",
+   "My history teacher says we should understand people in their time without excusing what they did."
+  ],
+  "a-cause-teens-work": [
+   "Three of my friends work at the grocery store to save money for a car.",
+   "My cousin works because his family needs help paying rent.",
+   "One friend's grades dropped when she started closing shifts on school nights."
+  ],
+  "a-argue-phone-ban": [
+   "Our school uses phones for the online attendance check-in and some quizzes.",
+   "My parents text me if pickup plans change.",
+   "In one class the teacher has a phone pocket chart by the door, and people mostly use it."
+  ],
+  "q-argument-4": [
+   "College football and basketball bring in a lot of TV money for big schools.",
+   "Since 2021 college athletes have been allowed to earn money from their name, image and likeness.",
+   "My cousin plays Division I volleyball and has practice, lifting and film for about 30 hours a week."
+  ],
+  "q-letter-1": [
+   "There are no crossing guards on Maple between 8 and 8:30 a.m., when most kids arrive.",
+   "Cars park on both sides of Maple, so kids step out between them where drivers can't see them.",
+   "Last month a car braked hard about two feet from a second grader near the school gate."
+  ],
+  "q-position-4": [
+   "Many apps already say users must be 13 or older, but signing up only asks for a birthday.",
+   "Some proposals would make people upload a photo ID to prove their age.",
+   "My little brother made an account at 10 by typing a fake birth year."
+  ]
+ }
+}
