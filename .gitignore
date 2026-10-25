@@ -16,3 +16,4 @@ training/writing_eval/packets/
 /generation-*.log
 /training-*.log
 /detectors-*.log
+/editor-*.log
